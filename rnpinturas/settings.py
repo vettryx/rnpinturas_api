@@ -43,6 +43,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     
     # Apps Personalizados (RN Pinturas)
+    'cities',
+    'common',
 ]
 
 # Configuração dos middlewares (MIDDLEWARE)
