@@ -1,0 +1,21 @@
+[project]
+name = "rnpinturas-api"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "André Ventura",email = "ti@asventura.com.br"}
+]
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+    "django (>=6.0,<7.0)",
+    "python-dotenv (>=1.2.1,<2.0.0)",
+    "pymysql (>=1.1.2,<2.0.0)",
+    "weasyprint (>=67.0,<68.0)",
+    "gunicorn (>=23.0.0,<24.0.0)"
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
