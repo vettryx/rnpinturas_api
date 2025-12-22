@@ -1,0 +1,63 @@
+<!-- templates/base.html -->
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}RN Pinturas - Sistema Corporativo de Gestão Empresarial{% endblock %}</title>
+    {% load static %}
+    <!-- Fontes e estilos CSS -->
+    {% include 'css_includes.html' %}
+</head>
+<body class="{% block body_class %}{% endblock %}">
+    <!-- Cabeçalho Comum -->
+    <header class="main-header">
+        <div class="header-content">
+            <div class="logo-area">
+                <img src="{% static 'shared-styles/images/venturix_logo.png' %}" alt="Logo Venturix" class="logo">
+            </div>
+
+            <div class="title-area">
+                <h2 class="page-title">{% block header_title %}RN PINTURAS{% endblock %}</h2>
+            </div>
+
+            <div class="actions-area">
+                <button id="theme-toggle-btn" class="btn-icon" title="Alternar Tema">
+                    <i class="fa fa-moon"></i>
+                </button>
+                
+                {% if request.user.is_authenticated %}
+                <div class="user-profile">
+                    <small>Olá, {{ request.user.first_name }}</small>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </header>
+
+
+    <!-- Área exclusiva para conteúdo específico de cada página -->
+    <main class="main-content">
+        {% block content %}
+        
+            {% if messages %}
+            <div class="messages-container">
+                {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                    {{ message|safe }}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+        {% endblock %}
+    </main>
+    
+    <!-- Rodapé -->
+    {% include 'includes/footer.html' %}
+    
+    <!-- Scripts -->
+    {% include 'js_includes.html' %}
+</body>
+</html>
