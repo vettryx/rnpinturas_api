@@ -44,8 +44,9 @@ INSTALLED_APPS = [
     
     # Apps Personalizados (RN Pinturas)
     'cities',
-    'common',
     'clients',
+    'common',
+    'materials',
 ]
 
 # Configuração dos middlewares (MIDDLEWARE)
