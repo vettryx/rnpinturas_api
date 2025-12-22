@@ -1,0 +1,76 @@
+/* static/css/apps_detail.css */
+
+/* Container principal de detalhes */
+.container-apps-detail {
+    display: flex;
+    gap: 2rem;
+    max-width: 1400px;
+    margin: 2rem auto;
+    align-items: flex-start;
+}
+
+/* Título de cada seção (ex: Informações Gerais) */
+.apps-detail-sub-section-title {
+    font-family: 'Fredoka', sans-serif;
+    font-size: 1rem;
+    color: var(--cor-brand-primary); /* Destaque na cor da marca */
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--borda-suave);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 600;
+}
+
+/* Grid de Dados */
+.apps-detail-group {
+    display: grid;
+    /* Colunas responsivas, mas mais densas */
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); 
+    gap: 2rem 1.5rem; /* Gap vertical maior, horizontal menor */
+    margin-bottom: 2rem;
+}
+
+/* Item de Dado (Label + Valor) */
+.p-detail {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    border: none;
+    margin: 0;
+}
+
+/* Rótulo (Label) */
+.apps-detail-label {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    font-weight: 700;
+    background: none; /* Removemos fundo azul antigo */
+    padding: 0;
+}
+
+/* Valor */
+.apps-detail-value {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1rem;
+    color: var(--text-primary);
+    font-weight: 500;
+    border-bottom: 1px solid transparent; /* Reserva espaço */
+}
+
+/* Destaque leve ao passar o mouse no valor */
+.p-detail:hover .apps-detail-value {
+    color: var(--cor-brand-primary);
+}
+
+/* Botões de Ação (Aquele grupo que estava quebrado) */
+.apps-detail-btn-group {
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--borda-suave);
+    display: flex;
+    justify-content: flex-end; /* Alinha à direita */
+    gap: 1rem;
+    width: 100%;
+}
