@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'clients',
     'common',
     'materials',
+    'services',
 ]
 
 # Configuração dos middlewares (MIDDLEWARE)
