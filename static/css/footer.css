@@ -1,0 +1,37 @@
+/* static/css/footer.css */
+
+/* RODAPÉ DO SITE */
+footer {
+    margin-top: auto;
+    
+    /* Cores baseadas no Tema (Variáveis) */
+    background-color: var(--bg-header); /* Usa a mesma cor do cabeçalho */
+    color: var(--text-secondary); /* Texto cinza suave */
+    border-top: 1px solid var(--borda-suave); /* Linha fina de separação */
+    
+    /* Espaçamento e Texto */
+    padding: 1.5rem 0;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.85rem;
+    text-align: center;
+    width: 100%;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+/* Garante que o texto dentro do footer siga a cor */
+footer p {
+    margin: 0;
+    font-weight: 500;
+    opacity: 0.8;
+}
+
+/* Se houver links no rodapé */
+footer a {
+    color: var(--text-primary);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+footer a:hover {
+    color: var(--cor-brand-primary);
+}
