@@ -1,0 +1,49 @@
+/* static/css/styles.css */
+
+/* IMPORTAÇÃO DE FONTES */
+/* Atualizei para incluir os pesos (font-weight) necessários para o design moderno funcionar bem */
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap');
+
+/* IMPORTAR O CSS DO SELECT2 */
+@import url('https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css');
+
+/* ----- ESTILOS GERAIS DE TEXTO ----- */
+
+/* TÍTULOS E SUBTÍTULOS DAS PÁGINAS */
+.page-subtitle {
+    text-align: center;
+    text-transform: uppercase;
+    font-weight: 600;
+    /* CORREÇÃO: Removemos o azul (#023047) e o fundo verde (#2ECC40) fixos */
+    color: var(--cor-brand-primary); 
+    background-color: transparent; 
+    margin: 1.5rem 0;
+    font-family: 'Fredoka', sans-serif;
+    letter-spacing: 1px;
+    position: relative;
+    padding-bottom: 10px;
+}
+
+/* Opcional: Uma linha decorativa abaixo do subtítulo para dar acabamento */
+.page-subtitle::after {
+    content: '';
+    display: block;
+    width: 60px;
+    height: 3px;
+    background-color: var(--borda-suave);
+    margin: 10px auto 0;
+    border-radius: 2px;
+}
+
+/* ATALHOS DO ACCESSKEY */
+.accesskey {
+    text-decoration: underline;
+    text-decoration-style: dotted; /* Estilo mais discreto que o sublinhado padrão */
+    text-decoration-color: var(--text-secondary);
+    cursor: help;
+}
+
+/* Utilitários de Texto (caso precise em algum lugar solto) */
+.text-brand { color: var(--cor-brand-primary) !important; }
+.text-danger { color: var(--cor-status-danger) !important; }
+.text-muted { color: var(--text-secondary) !important; }
