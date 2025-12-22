@@ -1,0 +1,211 @@
+/* static/css/apps_form.css */
+
+/* --- ESTRUTURA GERAL DO FORMULÁRIO --- */
+.container-apps-form {
+    max-width: 1000px;
+    width: 100%;
+    margin: 2rem auto;
+    padding: 0 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.apps-form {
+    width: 100%;
+}
+
+/* --- GRUPOS DE CAMPOS (CARDS) --- */
+.apps-form-group-edit-sub {
+    background-color: var(--bg-card);
+    border: 1px solid var(--borda-suave);
+    border-radius: 12px;
+    box-shadow: var(--sombra-card);
+    margin-bottom: 2rem;
+    padding: 2rem;
+    
+    /* Layout Flex para os campos */
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    
+    /* CRUCIAL: Impede que inputs pequenos estiquem na altura de textareas vizinhos */
+    align-items: flex-start; 
+    
+    position: relative;
+    overflow: hidden;
+}
+
+/* Título da Seção */
+.apps-form-sub-section-title {
+    width: 100%;
+    font-family: 'Fredoka', sans-serif;
+    font-size: 1.1rem;
+    color: var(--cor-brand-primary);
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--borda-suave);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    background: transparent;
+    text-align: left;
+}
+
+/* --- WRAPPER (CONTAINER DO LABEL + INPUT) --- */
+/* Esta classe substitui o uso antigo de .apps-form-input no container */
+.apps-form-field-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    /* Flexibilidade: Mínimo 300px, ocupa espaço disponível */
+    flex: 1 1 300px; 
+    margin-bottom: 0.5rem;
+}
+
+.apps-form-field-wrapper label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+/* --- ESTILIZAÇÃO DO INPUT (Classe definida no forms.py) --- */
+.apps-form-input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background-color: var(--bg-body);
+    border: 1px solid var(--borda-suave);
+    border-radius: 6px;
+    color: var(--text-primary);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1rem;
+    transition: all 0.2s ease-in-out;
+    outline: none;
+    box-sizing: border-box; /* Garante que padding não estoure largura */
+}
+
+/* Estilo genérico para inputs que por ventura não tenham a classe (segurança) */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="date"],
+select,
+textarea {
+    /* Herda os mesmos estilos básicos para manter consistência */
+    padding: 0.75rem 1rem;
+    background-color: var(--bg-body);
+    border: 1px solid var(--borda-suave);
+    border-radius: 6px;
+    color: var(--text-primary);
+    outline: none;
+}
+
+/* Efeito de Foco */
+.apps-form-input:focus,
+input:focus,
+select:focus,
+textarea:focus {
+    border-color: var(--cor-brand-primary);
+    background-color: var(--bg-card);
+    box-shadow: 0 0 0 3px rgba(3, 152, 158, 0.15);
+}
+
+/* Textarea Específico */
+textarea.apps-form-input,
+textarea {
+    min-height: 100px;
+    resize: vertical;
+    width: 100%;
+}
+
+/* Mensagens de erro e ajuda */
+.form-text.text-muted {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    opacity: 0.8;
+}
+
+.error {
+    color: var(--cor-status-danger);
+    font-size: 0.85rem;
+    margin-top: 0.25rem;
+    font-weight: 500;
+}
+
+/* --- BOTÕES DE AÇÃO --- */
+.apps-form-btn-group {
+    display: flex;
+    justify-content: flex-start;
+    gap: 1rem;
+    background-color: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    margin-top: 0;
+    padding: 1rem 2rem 3rem 2rem;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.btn-save {
+    background-color: var(--cor-brand-primary);
+    color: white;
+    padding: 0.8rem 2rem;
+    border-radius: 6px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: filter 0.2s;
+}
+
+.btn-save:hover {
+    filter: brightness(1.1);
+}
+
+/* --- TABELAS --- */
+.tb-form {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    border: 1px solid var(--borda-suave);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.tb-form thead {
+    background-color: var(--bg-body);
+    color: var(--text-primary);
+}
+
+.tb-form th {
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    padding: 1rem;
+    border-bottom: 1px solid var(--borda-suave);
+    text-align: left;
+}
+
+.tb-form td {
+    padding: 0.75rem;
+    border-bottom: 1px solid var(--borda-suave);
+    background-color: var(--bg-card);
+    color: var(--text-primary);
+}
+
+.tb-form tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.tb-form tbody tr:nth-child(even) td {
+    background-color: var(--bg-body);
+}
+
+/* Ajuste para Select2 (plugin JS comum) */
+.select2-container .select2-selection--single {
+    height: 45px !important; 
+    border: 1px solid var(--borda-suave) !important;
+    display: flex !important;
+    align-items: center !important;
+    border-radius: 6px !important;
+}

@@ -9,7 +9,7 @@
                     <h4 class="apps-form-sub-section-title">{{ section.title }}</h4>
 
                     {% if section.is_table %}
-                        <div class="apps-form-group-edit-sub">
+                        <div class="apps-form-group-edit-sub" style="border: none; box-shadow: none; padding: 0; margin: 0;">
                             <table class="tb-form">
                                 <thead>
                                     <tr>
@@ -37,18 +37,19 @@
                         </div>
                     {% else %}
                         {% if section.is_formset %}
-                            {{ section.formset.management_form }}  <!-- Certifica que o Django reconhece o formset -->
+                            {{ section.formset.management_form }}
                         {% endif %}
 
                         {% for field in section.fields %}
-                            <div class="apps-form-input">
+                            <div class="apps-form-field-wrapper">
                                 <label for="{{ field.id_for_label }}">
-                                    {{ field.label }}  <!-- Correção: renderizando o label correto -->
+                                    {{ field.label }}
                                 </label>
-                                {{ field }}  <!-- Renderiza o campo do formulário -->
-                                {% if field.help_text %}
+                                
+                                {{ field }} {% if field.help_text %}
                                     <small class="form-text text-muted">{{ field.help_text }}</small>
                                 {% endif %}
+                                
                                 {% for error in field.errors %}
                                     <div class="error">{{ error }}</div>
                                 {% endfor %}
@@ -59,7 +60,6 @@
             {% endfor %}
         </div>
 
-        <!-- Grupo de botões -->
         <div class="apps-form-btn-group">
             <button type="submit" class="btn-save btn-dark" title="Salvar">Salvar</button>
             {% for button in buttons %}
