@@ -1,0 +1,270 @@
+/* static/css/buttons.css */
+
+/* --- GRUPOS DE BOTÕES --- */
+.btn-group {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: flex-end; /* Alinhado à direita conforme original */
+    margin: 10px;
+}
+
+.btn-group-center {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 15px;
+}
+
+/* --- ESTILO BASE PARA TODOS OS BOTÕES --- */
+/* Seleciona todas as classes que começam com 'btn-' */
+[class*="btn-"] {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: 6px; /* Arredondamento moderno */
+    padding: 10px 20px;
+    cursor: pointer;
+    font-family: 'Fredoka', sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    line-height: 1;
+    position: relative;
+    z-index: 1;
+}
+
+/* Efeito Hover Geral */
+[class*="btn-"]:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    filter: brightness(1.1); /* Clareia levemente qualquer cor */
+}
+
+[class*="btn-"]:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+/* Configuração dos Ícones (FontAwesome) antes do texto */
+[class*="btn-"]::before {
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    margin-right: 8px;
+    font-size: 1.1em;
+}
+
+/* --- VARIAÇÕES DE FORMATO --- */
+
+/* Botão Circular (usado em paginação e ações rápidas) */
+.btn-circle {
+    width: 45px;
+    height: 45px;
+    padding: 0;
+    border-radius: 50%;
+    margin: 0 5px;
+}
+
+.btn-circle::before {
+    margin-right: 0; /* Centraliza ícone */
+}
+
+/* Botão Quadrado (Icon Only) */
+.btn-square {
+    width: 45px;
+    height: 45px;
+    padding: 0;
+    border-radius: 6px;
+    margin: 5px;
+}
+
+.btn-square::before {
+    margin-right: 0;
+}
+
+/* --- CORES E TEMAS (Padronizados com Variáveis) --- */
+
+/* 1. Primários / Ação (Salvar, Confirmar, Novo, Escuro) - Usa cor da MARCA */
+.btn-save, 
+.btn-confirm, 
+.btn-new, 
+.btn-dark {
+    background-color: var(--cor-brand-primary);
+    color: white;
+}
+
+/* 2. Secundários / Aviso (Editar, Voltar, Home, Laranja) - Usa AMARELO/LARANJA */
+.btn-edit, 
+.btn-return, 
+.btn-home, 
+.btn-orange {
+    background-color: var(--cor-status-warning);
+    color: #584c03; /* Texto escuro para contraste no amarelo */
+}
+
+/* 3. Perigo / Cancelar (Excluir, Cancelar, Fechar, Sair) - Usa VERMELHO */
+.btn-delete, 
+.btn-cancel, 
+.btn-close, 
+.btn-exit {
+    background-color: var(--cor-status-danger);
+    color: white;
+}
+
+/* 4. Funcionais / Relatórios (Listar, Imprimir, Roxo) - Usa ROXO/AZUL */
+.btn-list, 
+.btn-reports, 
+.btn-purple, 
+.btn-pdf, 
+.btn-excel,
+.btn-reset, 
+.btn-access, 
+.btn-clear {
+    background-color: #5D3FD3; /* Mantendo o roxo original */
+    color: white;
+}
+
+/* 5. Navegação (Paginação) - Específicos */
+.btn-first, 
+.btn-last, 
+.btn-previous, 
+.btn-next {
+    background-color: var(--bg-card);
+    color: var(--text-primary);
+    border: 1px solid var(--borda-suave);
+}
+.btn-first:hover, .btn-last:hover, .btn-previous:hover, .btn-next:hover {
+    background-color: var(--cor-brand-primary);
+    color: white;
+}
+
+/* 6. Transparente */
+.btn-transparent {
+    background-color: transparent;
+    color: var(--cor-brand-primary);
+    box-shadow: none;
+    border: 1px solid var(--borda-suave);
+}
+.btn-transparent:hover {
+    background-color: var(--bg-body);
+}
+
+/* 7. Desabilitado */
+.btn-disabled {
+    pointer-events: none;
+    opacity: 0.5;
+    background-color: var(--base-gray-200);
+    color: var(--text-secondary);
+}
+
+/* --- ÍCONES DE AÇÃO (Mapeamento Completo) --- */
+.btn-home::before {content: "\f015";}
+.btn-first::before {content: "\f049";}
+.btn-last::before {content: "\f050";}
+.btn-previous::before {content: "\f048";}
+.btn-next::before {content: "\f051";}
+.btn-new::before { content: "\2b"; }
+.btn-list::before { content: "\f002"; }
+.btn-reports::before { content: "\f56c"; }
+.btn-save::before { content: "\f0c7"; }
+.btn-edit::before { content: "\f044"; }
+.btn-delete::before { content: "\f1f8"; }
+.btn-return::before { content: "\f060"; }
+.btn-confirm::before { content: "\f00c"; }
+.btn-cancel::before { content: "\f05e"; }
+.btn-close::before { content: "\f00d"; }
+.btn-clear::before { content: "\f55a"; }
+.btn-access::before { content: "\f2f6"; }
+.btn-exit::before { content: "\f2f5"; }
+.btn-pdf::before { content: "\f1c1"; }
+.btn-excel::before { content: "\f1c3"; }
+.btn-reset::before { content: "\f2f9"; }
+
+/* --- BOTÕES DOS APLICATIVOS (Links Rápidos) --- */
+/* Estes botões aparecem em listas ou grids, geralmente sem fundo */
+
+.btn-address, 
+.btn-budget, 
+.btn-calendar, 
+.btn-certification, 
+.btn-certifier, 
+.btn-checks, 
+.btn-class, 
+.btn-company, 
+.btn-contact, 
+.btn-course, 
+.btn-detail, 
+.btn-finance, 
+.btn-invoice, 
+.btn-invoice-dollar, 
+.btn-package, 
+.btn-student, 
+.btn-teacher, 
+.btn-testCenter, 
+.btn-trainingBlocks, 
+.btn-version, 
+.btn-voucher {
+    background-color: transparent;
+    color: var(--text-primary); /* Adapta ao tema claro/escuro */
+    box-shadow: none;
+    padding: 8px 12px;
+    font-size: 14px;
+    text-transform: none; /* Mantém texto normal se preferir */
+    justify-content: flex-start; /* Alinha à esquerda */
+    width: auto;
+}
+
+.btn-address:hover, 
+.btn-budget:hover, 
+.btn-calendar:hover, 
+.btn-certification:hover, 
+.btn-certifier:hover, 
+.btn-checks:hover, 
+.btn-class:hover, 
+.btn-company:hover, 
+.btn-contact:hover, 
+.btn-course:hover, 
+.btn-detail:hover, 
+.btn-finance:hover, 
+.btn-invoice:hover, 
+.btn-invoice-dollar:hover, 
+.btn-package:hover, 
+.btn-student:hover, 
+.btn-teacher:hover, 
+.btn-testCenter:hover, 
+.btn-trainingBlocks:hover, 
+.btn-version:hover, 
+.btn-voucher:hover {
+    color: var(--cor-brand-primary);
+    background-color: rgba(0,0,0,0.02);
+    transform: none; /* Sem pulo para links de texto */
+    box-shadow: none;
+}
+
+/* Ícones Específicos dos Apps */
+.btn-address::before {content: "\f5a0";}
+.btn-budget::before {content: "\f15c";}
+.btn-calendar::before {content: "\f073";}
+.btn-certification::before {content: "\f0a3";}
+.btn-certifier::before {content: "\f4fc";}
+.btn-checks::before {content: "\f058";}
+.btn-class::before {content: "\f0c0";}
+.btn-company::before {content: "\f1ad";}
+.btn-contact::before {content: "\f2b9";}
+.btn-course::before {content: "\f02d";}
+.btn-detail::before {content: "\f05a";}
+.btn-finance::before {content: "\f555";}
+.btn-invoice::before {content: "\f570";}
+.btn-invoice-dollar::before {content: "\f571";}
+.btn-package::before {content: "\f187";}
+.btn-student::before {content: "\f501";}
+.btn-teacher::before {content: "\f51c";}
+.btn-testCenter::before {content: "\f549";}
+.btn-trainingBlocks::before {content: "\e4e6";}
+.btn-version::before {content: "\f126";}
+.btn-voucher::before {content: "\f145";}
