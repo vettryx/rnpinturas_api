@@ -1,0 +1,108 @@
+/* static/css/header.css */
+
+/* --- HEADER GERAL --- */
+.main-header {
+    background-color: var(--bg-header);
+    border-bottom: 1px solid var(--borda-suave);
+    padding: 0.8rem 2rem; /* Altura ajustada */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    transition: background-color 0.3s ease;
+    width: 100%;
+    position: sticky; /* Opcional: mantem o header fixo no topo */
+    top: 0;
+    z-index: 100;
+}
+
+.header-content {
+    display: flex; /* OBRIGATÓRIO para alinhar lado a lado */
+    justify-content: space-between; /* Espalha: Logo esq, Título centro, User dir */
+    align-items: center; /* Centraliza verticalmente */
+    max-width: 1400px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+/* 1. Área do Logo */
+.logo-area {
+    display: flex;
+    align-items: center;
+    flex: 0 0 200px; /* Largura fixa para não empurrar o título */
+}
+
+.logo {
+    max-height: 45px; /* Altura controlada da imagem */
+    width: auto;
+    filter: var(--logo-filter); 
+    transition: filter 0.3s;
+}
+
+/* 2. Área do Título */
+.title-area {
+    flex: 1; /* Ocupa todo o espaço central sobrando */
+    display: flex;
+    justify-content: center;
+}
+
+.page-title {
+    font-size: 1.25rem;
+    color: var(--text-primary);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin: 0;
+    text-align: center;
+    white-space: nowrap; /* Evita quebra de linha no título */
+}
+
+/* 3. Área de Ações */
+.actions-area {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 1rem;
+    flex: 0 0 200px; /* Mesma largura do logo para manter o título perfeitamente centralizado */
+}
+
+/* Botão de Tema */
+.btn-icon {
+    background: transparent;
+    border: 1px solid var(--borda-suave);
+    color: var(--text-primary);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.btn-icon:hover {
+    background-color: var(--cor-brand-primary);
+    color: white;
+    border-color: var(--cor-brand-primary);
+}
+
+.user-profile {
+    font-family: 'Fredoka', sans-serif;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+/* Responsividade para telas menores (Celulares) */
+@media (max-width: 768px) {
+    .header-content {
+        flex-direction: column; /* Empilha no celular */
+        gap: 10px;
+    }
+    
+    .logo-area, .actions-area {
+        flex: auto;
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .title-area {
+        display: none; /* Esconde o título no mobile para economizar espaço, ou diminua a fonte */
+    }
+}
