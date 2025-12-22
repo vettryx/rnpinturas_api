@@ -1,0 +1,12 @@
+/* static/css/record_counter.css */
+
+.record-counter {
+    margin: 1rem 0;
+    font-family: 'Montserrat', sans-serif;
+    text-align: center;
+    width: 100%;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    font-weight: 500;
+    background-color: transparent;
+}

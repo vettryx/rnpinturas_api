@@ -1,0 +1,86 @@
+/* static/css/select2_custom.css */
+
+/* Container Principal */
+.select2-container {
+    width: 100% !important;
+    font-family: 'Montserrat', sans-serif !important;
+}
+
+/* A Caixa de Seleção (Input fechado) */
+.select2-container .select2-selection--single {
+    background-color: var(--bg-body) !important;
+    border: 1px solid var(--borda-suave) !important;
+    border-radius: 6px !important; /* Arredondamento igual aos inputs */
+    height: 42px !important; /* Altura para bater com input text */
+    display: flex !important;
+    align-items: center !important;
+    box-shadow: none !important;
+    transition: all 0.2s ease-in-out;
+}
+
+/* Quando focado/aberto */
+.select2-container--default.select2-container--open .select2-selection--single {
+    border-color: var(--cor-brand-primary) !important;
+    box-shadow: 0 0 0 3px rgba(3, 152, 158, 0.15) !important;
+}
+
+/* Texto interno */
+.select2-container .select2-selection--single .select2-selection__rendered {
+    color: var(--text-primary) !important;
+    padding-left: 1rem !important;
+    padding-right: 2rem !important;
+    line-height: normal !important;
+}
+
+/* Seta (Arrow) */
+.select2-container .select2-selection--single .select2-selection__arrow {
+    height: 100% !important;
+    right: 10px !important;
+}
+.select2-container .select2-selection--single .select2-selection__arrow b {
+    border-color: var(--text-secondary) transparent transparent transparent !important;
+    border-width: 5px 4px 0 4px !important;
+}
+
+/* --- DROPDOWN (Lista de opções aberta) --- */
+.select2-dropdown {
+    background-color: var(--bg-card) !important;
+    border: 1px solid var(--borda-suave) !important;
+    border-radius: 8px !important;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15) !important;
+    overflow: hidden !important;
+    z-index: 9999 !important;
+}
+
+/* Campo de busca dentro do dropdown */
+.select2-search--dropdown .select2-search__field {
+    border: 1px solid var(--borda-suave) !important;
+    background-color: var(--bg-body) !important;
+    color: var(--text-primary) !important;
+    border-radius: 4px !important;
+    padding: 6px 10px !important;
+}
+.select2-search--dropdown .select2-search__field:focus {
+    outline: none !important;
+    border-color: var(--cor-brand-primary) !important;
+}
+
+/* Opções da Lista */
+.select2-results__option {
+    padding: 10px 15px !important;
+    font-size: 0.95rem !important;
+    color: var(--text-primary) !important;
+}
+
+/* Opção em Hover/Foco */
+.select2-container--default .select2-results__option--highlighted[aria-selected] {
+    background-color: var(--cor-brand-primary) !important;
+    color: white !important;
+}
+
+/* Opção Selecionada */
+.select2-container--default .select2-results__option[aria-selected="true"] {
+    background-color: rgba(3, 152, 158, 0.1) !important;
+    color: var(--cor-brand-primary) !important;
+    font-weight: 600 !important;
+}
