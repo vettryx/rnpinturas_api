@@ -1,0 +1,104 @@
+/* static/css/login.css */
+
+.login-page {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: var(--bg-body);
+    background-image: radial-gradient(circle at top right, rgba(3, 152, 158, 0.1), transparent 40%);
+    padding: 1rem;
+}
+
+.login-container {
+    width: 100%;
+    max-width: 420px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.login-box {
+    background-color: var(--bg-card);
+    padding: 2.5rem;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    border: 1px solid var(--borda-suave);
+    width: 100%;
+    text-align: center;
+    transition: transform 0.3s ease;
+}
+
+/* Imagem/Logo no Login */
+.login-image {
+    margin-bottom: 2rem;
+}
+
+.login-image img {
+    max-width: 220px;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+    filter: var(--logo-filter); /* Ajusta logo automaticamente no dark mode */
+}
+
+/* Campos do Login */
+.login-form-group {
+    margin-bottom: 1.5rem;
+    text-align: left;
+}
+
+.login-form-group label {
+    display: block;
+    color: var(--text-secondary);
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.login-form-group input {
+    width: 100% !important;
+    padding: 0.8rem 1rem;
+    border: 1px solid var(--borda-suave);
+    border-radius: 8px;
+    background-color: var(--bg-body);
+    color: var(--text-primary);
+    font-size: 1rem;
+    transition: all 0.2s;
+}
+
+.login-form-group input:focus {
+    border-color: var(--cor-brand-primary);
+    box-shadow: 0 0 0 3px rgba(3, 152, 158, 0.15);
+    outline: none;
+    background-color: var(--bg-card);
+}
+
+/* Botão de Entrar (usa classe genérica, mas forçamos largura total aqui) */
+.login-box button[type="submit"] {
+    width: 100%;
+    margin-top: 1rem;
+    padding: 0.8rem;
+    font-size: 1rem;
+}
+
+/* Texto de rodapé ou links */
+.login-box p {
+    color: var(--text-secondary);
+    margin-top: 1.5rem;
+    font-size: 0.9rem;
+}
+
+/* Responsividade */
+@media (max-width: 480px) {
+    .login-box {
+        padding: 1.5rem;
+        box-shadow: none;
+        background-color: transparent;
+        border: none;
+    }
+    .login-container {
+        max-width: 100%;
+    }
+}
