@@ -24,7 +24,7 @@ class Client(IdleBase):
         verbose_name="Tipo de Pessoa"
     )
     
-    cpf_cnpj = models.CharField(max_length=20, unique=True, verbose_name="CPF/CNPJ")
+    cpf_cnpj = models.CharField(max_length=20, unique=True, blank=True, null=True, verbose_name="CPF/CNPJ")
     rg_ie = models.CharField(max_length=20, blank=True, null=True, verbose_name="RG / Inscrição Estadual")
 
     class Meta:
