@@ -1,0 +1,14 @@
+<!-- templates/includes/footer.html -->
+
+<footer>
+    <div class="footer-content">
+        <p>
+            &copy; {% now "Y" %} 
+            <strong class="footer-brand">{{ config_site.nome_empresa|default:"RN Pinturas" }}</strong>
+            
+            <span class="footer-separator">|</span>
+            
+            <span class="footer-project">{{ config_site.nome_projeto|default:"A transformação das cores em sua reforma" }}</span>
+        </p>
+    </div>
+</footer>

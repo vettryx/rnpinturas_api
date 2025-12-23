@@ -5,33 +5,80 @@ footer {
     margin-top: auto;
     
     /* Cores baseadas no Tema (Variáveis) */
-    background-color: var(--bg-header); /* Usa a mesma cor do cabeçalho */
-    color: var(--text-secondary); /* Texto cinza suave */
-    border-top: 1px solid var(--borda-suave); /* Linha fina de separação */
+    background-color: var(--bg-header);
+    color: var(--text-secondary);
+    border-top: 1px solid var(--borda-suave);
     
-    /* Espaçamento e Texto */
+    /* Espaçamento */
     padding: 1.5rem 0;
-    font-family: 'Montserrat', sans-serif;
-    font-size: 0.85rem;
-    text-align: center;
     width: 100%;
+    
     transition: background-color 0.3s, color 0.3s;
 }
 
-/* Garante que o texto dentro do footer siga a cor */
-footer p {
-    margin: 0;
-    font-weight: 500;
-    opacity: 0.8;
+/* Container interno para alinhamento */
+.footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
 }
 
-/* Se houver links no rodapé */
+/* Texto Geral */
+footer p {
+    margin: 0;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 500;
+    opacity: 0.9;
+    
+    /* Permite quebrar linha suavemente em telas muito pequenas */
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+/* Marca (Nome da Empresa) */
+.footer-brand {
+    font-weight: 700;
+    color: var(--text-primary); /* Um pouco mais escuro que o resto */
+}
+
+/* Separador (|) */
+.footer-separator {
+    opacity: 0.5;
+    display: inline-block;
+}
+
+/* Nome do Projeto */
+.footer-project {
+    color: var(--text-secondary);
+}
+
+/* Se houver links no rodapé futuramente */
 footer a {
     color: var(--text-primary);
     text-decoration: none;
     font-weight: 600;
+    transition: color 0.2s;
 }
 
 footer a:hover {
     color: var(--cor-brand-primary);
+}
+
+/* --- RESPONSIVIDADE --- */
+@media (max-width: 480px) {
+    footer p {
+        flex-direction: column; /* Empilha em telas muito pequenas */
+        gap: 0.2rem;
+    }
+    
+    .footer-separator {
+        display: none; /* Esconde o pipe separador no mobile */
+    }
 }
