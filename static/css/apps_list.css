@@ -1,0 +1,187 @@
+/* static/css/apps_list.css */
+
+/* --- ESTRUTURA DA PÁGINA DE LISTAGEM --- */
+.container-apps-list {
+    max-width: 1400px; /* Mais largo que o form para caber muitas colunas */
+    width: 100%;
+    margin: 2rem auto;
+    padding: 0 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* --- ÁREA DE FILTROS E BUSCA (SEARCH CARD) --- */
+.apps-list-search-form {
+    background-color: var(--bg-card);
+    border: 1px solid var(--borda-suave);
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: var(--sombra-card);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    transition: all 0.3s ease;
+}
+
+/* Título ou Labels dentro da busca */
+.apps-list-form-group-search {
+    width: 100%;
+}
+
+.apps-list-form-group-search label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 0.25rem;
+    display: block;
+}
+
+/* Inputs de Busca (Reutilizando estilo moderno) */
+.apps-list-search-form input[type="text"],
+.apps-list-search-form select,
+.apps-list-search-form .daterange {
+    background-color: var(--bg-body);
+    border: 1px solid var(--borda-suave);
+    border-radius: 6px;
+    padding: 0.6rem 1rem;
+    font-size: 0.95rem;
+    color: var(--text-primary);
+    width: 100%;
+}
+
+/* Checkboxes de filtro */
+.apps-list-form-group-search-sub {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0;
+}
+
+/* Botões da área de busca */
+.apps-list-btn-group-search {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 0.5rem;
+    border-top: 1px solid var(--borda-suave);
+    padding-top: 1rem;
+}
+
+/* --- TABELA DE DADOS (DATA TABLE) --- */
+.apps-list-tb {
+    background-color: var(--bg-card);
+    border-radius: 12px;
+    box-shadow: var(--sombra-card);
+    border: 1px solid var(--borda-suave);
+    overflow: hidden; /* Garante que o scroll respeite o arredondamento */
+    display: flex;
+    flex-direction: column;
+}
+
+/* Container com scroll apenas se necessário */
+.table-responsive {
+    overflow-x: auto;
+    width: 100%;
+}
+
+.tb-list {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.95rem;
+    white-space: nowrap; /* Evita quebra de linha feia em dados curtos */
+}
+
+/* Cabeçalho da Tabela */
+.tb-list thead {
+    background-color: var(--bg-body);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.tb-list th {
+    text-align: left;
+    padding: 1rem 1.5rem;
+    font-weight: 600;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    border-bottom: 2px solid var(--borda-suave);
+    letter-spacing: 0.5px;
+}
+
+/* Links de ordenação no cabeçalho */
+.tb-list th a {
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.tb-list th a:hover {
+    color: var(--cor-brand-primary);
+    text-decoration: none;
+}
+
+/* Corpo da Tabela */
+.tb-list tbody {
+    background-color: var(--bg-card);
+}
+
+.tb-list td {
+    padding: 1rem 1.5rem;
+    color: var(--text-primary);
+    border-bottom: 1px solid var(--borda-suave);
+    vertical-align: middle;
+}
+
+/* Linhas Zebra Suaves (usando opacidade para funcionar no dark mode) */
+.tb-list tbody tr:nth-child(even) {
+    background-color: rgba(0, 0, 0, 0.02);
+}
+
+[data-theme="dark"] .tb-list tbody tr:nth-child(even) {
+    background-color: rgba(255, 255, 255, 0.02);
+}
+
+/* Hover na linha (Destaque ao passar o mouse) */
+.tb-list tbody tr:hover {
+    background-color: rgba(3, 152, 158, 0.05); /* Um toque bem leve da cor da marca */
+    transition: background-color 0.2s ease;
+}
+
+/* Links dentro da tabela (geralmente ações) */
+.tb-list td a {
+    font-weight: 500;
+    color: var(--cor-brand-primary);
+    text-decoration: none;
+}
+
+.tb-list td a:hover {
+    text-decoration: underline;
+}
+
+/* Mensagem de "Nenhum registro" */
+.tb-list td[colspan] {
+    text-align: center;
+    padding: 3rem;
+    color: var(--text-secondary);
+    font-style: italic;
+}
+
+/* --- PAGINAÇÃO E RODAPÉ DA LISTA --- */
+.apps-list-btn-group {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    background-color: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    margin: 1rem 0 3rem 0; 
+    padding: 0 0.5rem; 
+    width: 100%;
+}
