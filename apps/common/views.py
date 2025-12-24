@@ -1,9 +1,12 @@
 # apps/common/views.py
 
+from django.http import JsonResponse
+from django.views.decorators.http import require_http_methods
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView, TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from django.contrib import messages
+from .utils import buscar_dados_cep
 
 class CommonListView(LoginRequiredMixin, ListView):
     """
@@ -183,3 +186,16 @@ class CommonDetailView(LoginRequiredMixin, DetailView):
             ]
             
         return context
+
+
+@require_http_methods(["GET"])
+def api_busca_cep(request, cep):
+    """
+    Endpoint API para retornar dados do CEP para o front-end.
+    """
+    resultado = buscar_dados_cep(cep)
+    
+    if "erro" in resultado:
+        return JsonResponse(resultado, status=400)
+        
+    return JsonResponse(resultado)

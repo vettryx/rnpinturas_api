@@ -8,8 +8,8 @@ from django import forms
 from django.forms import inlineformset_factory
 
 from .models import Client, ClientAddress, ClientContact
-from cities.models import City
 from common.models import AuxContactType
+from cities.models import City
 
 
 class ClientForm(forms.ModelForm):
@@ -82,7 +82,7 @@ class ClientForm(forms.ModelForm):
     )
     idle = forms.TypedChoiceField(
         label="Cliente Inativo?",
-        choices=Client.SIM_NAO, 
+        choices=Client.SIM_NAO,
         coerce=lambda x: x == 'True' or x is True,
         widget=forms.Select(
             attrs={
@@ -110,7 +110,7 @@ class ClientAddressForm(forms.ModelForm):
         label="CEP",
         widget=forms.TextInput(
             attrs={
-                "class": "apps-form-input zip-code-input zip-code-mask",
+                "class": "apps-form-input zip-code-input zip-code-mask cep-input",
                 "id": "client-address-zip-code",
                 "placeholder": "Digite o CEP",
             }
@@ -121,7 +121,7 @@ class ClientAddressForm(forms.ModelForm):
         queryset=City.objects.all().order_by('name'),
         widget=forms.Select(
             attrs={
-                "class": "apps-form-input select2-ajax",
+                "class": "apps-form-input select2-ajax city-input",
                 "data-ajax-url": "/cities/api/autocomplete/",
                 "id": "client-address-city",
                 "placeholder": "Selecione a Cidade",
@@ -132,7 +132,7 @@ class ClientAddressForm(forms.ModelForm):
         label="Logradouro (Rua/Av)",
         widget=forms.TextInput(
             attrs={
-                "class": "apps-form-input",
+                "class": "apps-form-input logradouro-input",
                 "id": "client-address-street",
                 "placeholder": "Digite o Logradouro",
             }
@@ -153,7 +153,7 @@ class ClientAddressForm(forms.ModelForm):
         required=False,
         widget=forms.TextInput(
             attrs={
-                "class": "apps-form-input",
+                "class": "apps-form-input complemento-input",
                 "id": "client-address-complement",
                 "placeholder": "Digite o Complemento (opcional)",
             }
@@ -163,7 +163,7 @@ class ClientAddressForm(forms.ModelForm):
         label="Bairro",
         widget=forms.TextInput(
             attrs={
-                "class": "apps-form-input",
+                "class": "apps-form-input bairro-input",
                 "id": "client-address-district",
                 "placeholder": "Digite o Bairro",
             }
@@ -183,7 +183,7 @@ class ClientAddressForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        
+
         # LÓGICA DE PERFORMANCE (O Pulo do Gato)
         # Por padrão, queryset vazio para não renderizar 5000 options no HTML
         self.fields['city'].queryset = City.objects.none()
@@ -195,21 +195,21 @@ class ClientAddressForm(forms.ModelForm):
                 self.fields['city'].queryset = City.objects.filter(pk=city_id)
             except (ValueError, TypeError):
                 pass  # Input inválido, deixa vazio e o Django gerencia o erro field required
-        
+
         # 2. Se for edição (instance já existe), carrega a cidade atual
         elif self.instance.pk and self.instance.city:
             self.fields['city'].queryset = City.objects.filter(pk=self.instance.city.pk)
-        
+
         # 3. Formset Management (O prefixo muda em formsets: 'address_set-0-city')
         elif self.prefix:
-             # Tenta achar o campo no POST usando o prefixo (ex: clients-address-0-city)
-             field_name = f"{self.prefix}-city"
-             if self.data and field_name in self.data:
-                 try:
-                     city_id = int(self.data.get(field_name))
-                     self.fields['city'].queryset = City.objects.filter(pk=city_id)
-                 except Exception:
-                     pass
+            # Tenta achar o campo no POST usando o prefixo (ex: clients-address-0-city)
+            field_name = f"{self.prefix}-city"
+            if self.data and field_name in self.data:
+                try:
+                    city_id = int(self.data.get(field_name))
+                    self.fields['city'].queryset = City.objects.filter(pk=city_id)
+                except Exception:
+                    pass
 
 
 
