@@ -17,7 +17,6 @@ Including another URLconf
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from django.urls import include, path
-from apps.cities.views import city_autocomplete_view
 
 from .views import home
 
@@ -32,9 +31,7 @@ urlpatterns = [
     path("login/", auth_views.LoginView.as_view(), name="login"),
     path("logout/", auth_views.LogoutView.as_view(), name="logout"),
 
-    # URLs das APIs do Projeto
-    path('api/cities/autocomplete/', city_autocomplete_view, name='city-autocomplete'),
-
     # URLs dos Apps do Projeto
+    path("", include("cities.urls")),
     path("", include("clients.urls")),
 ]

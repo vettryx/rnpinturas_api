@@ -122,7 +122,7 @@ class ClientAddressForm(forms.ModelForm):
         widget=forms.Select(
             attrs={
                 "class": "apps-form-input select2-ajax",
-                "data-ajax-url": "/api/cities/autocomplete/",
+                "data-ajax-url": "/cities/api/autocomplete/",
                 "id": "client-address-city",
                 "placeholder": "Selecione a Cidade",
             }
