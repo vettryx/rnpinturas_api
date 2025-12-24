@@ -1,187 +1,297 @@
 /* static/css/apps_list.css */
 
-/* --- ESTRUTURA DA PÁGINA DE LISTAGEM --- */
-.container-apps-list {
-    max-width: 1400px; /* Mais largo que o form para caber muitas colunas */
-    width: 100%;
-    margin: 2rem auto;
-    padding: 0 1.5rem;
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
+/* --- CONFIGURAÇÕES DE SCROLLBAR --- */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: var(--cor-brand-primary);
 }
 
-/* --- ÁREA DE FILTROS E BUSCA (SEARCH CARD) --- */
-.apps-list-search-form {
-    background-color: var(--bg-card);
-    border: 1px solid var(--borda-suave);
-    border-radius: 12px;
-    padding: 1.5rem;
-    box-shadow: var(--sombra-card);
+/* ==========================================================================
+   LAYOUT DESKTOP (PADRÃO)
+   ========================================================================== */
+.container-apps-list {
+    display: grid;
+    grid-template-columns: 280px 1fr; /* Sidebar fixa | Conteúdo flex */
+    grid-template-rows: 100%;
+    gap: 1.5rem;
+    height: calc(100vh - 85px);
+    width: 100%;
+    padding: 1rem 1.5rem 1.5rem 1.5rem;
+    overflow: hidden;
+    font-family: 'Montserrat', sans-serif;
+}
+
+/* SIDEBAR */
+.apps-list-sidebar {
     display: flex;
     flex-direction: column;
     gap: 1rem;
-    transition: all 0.3s ease;
+    height: 100%;
+    overflow-y: auto;
+    padding-right: 5px;
 }
 
-/* Título ou Labels dentro da busca */
-.apps-list-form-group-search {
-    width: 100%;
+.apps-list-actions-card,
+.apps-list-search-form {
+    background-color: var(--bg-card);
+    border: none;
+    border-radius: 12px;
+    padding: 1.2rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
 }
+
+/* BOTÕES GERAIS */
+.btn-new, .btn-return, .btn-list, .btn-clear {
+    border: none;
+    border-radius: 8px;
+    font-weight: 700; /* Negrito para leitura melhor */
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    width: 100%; /* Ocupa largura disponível */
+}
+
+/* Cores dos Botões */
+.btn-new {
+    background: linear-gradient(135deg, var(--cor-brand-primary) 0%, #027a7e 100%);
+    color: #fff !important;
+    padding: 0.9rem;
+    box-shadow: 0 4px 12px rgba(3, 152, 158, 0.25);
+}
+.btn-new:hover { transform: translateY(-2px); filter: brightness(1.1); }
+
+.btn-return {
+    background: var(--base-yellow);
+    color: var(--base-dark-blue) !important;
+    padding: 0.9rem;
+    box-shadow: 0 4px 12px rgba(255, 235, 59, 0.3);
+}
+.btn-return:hover { transform: translateY(-2px); background-color: #fdd835; }
+
+.btn-list {
+    background-color: var(--base-dark-blue);
+    color: white !important;
+    padding: 0.8rem;
+}
+.btn-list:hover { background-color: black; transform: translateY(-2px); }
+
+.btn-clear {
+    background-color: transparent;
+    border: 1px solid var(--base-red);
+    color: var(--base-red) !important;
+    padding: 0.8rem;
+}
+.btn-clear:hover { background-color: var(--base-red); color: white !important; }
+
+
+/* FILTROS */
+.apps-list-search-header {
+    border-bottom: 1px solid var(--borda-suave);
+    padding-bottom: 0.6rem;
+    margin-bottom: 0.2rem;
+}
+.apps-list-search-header h3 {
+    font-size: 0.9rem;
+    color: var(--text-primary);
+    font-weight: 700;
+    text-transform: uppercase;
+    display: flex; align-items: center; gap: 8px; margin: 0;
+}
+.apps-list-search-header h3 i { color: var(--cor-brand-primary); }
 
 .apps-list-form-group-search label {
-    font-size: 0.85rem;
+    font-size: 0.75rem;
     font-weight: 600;
     color: var(--text-secondary);
-    margin-bottom: 0.25rem;
+    text-transform: uppercase;
+    margin-bottom: 0.3rem;
     display: block;
 }
 
-/* Inputs de Busca (Reutilizando estilo moderno) */
 .apps-list-search-form input[type="text"],
-.apps-list-search-form select,
-.apps-list-search-form .daterange {
+.apps-list-search-form select {
     background-color: var(--bg-body);
     border: 1px solid var(--borda-suave);
     border-radius: 6px;
-    padding: 0.6rem 1rem;
-    font-size: 0.95rem;
+    padding: 0.7rem;
+    font-size: 0.9rem;
     color: var(--text-primary);
     width: 100%;
+    outline: none;
+}
+.apps-list-search-form input[type="text"]:focus,
+.apps-list-search-form select:focus {
+    border-color: var(--cor-brand-primary);
+    background-color: var(--bg-card);
 }
 
-/* Checkboxes de filtro */
-.apps-list-form-group-search-sub {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.5rem 0;
-}
-
-/* Botões da área de busca */
+/* Grupo de botões de filtro (Desktop: Empilhado) */
 .apps-list-btn-group-search {
     display: flex;
-    justify-content: flex-end;
-    gap: 1rem;
+    flex-direction: column;
+    gap: 10px;
     margin-top: 0.5rem;
-    border-top: 1px solid var(--borda-suave);
-    padding-top: 1rem;
 }
 
-/* --- TABELA DE DADOS (DATA TABLE) --- */
-.apps-list-tb {
+/* TABELA / CONTEÚDO */
+.apps-list-content {
     background-color: var(--bg-card);
     border-radius: 12px;
-    box-shadow: var(--sombra-card);
-    border: 1px solid var(--borda-suave);
-    overflow: hidden; /* Garante que o scroll respeite o arredondamento */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
     display: flex;
     flex-direction: column;
+    overflow: hidden;
+    border: 1px solid rgba(0,0,0,0.05);
 }
 
-/* Container com scroll apenas se necessário */
-.table-responsive {
-    overflow-x: auto;
-    width: 100%;
-}
-
-.tb-list {
-    width: 100%;
-    border-collapse: collapse;
-    font-family: 'Montserrat', sans-serif;
-    font-size: 0.95rem;
-    white-space: nowrap; /* Evita quebra de linha feia em dados curtos */
-}
-
-/* Cabeçalho da Tabela */
-.tb-list thead {
-    background-color: var(--bg-body);
-    position: sticky;
-    top: 0;
-    z-index: 10;
-}
-
-.tb-list th {
-    text-align: left;
-    padding: 1rem 1.5rem;
-    font-weight: 600;
-    font-size: 0.8rem;
-    text-transform: uppercase;
-    color: var(--text-secondary);
-    border-bottom: 2px solid var(--borda-suave);
-    letter-spacing: 0.5px;
-}
-
-/* Links de ordenação no cabeçalho */
-.tb-list th a {
-    color: var(--text-secondary);
-    display: flex;
-    align-items: center;
-    gap: 5px;
-}
-
-.tb-list th a:hover {
-    color: var(--cor-brand-primary);
-    text-decoration: none;
-}
-
-/* Corpo da Tabela */
-.tb-list tbody {
+.apps-list-content-header {
+    padding: 0.8rem 1.5rem;
     background-color: var(--bg-card);
+    display: flex; justify-content: space-between; align-items: center;
+    border-bottom: 1px solid var(--borda-suave);
 }
 
-.tb-list td {
+.apps-list-table-area { flex-grow: 1; overflow: auto; }
+
+.tb-list { width: 100%; border-collapse: collapse; white-space: nowrap; }
+
+.tb-list thead th {
+    background-color: var(--cor-brand-primary);
+    color: white;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 1rem 1.5rem;
+    text-align: left;
+    position: sticky; top: 0; z-index: 10;
+}
+.tb-list th a { color: white; text-decoration: none; display: flex; align-items: center; gap: 5px; }
+
+.tb-list tbody td {
     padding: 1rem 1.5rem;
     color: var(--text-primary);
     border-bottom: 1px solid var(--borda-suave);
+    font-size: 0.9rem;
     vertical-align: middle;
 }
+.tb-list tbody tr:hover { background-color: var(--bg-body); }
+.tb-list td a { color: var(--text-primary); font-weight: 600; text-decoration: none; }
+.tb-list td a:hover { color: var(--cor-brand-primary); }
 
-/* Linhas Zebra Suaves (usando opacidade para funcionar no dark mode) */
-.tb-list tbody tr:nth-child(even) {
-    background-color: rgba(0, 0, 0, 0.02);
+.btn-icon {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 32px; height: 32px; border-radius: 6px; margin-right: 4px;
+    background-color: var(--bg-body); color: var(--text-secondary);
+    font-size: 0.9rem; transition: 0.2s;
+}
+.btn-icon:hover { color: white !important; }
+.btn-icon:nth-child(1):hover { background-color: var(--base-dark-blue); }
+.btn-icon:nth-child(2):hover { background-color: #FFA000; }
+.btn-icon:nth-child(3):hover { background-color: var(--base-red); }
+
+.apps-list-content-footer {
+    padding: 0.8rem 1.5rem;
+    border-top: 1px solid var(--borda-suave);
+    background-color: var(--bg-card);
+    display: flex; justify-content: flex-end;
 }
 
-[data-theme="dark"] .tb-list tbody tr:nth-child(even) {
-    background-color: rgba(255, 255, 255, 0.02);
-}
 
-/* Hover na linha (Destaque ao passar o mouse) */
-.tb-list tbody tr:hover {
-    background-color: rgba(3, 152, 158, 0.05); /* Um toque bem leve da cor da marca */
-    transition: background-color 0.2s ease;
-}
+/* ==========================================================================
+   MOBILE & TABLET (CORREÇÃO DE ESTOURO)
+   ========================================================================== */
+@media (max-width: 992px) {
+    /* 1. LAYOUT FLUIDO: Destrava altura e permite rolagem natural */
+    .container-apps-list {
+        display: flex;
+        flex-direction: column;
+        height: auto !important;
+        min-height: 100vh;
+        overflow-y: visible !important;
+        /* Reduzimos o padding lateral para 10px para dar mais espaço aos botões */
+        padding: 1rem 0.6rem; 
+        gap: 1rem;
+    }
 
-/* Links dentro da tabela (geralmente ações) */
-.tb-list td a {
-    font-weight: 500;
-    color: var(--cor-brand-primary);
-    text-decoration: none;
-}
+    /* 2. SIDEBAR VIRA TOPO */
+    .apps-list-sidebar {
+        height: auto;
+        overflow: visible;
+        padding-right: 0;
+        gap: 0.8rem;
+    }
 
-.tb-list td a:hover {
-    text-decoration: underline;
-}
+    /* Cards laterais mais compactos no mobile */
+    .apps-list-actions-card,
+    .apps-list-search-form {
+        padding: 1rem;
+    }
 
-/* Mensagem de "Nenhum registro" */
-.tb-list td[colspan] {
-    text-align: center;
-    padding: 3rem;
-    color: var(--text-secondary);
-    font-style: italic;
-}
+    /* 3. BOTÕES LADO A LADO (USANDO GRID PARA NÃO ESTOURAR) */
+    /* Ao invés de Flex, usamos Grid para forçar exatamente 50% para cada */
+    .apps-list-actions-card {
+        display: grid !important; /* Força grid */
+        grid-template-columns: 1fr 1fr; /* Duas colunas iguais */
+        gap: 10px;
+    }
 
-/* --- PAGINAÇÃO E RODAPÉ DA LISTA --- */
-.apps-list-btn-group {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 1rem;
-    background-color: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
-    margin: 1rem 0 3rem 0; 
-    padding: 0 0.5rem; 
-    width: 100%;
+    .btn-new, .btn-return {
+        padding: 0.8rem 0.2rem; /* Menos padding lateral para o texto caber */
+        font-size: 0.75rem; /* Fonte levemente menor */
+        white-space: nowrap; /* Tenta manter em uma linha */
+        width: 100%;
+        margin: 0;
+    }
+    
+    /* 4. FILTROS TAMBÉM EM GRID */
+    .apps-list-btn-group-search {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-top: 0;
+    }
+    
+    .btn-list, .btn-clear {
+        padding: 0.8rem 0.2rem;
+        font-size: 0.75rem;
+    }
+
+    /* 5. AJUSTES DA TABELA NO MOBILE */
+    .apps-list-content {
+        height: auto;
+        min-height: 400px;
+    }
+
+    .apps-list-content-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    /* Garante scroll horizontal na tabela */
+    .apps-list-table-area {
+        overflow-x: auto;
+        border-top: 1px solid var(--borda-suave);
+    }
+    
+    .tb-list thead th { position: static; }
 }
