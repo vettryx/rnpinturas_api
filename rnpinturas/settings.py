@@ -132,6 +132,11 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# --- LOGIN / LOGOUT ---
+LOGIN_URL = "login"
+LOGIN_REDIRECT_URL = "home"
+LOGOUT_REDIRECT_URL = "login"
+
 # --- INTERNACIONALIZAÇÃO ---
 LANGUAGE_CODE = 'pt-br'
 TIME_ZONE = 'America/Sao_Paulo'
