@@ -121,7 +121,8 @@ class ClientAddressForm(forms.ModelForm):
         queryset=City.objects.all().order_by('name'),
         widget=forms.Select(
             attrs={
-                "class": "apps-form-input select2",
+                "class": "apps-form-input select2-ajax",
+                "data-ajax-url": "/api/cities/autocomplete/",
                 "id": "client-address-city",
                 "placeholder": "Selecione a Cidade",
             }
@@ -179,6 +180,37 @@ class ClientAddressForm(forms.ModelForm):
             'complement',
             'district',
         ]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        
+        # LÓGICA DE PERFORMANCE (O Pulo do Gato)
+        # Por padrão, queryset vazio para não renderizar 5000 options no HTML
+        self.fields['city'].queryset = City.objects.none()
+
+        # 1. Se tiver dados no POST (tentando salvar), carrega a cidade enviada para validar
+        if 'city' in self.data:
+            try:
+                city_id = int(self.data.get('city'))
+                self.fields['city'].queryset = City.objects.filter(pk=city_id)
+            except (ValueError, TypeError):
+                pass  # Input inválido, deixa vazio e o Django gerencia o erro field required
+        
+        # 2. Se for edição (instance já existe), carrega a cidade atual
+        elif self.instance.pk and self.instance.city:
+            self.fields['city'].queryset = City.objects.filter(pk=self.instance.city.pk)
+        
+        # 3. Formset Management (O prefixo muda em formsets: 'address_set-0-city')
+        elif self.prefix:
+             # Tenta achar o campo no POST usando o prefixo (ex: clients-address-0-city)
+             field_name = f"{self.prefix}-city"
+             if self.data and field_name in self.data:
+                 try:
+                     city_id = int(self.data.get(field_name))
+                     self.fields['city'].queryset = City.objects.filter(pk=city_id)
+                 except Exception:
+                     pass
+
 
 
 class ClientContactForm(forms.ModelForm):

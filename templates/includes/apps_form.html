@@ -1,62 +1,132 @@
-<!-- templates/includes/apps_form.html -->
+{# templates/includes/apps_form.html #}
 
 <div class="container-apps-form">
     <form method="post" enctype="multipart/form-data" class="apps-form">
         {% csrf_token %}
+        
         <div class="apps-form-group">
             {% for section in sections %}
+                
                 <div class="apps-form-group-edit-sub">
-                    <h4 class="apps-form-sub-section-title">{{ section.title }}</h4>
+                    
+                    {% if section.title %}
+                        <h4 class="apps-form-sub-section-title">{{ section.title }}</h4>
+                    {% endif %}
+                    
+                    {% if section.helper_text %}
+                        <p class="section-helper-text text-muted">{{ section.helper_text }}</p>
+                    {% endif %}
 
                     {% if section.is_table %}
-                        <div class="apps-form-group-edit-sub" style="border: none; box-shadow: none; padding: 0; margin: 0;">
+                        <div class="apps-table-wrapper" style="border: none; box-shadow: none; padding: 0; margin: 0;">
                             <table class="tb-form">
                                 <thead>
                                     <tr>
-                                        {% for header in section.table_headers %}
+                                        {% for header in section.headers %}
                                             <th>{{ header }}</th>
                                         {% endfor %}
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {% if section.fields %}
-                                        {% for field in section.fields %}
+                                    {% if section.rows %}
+                                        {% for row in section.rows %}
                                             <tr>
-                                                {% for value in field.values %}
+                                                {% for value in row %}
                                                     <td>{{ value }}</td>
                                                 {% endfor %}
                                             </tr>
                                         {% endfor %}
                                     {% else %}
                                         <tr>
-                                            <td colspan="{{ section.table_headers|length }}">Nenhum dado encontrado.</td>
+                                            <td colspan="{{ section.headers|length }}">Nenhum dado encontrado.</td>
                                         </tr>
                                     {% endif %}
                                 </tbody>
                             </table>
                         </div>
-                    {% else %}
-                        {% if section.is_formset %}
-                            {{ section.formset.management_form }}
-                        {% endif %}
 
-                        {% for field in section.fields %}
+                    {% elif section.form %}
+                        
+                        {% for field in section.form %}
                             <div class="apps-form-field-wrapper">
                                 <label for="{{ field.id_for_label }}">
                                     {{ field.label }}
+                                    {% if field.field.required %} <span class="required">*</span>{% endif %}
                                 </label>
                                 
-                                {{ field }} {% if field.help_text %}
+                                {{ field }}
+                                
+                                {% if field.help_text %}
                                     <small class="form-text text-muted">{{ field.help_text }}</small>
                                 {% endif %}
                                 
-                                {% for error in field.errors %}
-                                    <div class="error">{{ error }}</div>
-                                {% endfor %}
+                                {% if field.errors %}
+                                    <div class="error-list">
+                                        {% for error in field.errors %}
+                                            <div class="error">{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
                             </div>
                         {% endfor %}
-                    {% endif %}
-                </div>
+
+                    {% elif section.formset %}
+                        
+                        {{ section.formset.management_form }}
+
+                        <div class="apps-formset-container">
+                            {% for form in section.formset %}
+                                
+                                <div class="apps-formset-item">
+                                    {% for hidden in form.hidden_fields %}
+                                        {{ hidden }}
+                                    {% endfor %}
+
+                                    {% for field in form.visible_fields %}
+                                        <div class="apps-form-field-wrapper">
+                                            
+                                            {% if field.name == 'DELETE' %}
+                                                <div class="checkbox-delete-wrapper">
+                                                    <label for="{{ field.id_for_label }}" class="label-delete">
+                                                        {{ field }} {{ field.label }}
+                                                    </label>
+                                                </div>
+                                            {% else %}
+                                                <label for="{{ field.id_for_label }}">
+                                                    {{ field.label }}
+                                                    {% if field.field.required %} <span class="required">*</span>{% endif %}
+                                                </label>
+
+                                                {{ field }}
+
+                                                {% if field.help_text %}
+                                                    <small class="form-text text-muted">{{ field.help_text }}</small>
+                                                {% endif %}
+
+                                                {% if field.errors %}
+                                                    <div class="error-list">
+                                                        {% for error in field.errors %}
+                                                            <div class="error">{{ error }}</div>
+                                                        {% endfor %}
+                                                    </div>
+                                                {% endif %}
+                                            {% endif %}
+                                        </div>
+                                    {% endfor %}
+                                    
+                                    {% if not forloop.last %}
+                                        <hr class="formset-separator">
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                        </div>
+                            <div class="apps-formset-actions" style="margin-top: 10px;">
+                            <button type="button" class="btn btn-sm btn-secondary btn-add-row">
+                                <i class="fas fa-plus"></i> Adicionar
+                            </button>
+                        </div>
+
+                    {% endif %} </div>
             {% endfor %}
         </div>
 
@@ -65,6 +135,10 @@
             {% for button in buttons %}
                 <a class="{{ button.class }} btn-dark" href="{{ button.url }}" role="button" title="{{ button.title }}">{{ button.text }}</a>
             {% endfor %}
+            
+            {% if not buttons and return_url %}
+                 <a class="btn-cancel btn-light" href="{{ return_url }}" role="button" title="Voltar">Voltar</a>
+            {% endif %}
         </div>
     </form>
 </div>
