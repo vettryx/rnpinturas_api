@@ -26,7 +26,7 @@ class CommonListView(LoginRequiredMixin, ListView):
     """
     paginate_by = 20
     title = ""
-    new_url = ""
+    header_buttons = []
 
     # Configurações que as views filhas definem
     search_config = [] # [{'name': 'q', 'type': 'text', 'label': 'Buscar'}]
@@ -72,7 +72,7 @@ class CommonListView(LoginRequiredMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        # Monta search_fields
+        # 1. PROCESSAMENTO DA BUSCA
         prepared_search = []
         for config in self.search_config:
             c = config.copy()
@@ -82,16 +82,49 @@ class CommonListView(LoginRequiredMixin, ListView):
                 c['options'] = [(o.pk, str(o)) for o in config['queryset']]
             prepared_search.append(c)
 
+        # 2. PROCESSAMENTO DOS BOTÕES DO CABEÇALHO (header_buttons)
+        # Se a view filha não definiu botões, tentamos criar um "Novo" padrão se houver new_url definida
+        buttons = self.header_buttons.copy()
+
+        # 3. PROCESSAMENTO DOS BOTÕES DE AÇÃO DA BUSCA (search_actions)
+        context['search_actions'] = [
+            {
+                'type': 'submit',
+                'label': 'Buscar',
+                'class': 'btn-list'
+            },
+            {
+                'type': 'clear',
+                'label': 'Limpar',
+                'class': 'btn-clear',
+                'url': self.request.path
+            }
+        ]
+
         # Monta o contexto padrão
         context.update({
             'title': self.title,
-            'new_url': self.new_url,
+            'header_buttons': buttons,
             'search_fields': prepared_search,
             'headers': self.table_headers,
             'rows': [self.get_row_data(item) for item in context['page_obj']],
             'query_params': self.request.GET.urlencode()
         })
         return context
+
+    def render_to_response(self, context, **response_kwargs):
+        """
+        Se a requisição for AJAX, retorna apenas o partial_list_results.html.
+        Caso contrário, retorna o template completo definido na view filha via template_name.
+        """
+        if self.request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            return self.response_class(
+                request=self.request,
+                template='includes/partial_list_results.html',
+                context=context,
+                **response_kwargs
+            )
+        return super().render_to_response(context, **response_kwargs)
 
 class CommonFormMixin:
     """
