@@ -1,6 +1,6 @@
-<!-- templates/includes/records_per_page_selector.html -->
+{# templates/includes/records_per_page_selector.html #}
 
-<form method="GET" action="{{ action_url }}" class="pagination-form">
+<form method="get" action="{{ action_url }}" class="pagination-form">
     <label for="records_per_page">Registros para exibir:</label>
     <select name="records_per_page" id="records_per_page" class="records-per-page-selector">
         <option value="20" {% if request.GET.records_per_page == "20" %}selected{% endif %}>20</option>
