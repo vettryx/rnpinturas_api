@@ -1,5 +1,8 @@
 # apps/common/utils.py
+
 import logging
+from http import HTTPStatus
+
 import requests
 from cities.models import City
 
@@ -14,23 +17,23 @@ def buscar_dados_cep(cep):
     """
     cep_limpo = str(cep).replace("-", "").replace(".", "").strip()
     url = f"https://brasilapi.com.br/api/cep/v2/{cep_limpo}"
-    
+
     try:
         response = requests.get(url, timeout=5)
-        
-        if response.status_code == 200:
+
+        if response.status_code == HTTPStatus.OK:
             data = response.json()
-            
+
             ibge_code = data.get("ibge")
             cidade_nome_api = data.get("city")
             uf_api = data.get("state")
-            
+
             city_obj = None
 
             # TENTATIVA 1: Busca pelo ID (IBGE)
             if ibge_code:
                 city_obj = City.objects.filter(pk=ibge_code).first()
-            
+
             # TENTATIVA 2: Busca por Nome + UF (Caso a API não retorne IBGE)
             if not city_obj and cidade_nome_api and uf_api:
                 try:
@@ -55,12 +58,12 @@ def buscar_dados_cep(cep):
                 "uf": uf_api,
                 "encontrou_cidade_local": city_obj is not None
             }
-            
-        elif response.status_code == 404:
+
+        elif response.status_code == HTTPStatus.NOT_FOUND:
             return {"erro": "CEP não encontrado."}
-            
+
     except requests.exceptions.RequestException as e:
         logger.error(f"Erro de conexão na busca de CEP: {e}")
         return {"erro": "Serviço de CEP indisponível no momento."}
-    
+
     return {"erro": "Erro desconhecido ao buscar CEP."}

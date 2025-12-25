@@ -1,12 +1,23 @@
 # apps/common/views.py
 
-from django.http import JsonResponse
-from django.views.decorators.http import require_http_methods
-from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView, TemplateView
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.urls import reverse_lazy
+from http import HTTPStatus
+
 from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import JsonResponse
+from django.urls import reverse_lazy
+from django.views.decorators.http import require_http_methods
+from django.views.generic import (
+    CreateView,
+    DeleteView,
+    DetailView,
+    ListView,
+    TemplateView,
+    UpdateView,
+)
+
 from .utils import buscar_dados_cep
+
 
 class CommonListView(LoginRequiredMixin, ListView):
     """
@@ -43,7 +54,7 @@ class CommonListView(LoginRequiredMixin, ListView):
             if value:
                 if ftype == 'text':
                     queryset = queryset.filter(**{f"{field}__icontains": value})
-                elif ftype == 'select' or ftype == 'boolean':
+                elif ftype in ('select', 'boolean'):
                     if value == 'True':
                         value = True
                     elif value == 'False':
@@ -99,7 +110,7 @@ class CommonFormMixin:
             context['sections'] = [
                 {
                     'title': 'Dados do Registro',
-                    'fields': [field for field in form]
+                    'fields': list(form)
                 }
             ]
 
@@ -196,6 +207,6 @@ def api_busca_cep(request, cep):
     resultado = buscar_dados_cep(cep)
 
     if "erro" in resultado:
-        return JsonResponse(resultado, status=400)
+        return JsonResponse(resultado, status=HTTPStatus.BAD_REQUEST)
 
     return JsonResponse(resultado)

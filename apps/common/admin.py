@@ -1,7 +1,9 @@
 # apps/common/admin.py
 
 from django.contrib import admin
+
 from .models import AuxContactType, AuxStatus, AuxUnitMeasure
+
 
 @admin.register(AuxContactType)
 class AuxContactTypeAdmin(admin.ModelAdmin):
