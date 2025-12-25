@@ -9,7 +9,8 @@
     background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-    background: #ccc;
+    /* Substituído #ccc por variável global */
+    background: var(--borda-suave); 
     border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
@@ -21,7 +22,7 @@
    ========================================================================== */
 .container-apps-list {
     display: grid;
-    grid-template-columns: 280px 1fr; /* Sidebar fixa | Conteúdo flex */
+    grid-template-columns: 280px 1fr;
     grid-template-rows: 100%;
     gap: 1.5rem;
     height: calc(100vh - 85px);
@@ -41,6 +42,7 @@
     padding-right: 5px;
 }
 
+/* Cards da Sidebar */
 .apps-list-actions-card,
 .apps-list-search-form {
     background-color: var(--bg-card);
@@ -51,59 +53,11 @@
     display: flex;
     flex-direction: column;
     gap: 1rem;
+    transform: none !important; 
+    transition: none !important;
 }
 
-/* BOTÕES GERAIS */
-.btn-new, .btn-return, .btn-list, .btn-clear {
-    border: none;
-    border-radius: 8px;
-    font-weight: 700; /* Negrito para leitura melhor */
-    text-transform: uppercase;
-    font-size: 0.85rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    cursor: pointer;
-    text-decoration: none;
-    transition: all 0.2s ease;
-    width: 100%; /* Ocupa largura disponível */
-}
-
-/* Cores dos Botões */
-.btn-new {
-    background: linear-gradient(135deg, var(--cor-brand-primary) 0%, #027a7e 100%);
-    color: #fff !important;
-    padding: 0.9rem;
-    box-shadow: 0 4px 12px rgba(3, 152, 158, 0.25);
-}
-.btn-new:hover { transform: translateY(-2px); filter: brightness(1.1); }
-
-.btn-return {
-    background: var(--base-yellow);
-    color: var(--base-dark-blue) !important;
-    padding: 0.9rem;
-    box-shadow: 0 4px 12px rgba(255, 235, 59, 0.3);
-}
-.btn-return:hover { transform: translateY(-2px); background-color: #fdd835; }
-
-.btn-list {
-    background-color: var(--base-dark-blue);
-    color: white !important;
-    padding: 0.8rem;
-}
-.btn-list:hover { background-color: black; transform: translateY(-2px); }
-
-.btn-clear {
-    background-color: transparent;
-    border: 1px solid var(--base-red);
-    color: var(--base-red) !important;
-    padding: 0.8rem;
-}
-.btn-clear:hover { background-color: var(--base-red); color: white !important; }
-
-
-/* FILTROS */
+/* Título do Filtro */
 .apps-list-search-header {
     border-bottom: 1px solid var(--borda-suave);
     padding-bottom: 0.6rem;
@@ -114,21 +68,19 @@
     color: var(--text-primary);
     font-weight: 700;
     text-transform: uppercase;
-    display: flex; align-items: center; gap: 8px; margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
 }
-.apps-list-search-header h3 i { color: var(--cor-brand-primary); }
-
-.apps-list-form-group-search label {
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: var(--text-secondary);
-    text-transform: uppercase;
-    margin-bottom: 0.3rem;
-    display: block;
+.apps-list-search-header h3 i {
+    color: var(--cor-brand-primary);
 }
 
+/* INPUTS E SELECTS */
 .apps-list-search-form input[type="text"],
-.apps-list-search-form select {
+.apps-list-search-form select,
+.records-per-page-selector {
     background-color: var(--bg-body);
     border: 1px solid var(--borda-suave);
     border-radius: 6px;
@@ -137,19 +89,60 @@
     color: var(--text-primary);
     width: 100%;
     outline: none;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
 }
+
+/* --- CORREÇÃO DO PLACEHOLDER (TEXTO DE AJUDA) --- */
+.apps-list-search-form input::placeholder {
+    color: var(--text-secondary) !important; 
+    opacity: 0.7;
+}
+
+[data-theme="dark"] .apps-list-search-form input::placeholder {
+    opacity: 1;
+}
+
+/* --- CORREÇÃO DOS RÓTULOS (LABELS) --- */
+.apps-list-search-form label {
+    color: var(--text-primary) !important; 
+    
+    font-weight: 600;
+    font-size: 0.8rem;
+    margin-bottom: 0.3rem;
+    display: inline-block;
+}
+
+[data-theme="dark"] .apps-list-search-form label {
+    text-shadow: 0 1px 2px rgba(0,0,0,0.5); 
+}
+
+/* Ícone da seta no select */
+/* NOTA: SVG requer codificação URL. A cor #03989E (Brand Primary) vira %2303989E */
+.apps-list-search-form select, .records-per-page-selector {
+    background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%2303989E%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+    background-repeat: no-repeat;
+    background-position: right .7em top 50%;
+    background-size: .65em auto;
+}
+
 .apps-list-search-form input[type="text"]:focus,
 .apps-list-search-form select:focus {
     border-color: var(--cor-brand-primary);
     background-color: var(--bg-card);
 }
 
-/* Grupo de botões de filtro (Desktop: Empilhado) */
+/* Wrapper dos botões de busca */
 .apps-list-btn-group-search {
     display: flex;
     flex-direction: column;
     gap: 10px;
     margin-top: 0.5rem;
+    background: transparent !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    transform: none !important;
 }
 
 /* TABELA / CONTEÚDO */
@@ -160,19 +153,27 @@
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    border: 1px solid rgba(0,0,0,0.05);
+    border: 1px solid var(--borda-suave);
 }
 
 .apps-list-content-header {
     padding: 0.8rem 1.5rem;
     background-color: var(--bg-card);
-    display: flex; justify-content: space-between; align-items: center;
+    display: flex; justify-content: space-between;
+    align-items: center;
     border-bottom: 1px solid var(--borda-suave);
 }
 
-.apps-list-table-area { flex-grow: 1; overflow: auto; }
+.apps-list-table-area {
+    flex-grow: 1;
+    overflow: auto;
+}
 
-.tb-list { width: 100%; border-collapse: collapse; white-space: nowrap; }
+.tb-list {
+    width: 100%;
+    border-collapse: collapse;
+    white-space: nowrap;
+}
 
 .tb-list thead th {
     background-color: var(--cor-brand-primary);
@@ -182,57 +183,71 @@
     text-transform: uppercase;
     padding: 1rem 1.5rem;
     text-align: left;
-    position: sticky; top: 0; z-index: 10;
+    position: sticky;
+    top: 0;
+    z-index: 10;
 }
-.tb-list th a { color: white; text-decoration: none; display: flex; align-items: center; gap: 5px; }
+.tb-list th a {
+    color: inherit;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
 
+/* Correção Header Tabela Modo Escuro */
+[data-theme="dark"] .tb-list thead th {
+    color: var(--base-dark-blue) !important;
+}
+
+/* Correção da Tabela no Modo Escuro */
 .tb-list tbody td {
     padding: 1rem 1.5rem;
     color: var(--text-primary);
     border-bottom: 1px solid var(--borda-suave);
     font-size: 0.9rem;
     vertical-align: middle;
+    background-color: var(--bg-card);
 }
-.tb-list tbody tr:hover { background-color: var(--bg-body); }
-.tb-list td a { color: var(--text-primary); font-weight: 600; text-decoration: none; }
-.tb-list td a:hover { color: var(--cor-brand-primary); }
 
-.btn-icon {
-    display: inline-flex; align-items: center; justify-content: center;
-    width: 32px; height: 32px; border-radius: 6px; margin-right: 4px;
-    background-color: var(--bg-body); color: var(--text-secondary);
-    font-size: 0.9rem; transition: 0.2s;
+/* Linha Zebra / Hover compatível com dark mode */
+.tb-list tbody tr:hover td { 
+    background-color: var(--bg-body); 
+    color: var(--cor-brand-primary);
 }
-.btn-icon:hover { color: white !important; }
-.btn-icon:nth-child(1):hover { background-color: var(--base-dark-blue); }
-.btn-icon:nth-child(2):hover { background-color: #FFA000; }
-.btn-icon:nth-child(3):hover { background-color: var(--base-red); }
+
+.tb-list td a {
+    color: var(--text-primary);
+    font-weight: 600;
+    text-decoration: none;
+}
+.tb-list td a:hover {
+    color: var(--cor-brand-primary);
+}
 
 .apps-list-content-footer {
     padding: 0.8rem 1.5rem;
     border-top: 1px solid var(--borda-suave);
     background-color: var(--bg-card);
-    display: flex; justify-content: flex-end;
+    display: flex;
+    justify-content: center; 
+    align-items: center;
 }
 
-
 /* ==========================================================================
-   MOBILE & TABLET (CORREÇÃO DE ESTOURO)
+   MOBILE & TABLET
    ========================================================================== */
 @media (max-width: 992px) {
-    /* 1. LAYOUT FLUIDO: Destrava altura e permite rolagem natural */
     .container-apps-list {
         display: flex;
         flex-direction: column;
         height: auto !important;
         min-height: 100vh;
         overflow-y: visible !important;
-        /* Reduzimos o padding lateral para 10px para dar mais espaço aos botões */
         padding: 1rem 0.6rem; 
         gap: 1rem;
     }
 
-    /* 2. SIDEBAR VIRA TOPO */
     .apps-list-sidebar {
         height: auto;
         overflow: visible;
@@ -240,29 +255,12 @@
         gap: 0.8rem;
     }
 
-    /* Cards laterais mais compactos no mobile */
-    .apps-list-actions-card,
-    .apps-list-search-form {
-        padding: 1rem;
-    }
-
-    /* 3. BOTÕES LADO A LADO (USANDO GRID PARA NÃO ESTOURAR) */
-    /* Ao invés de Flex, usamos Grid para forçar exatamente 50% para cada */
     .apps-list-actions-card {
-        display: grid !important; /* Força grid */
-        grid-template-columns: 1fr 1fr; /* Duas colunas iguais */
+        display: grid !important;
+        grid-template-columns: 1fr 1fr;
         gap: 10px;
     }
 
-    .btn-new, .btn-return {
-        padding: 0.8rem 0.2rem; /* Menos padding lateral para o texto caber */
-        font-size: 0.75rem; /* Fonte levemente menor */
-        white-space: nowrap; /* Tenta manter em uma linha */
-        width: 100%;
-        margin: 0;
-    }
-    
-    /* 4. FILTROS TAMBÉM EM GRID */
     .apps-list-btn-group-search {
         display: grid;
         grid-template-columns: 1fr 1fr;
@@ -270,28 +268,20 @@
         margin-top: 0;
     }
     
-    .btn-list, .btn-clear {
-        padding: 0.8rem 0.2rem;
-        font-size: 0.75rem;
-    }
-
-    /* 5. AJUSTES DA TABELA NO MOBILE */
     .apps-list-content {
         height: auto;
         min-height: 400px;
     }
-
     .apps-list-content-header {
         flex-direction: column;
         align-items: flex-start;
         gap: 10px;
     }
-
-    /* Garante scroll horizontal na tabela */
     .apps-list-table-area {
         overflow-x: auto;
         border-top: 1px solid var(--borda-suave);
     }
-    
-    .tb-list thead th { position: static; }
+    .tb-list thead th {
+        position: static;
+    }
 }
