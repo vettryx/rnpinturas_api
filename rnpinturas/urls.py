@@ -1,3 +1,5 @@
+# rnpinturas/urls.py
+
 """
 URL configuration for rnpinturas project.
 

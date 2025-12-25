@@ -5,10 +5,11 @@ Configurações do Django para o projeto RN Pinturas.
 Baseado na estrutura moderna com Pathlib e boas práticas de produção.
 """
 
-from pathlib import Path
-from dotenv import load_dotenv
 import os
 import sys
+from pathlib import Path
+
+from dotenv import load_dotenv
 
 # --- CONFIGURAÇÃO DE CAMINHOS ---
 # Definição do diretório base do projeto (BASE_DIR)
@@ -41,7 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    
+
     # Apps Personalizados (RN Pinturas)
     'cities',
     'clients',
