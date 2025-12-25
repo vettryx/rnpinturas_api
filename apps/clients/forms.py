@@ -1,16 +1,15 @@
 # apps/clients/forms.py
 
-"""
-Definição dos formulários do aplicativo 'clients'.
-"""
+import logging
 
+from cities.models import City
+from common.models import AuxContactType
 from django import forms
 from django.forms import inlineformset_factory
 
 from .models import Client, ClientAddress, ClientContact
-from common.models import AuxContactType
-from cities.models import City
 
+logger = logging.getLogger(__name__)
 
 class ClientForm(forms.ModelForm):
     name = forms.CharField(
@@ -208,8 +207,8 @@ class ClientAddressForm(forms.ModelForm):
                 try:
                     city_id = int(self.data.get(field_name))
                     self.fields['city'].queryset = City.objects.filter(pk=city_id)
-                except Exception:
-                    pass
+                except Exception as e:
+                    logger.debug(f"Input inválido no campo city do formset: {e}")
 
 
 

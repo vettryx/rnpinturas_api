@@ -1,11 +1,21 @@
 # apps/clients/views.py
 
-from django.urls import reverse_lazy
-from django.utils.safestring import mark_safe
+from common.views import (
+    CommonCreateView,
+    CommonDeleteView,
+    CommonDetailView,
+    CommonListView,
+    CommonTemplateView,
+    CommonUpdateView,
+)
 from django.shortcuts import redirect
-from common.views import CommonListView, CommonCreateView, CommonUpdateView, CommonDeleteView, CommonDetailView, CommonTemplateView
+from django.urls import reverse_lazy
+from django.utils.html import format_html
+from django.utils.safestring import mark_safe
+
+from .forms import ClientAddressFormSet, ClientContactFormSet, ClientForm
 from .models import Client
-from .forms import ClientForm, ClientAddressFormSet, ClientContactFormSet
+
 
 # 1. HOME (Dashboard do Cliente)
 class ClientHomeView(CommonTemplateView):
@@ -29,27 +39,16 @@ class ClientListView(CommonListView):
         {'field': 'name', 'label': 'Nome'},
         {'field': 'cpf_cnpj', 'label': 'Documento'},
         {'field': 'idle', 'label': 'Status'},
-        {'field': 'actions', 'label': 'Ações'},
     ]
 
     def get_row_data(self, item):
         detail_url = reverse_lazy('clients:detail', args=[item.pk])
-        edit_url = reverse_lazy('clients:edit', args=[item.pk])
-        delete_url = reverse_lazy('clients:delete', args=[item.pk])
-
         status = "Sim" if item.idle else "Não"
-        
-        actions = f"""
-            <a href="{detail_url}" class="btn-icon" title="Ver Detalhes"><i class="fas fa-eye"></i></a>
-            <a href="{edit_url}" class="btn-icon" title="Editar"><i class="fas fa-edit"></i></a>
-            <a href="{delete_url}" class="btn-icon" title="Excluir"><i class="fas fa-trash"></i></a>
-        """
 
         return [
-            mark_safe(f'<a href="{detail_url}">{item.name}</a>'),
+            format_html('<a href="{}">{}</a>', detail_url, item.name),
             item.cpf_cnpj,
             status,
-            mark_safe(actions)
         ]
 
 # 3. DETALHES
@@ -129,7 +128,7 @@ class ClientCreateView(CommonCreateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        
+
         # Garante que temos o form principal (útil quando ocorre erro de validação e o form volta preenchido)
         # Se 'form' estiver em kwargs, usa ele (com erros); senão, cria um novo.
         main_form = kwargs.get('form')
@@ -158,7 +157,7 @@ class ClientCreateView(CommonCreateView):
                 'active': True,
                 'title': 'Dados do Cliente',
                 # Passamos o objeto form explicitamente para o template
-                'form': main_form, 
+                'form': main_form,
             },
             {
                 'id': 'tab-enderecos',
@@ -173,7 +172,7 @@ class ClientCreateView(CommonCreateView):
                 'helper_text': 'Telefones, E-mails, etc.'
             }
         ]
-        
+
         return context
 
     def form_valid(self, form):
@@ -184,15 +183,15 @@ class ClientCreateView(CommonCreateView):
         if form.is_valid() and address_formset.is_valid() and contact_formset.is_valid():
             # 1. Salva o cliente (Pai)
             self.object = form.save()
-            
+
             # 2. Salva Endereços
             address_formset.instance = self.object
             address_formset.save()
-            
+
             # 3. Salva Contatos
             contact_formset.instance = self.object
             contact_formset.save()
-            
+
             return redirect(self.success_url)
         else:
             # Se der erro, renderiza tudo de novo com os erros visíveis
@@ -209,7 +208,7 @@ class ClientUpdateView(CommonUpdateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        
+
         # Garante o form principal (com instância ou erros)
         main_form = kwargs.get('form')
         if not main_form:
@@ -247,7 +246,7 @@ class ClientUpdateView(CommonUpdateView):
                 'formset': context['contact_formset'],
             }
         ]
-        
+
         return context
 
     def form_valid(self, form):
@@ -257,13 +256,13 @@ class ClientUpdateView(CommonUpdateView):
 
         if form.is_valid() and address_formset.is_valid() and contact_formset.is_valid():
             self.object = form.save()
-            
+
             address_formset.instance = self.object
             address_formset.save()
-            
+
             contact_formset.instance = self.object
             contact_formset.save()
-            
+
             return redirect(self.success_url)
         else:
             return self.render_to_response(self.get_context_data(form=form))
