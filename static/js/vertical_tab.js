@@ -1,4 +1,5 @@
 /* static/js/vertical_tab.js */
+
 document.addEventListener('DOMContentLoaded', () => {
     const tabs = document.querySelectorAll('.verticalTab');
     

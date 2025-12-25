@@ -1,4 +1,5 @@
 /* static/js/checkbox-toggle.js */
+
 document.addEventListener("DOMContentLoaded", function() {
     document.querySelectorAll('input[type="checkbox"][data-target]').forEach(checkbox => {
         const targetField = document.getElementById(checkbox.dataset.target);
