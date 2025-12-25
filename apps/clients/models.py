@@ -1,7 +1,9 @@
 # apps/clients/models.py
 
-from cities.models import City
-from common.models import AuxContactType, IdleBase, NoteBase
+import re
+import unicodedata
+
+from common.models import AddressBase, ContactBase, IdleBase, NoteBase
 from django.db import models
 
 
@@ -15,16 +17,35 @@ class Client(IdleBase):
         ('J', 'Pessoa Jurídica'),
     ]
 
-    name = models.CharField(max_length=255, verbose_name="Nome / Razão Social")
-    fantasy_name = models.CharField(max_length=255, blank=True, null=True, verbose_name="Nome Fantasia")
+    name = models.CharField(
+        max_length=255,
+        verbose_name="Nome / Razão Social"
+    )
+    fantasy_name = models.CharField(
+        max_length=255,
+        blank=True,
+        null=True,
+        verbose_name="Nome Fantasia"
+    )
     person_type = models.CharField(
         max_length=1,
         choices=PESSOA_CHOICES,
         default='F',
         verbose_name="Tipo de Pessoa"
     )
-    cpf_cnpj = models.CharField(max_length=20, unique=True, blank=True, null=True, verbose_name="CPF/CNPJ")
-    rg_ie = models.CharField(max_length=20, blank=True, null=True, verbose_name="RG / Inscrição Estadual")
+    cpf_cnpj = models.CharField(
+        max_length=20,
+        unique=True,
+        blank=True,
+        null=True,
+        verbose_name="CPF/CNPJ"
+    )
+    rg_ie = models.CharField(
+        max_length=20,
+        blank=True,
+        null=True,
+        verbose_name="RG / Inscrição Estadual"
+    )
 
     class Meta:
         verbose_name = "Cliente"
@@ -32,13 +53,37 @@ class Client(IdleBase):
         db_table = "clients"
         ordering = ['name']
 
+    def save(self, *args, **kwargs):
+        # Garante que o nome seja salvo em caixa alta
+        if self.name:
+            normalized = unicodedata.normalize('NFKD', self.name)
+            clean_name = normalized.encode('ASCII', 'ignore').decode('utf-8')
+            self.name = clean_name.strip().upper()
+
+        if self.fantasy_name:
+            normalized_fantasy = unicodedata.normalize('NFKD', self.fantasy_name)
+            clean_fantasy = normalized_fantasy.encode('ASCII', 'ignore').decode('utf-8')
+            self.fantasy_name = clean_fantasy.strip().upper()
+
+        # Limpeza de CPF/CNPJ (Mantém apenas números)
+        if self.cpf_cnpj:
+            self.cpf_cnpj = re.sub(r'[^0-9]', '', self.cpf_cnpj)
+
+        # Limpeza de RG/IE (Remove pontos, traços e barras)
+        if self.rg_ie:
+            self.rg_ie = re.sub(r'[\.\-\/]', '', self.rg_ie).strip().upper()
+
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return self.name
 
 
-class ClientAddress(NoteBase):
+class ClientAddress(NoteBase, AddressBase):
     """
     Endereços do Cliente.
+    Herda campos e lógica de AddressBase.
+    Herda 'notes' de NoteBase.
     """
     client = models.ForeignKey(
         Client,
@@ -46,29 +91,17 @@ class ClientAddress(NoteBase):
         related_name="addresses",
         verbose_name="Cliente"
     )
-    city = models.ForeignKey(
-        City,
-        on_delete=models.PROTECT,
-        verbose_name="Cidade"
-    )
-    zip_code = models.CharField(max_length=10, verbose_name="CEP")
-    street = models.CharField(max_length=255, verbose_name="Logradouro (Rua/Av)")
-    number = models.CharField(max_length=20, verbose_name="Número")
-    complement = models.CharField(max_length=100, blank=True, null=True, verbose_name="Complemento")
-    district = models.CharField(max_length=100, verbose_name="Bairro")
 
     class Meta:
         verbose_name = "Endereço"
         verbose_name_plural = "Endereços"
         db_table = "clients_addresses"
 
-    def __str__(self):
-        return f"{self.street}, {self.number} - {self.city.name}"
 
-
-class ClientContact(NoteBase):
+class ClientContact(NoteBase, ContactBase):
     """
-    Contatos do Cliente (Telefones, Emails, etc).
+    Contatos do Cliente.
+    Herda lógica de telefone/email de ContactBase.
     """
     client = models.ForeignKey(
         Client,
@@ -76,17 +109,8 @@ class ClientContact(NoteBase):
         related_name="contacts",
         verbose_name="Cliente"
     )
-    contact_type = models.ForeignKey(
-        AuxContactType,
-        on_delete=models.PROTECT,
-        verbose_name="Tipo de Contato"
-    )
-    value = models.CharField(max_length=255, verbose_name="Valor (Tel/Email)")
 
     class Meta:
         verbose_name = "Contato"
         verbose_name_plural = "Contatos"
         db_table = "clients_contacts"
-
-    def __str__(self):
-        return f"{self.client}: {self.value}"

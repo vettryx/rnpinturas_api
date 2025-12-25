@@ -16,7 +16,7 @@ class CommonListView(LoginRequiredMixin, ListView):
     paginate_by = 20
     title = ""
     new_url = ""
-    
+
     # Configurações que as views filhas definem
     search_config = [] # [{'name': 'q', 'type': 'text', 'label': 'Buscar'}]
     table_headers = [] # [{'field': 'name', 'label': 'Nome'}]
@@ -33,7 +33,7 @@ class CommonListView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        
+
         # Filtro automático baseado no search_config
         for config in self.search_config:
             field = config.get('name')
@@ -49,7 +49,7 @@ class CommonListView(LoginRequiredMixin, ListView):
                     elif value == 'False':
                         value = False
                     queryset = queryset.filter(**{field: value})
-        
+
         ordering = self.get_ordering()
         if ordering:
             queryset = queryset.order_by(ordering)
@@ -60,7 +60,7 @@ class CommonListView(LoginRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        
+
         # Monta search_fields
         prepared_search = []
         for config in self.search_config:
@@ -93,7 +93,7 @@ class CommonFormMixin:
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         form = context['form']
-        
+
         # Gera sections automaticamente se não forem definidas manualmente na view filha
         if 'sections' not in context:
             context['sections'] = [
@@ -102,7 +102,7 @@ class CommonFormMixin:
                     'fields': [field for field in form]
                 }
             ]
-        
+
         # Gera botões padrão
         if 'buttons' not in context:
             context['buttons'] = [
@@ -113,7 +113,7 @@ class CommonFormMixin:
                     'text': 'Retornar',
                 },
             ]
-        
+
         context['title'] = self.title
         return context
 
@@ -137,7 +137,7 @@ class CommonTemplateView(LoginRequiredMixin, TemplateView):
     Para páginas estáticas ou dashboards (Ex: Home do Cliente)
     """
     title = ""
-    
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = self.title
@@ -174,7 +174,7 @@ class CommonDetailView(LoginRequiredMixin, DetailView):
                 {'class': 'btn-delete', 'url': delete_url, 'title': 'Excluir', 'text': 'Excluir'},
                 {'class': 'btn-return', 'url': self.return_url, 'title': 'Voltar', 'text': 'Voltar'},
             ]
-        
+
         # Se as seções não forem definidas na view filha, cria uma padrão
         if 'sections' not in context:
             context['sections'] = [
@@ -184,7 +184,7 @@ class CommonDetailView(LoginRequiredMixin, DetailView):
                     'fields': [{'label': field.verbose_name, 'value': getattr(obj, field.name)} for field in obj._meta.fields]
                 }
             ]
-            
+
         return context
 
 
@@ -194,8 +194,8 @@ def api_busca_cep(request, cep):
     Endpoint API para retornar dados do CEP para o front-end.
     """
     resultado = buscar_dados_cep(cep)
-    
+
     if "erro" in resultado:
         return JsonResponse(resultado, status=400)
-        
+
     return JsonResponse(resultado)
