@@ -9,7 +9,6 @@
     background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-    /* Substituído #ccc por variável global */
     background: var(--borda-suave); 
     border-radius: 3px;
 }
@@ -25,7 +24,7 @@
     grid-template-columns: 280px 1fr;
     grid-template-rows: 100%;
     gap: 1.5rem;
-    height: calc(100vh - 85px);
+    height: calc(100vh - 140px);
     width: 100%;
     padding: 1rem 1.5rem 1.5rem 1.5rem;
     overflow: hidden;
@@ -89,9 +88,15 @@
     color: var(--text-primary);
     width: 100%;
     outline: none;
-    appearance: none;
+    appearance: none; /* Remove estilo nativo */
     -webkit-appearance: none;
     -moz-appearance: none;
+}
+
+.apps-list-search-form input[type="text"]:focus,
+.apps-list-search-form select:focus {
+    border-color: var(--cor-brand-primary);
+    background-color: var(--bg-card);
 }
 
 /* --- CORREÇÃO DO PLACEHOLDER (TEXTO DE AJUDA) --- */
@@ -107,7 +112,6 @@
 /* --- CORREÇÃO DOS RÓTULOS (LABELS) --- */
 .apps-list-search-form label {
     color: var(--text-primary) !important; 
-    
     font-weight: 600;
     font-size: 0.8rem;
     margin-bottom: 0.3rem;
@@ -118,8 +122,8 @@
     text-shadow: 0 1px 2px rgba(0,0,0,0.5); 
 }
 
-/* Ícone da seta no select */
-/* NOTA: SVG requer codificação URL. A cor #03989E (Brand Primary) vira %2303989E */
+/* --- ÍCONE DA SETA NO SELECT --- */
+/* Padrão (Light Mode): Teal (#03989E -> %2303989E) */
 .apps-list-search-form select, .records-per-page-selector {
     background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%2303989E%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
     background-repeat: no-repeat;
@@ -127,22 +131,31 @@
     background-size: .65em auto;
 }
 
-.apps-list-search-form input[type="text"]:focus,
-.apps-list-search-form select:focus {
-    border-color: var(--cor-brand-primary);
-    background-color: var(--bg-card);
+/* Padrão (Dark Mode): Ciano (#04dbe4 -> %2304dbe4) - Ajuste Fino Extra */
+[data-theme="dark"] .apps-list-search-form select, 
+[data-theme="dark"] .records-per-page-selector {
+    background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%2304dbe4%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
 }
 
 /* Wrapper dos botões de busca */
 .apps-list-btn-group-search {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    flex-wrap: wrap;
     gap: 10px;
     margin-top: 0.5rem;
     background: transparent !important;
     box-shadow: none !important;
     padding: 0 !important;
     transform: none !important;
+}
+
+.apps-list-btn-group-search .btn-list,
+.apps-list-btn-group-search .btn-clear {
+    flex: 1;
+    min-width: 100px;
+    width: auto;
+    margin: 0;
 }
 
 /* TABELA / CONTEÚDO */
@@ -255,17 +268,20 @@
         gap: 0.8rem;
     }
 
+    /* Botões do Topo (Novo, Dashboard) - Flex Wrap */
     .apps-list-actions-card {
-        display: grid !important;
-        grid-template-columns: 1fr 1fr;
+        display: flex !important;
+        flex-direction: row;
+        flex-wrap: wrap;
         gap: 10px;
     }
 
-    .apps-list-btn-group-search {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 10px;
-        margin-top: 0;
+    .apps-list-actions-card a {
+        flex: 1;
+        min-width: 120px;
+        margin: 0;
+        justify-content: center;
+        width: auto;
     }
     
     .apps-list-content {

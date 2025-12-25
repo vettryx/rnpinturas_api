@@ -46,7 +46,7 @@ class ClientListView(CommonListView):
     table_headers = [
         {'field': 'name', 'label': 'Nome'},
         {'field': 'cpf_cnpj', 'label': 'Documento'},
-        {'field': 'idle', 'label': 'Status'},
+        {'field': 'idle', 'label': 'Inativo?'},
     ]
 
     def get_row_data(self, item):
