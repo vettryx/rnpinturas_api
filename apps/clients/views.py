@@ -25,9 +25,17 @@ class ClientHomeView(CommonTemplateView):
 # 2. LISTA
 class ClientListView(CommonListView):
     model = Client
-    template_name = 'clients/client_list.html'
+    template_name = 'includes/apps_list.html'
     title = "Listagem de Clientes"
-    new_url = reverse_lazy('clients:new')
+
+    header_buttons = [
+        {
+            'label': 'Novo Cliente',
+            'url': reverse_lazy('clients:new'),
+            'class': 'btn-new',
+        },
+
+    ]
 
     search_config = [
         {'name': 'name', 'label': 'Nome', 'type': 'text'},
