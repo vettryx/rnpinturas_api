@@ -24,7 +24,6 @@ class ClientHomeView(CommonTemplateView):
 # 2. LISTA
 class ClientListView(CommonListView):
     model = Client
-    template_name = 'includes/apps_list.html'
     title = "Listagem de Clientes"
 
     header_buttons = [

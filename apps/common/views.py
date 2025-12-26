@@ -24,6 +24,7 @@ class CommonListView(LoginRequiredMixin, ListView):
     Gera automaticamente: search_fields, headers, rows e page_obj
     para alimentar 'includes/table.html' e 'includes/search_fields.html'
     """
+    template_name = 'includes/apps_list.html'
     paginate_by = 20
     title = ""
     header_buttons = []
