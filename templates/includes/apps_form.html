@@ -13,10 +13,9 @@
     <form method="post" enctype="multipart/form-data" class="apps-form">
         {% csrf_token %}
 
-        {# Estrutura Flex: Sidebar (Abas) + Conteúdo #}
         <div class="apps-form-layout-wrapper {% if not tabs %}no-tabs{% endif %}">
             
-            {# 1. Sidebar de Navegação (Renderiza apenas se houver 'tabs' no contexto) #}
+            {# 1. Sidebar de Navegação (Esquerda) #}
             {% if tabs %}
                 <div class="apps-form-sidebar">
                     {% for tab in tabs %}
@@ -30,173 +29,175 @@
                 </div>
             {% endif %}
 
-            {# 2. Área de Conteúdo dos Formulários #}
-            <div class="apps-form-content">
-                {% for section in sections %}
-                    
-                    {# Container da Seção com ID para o JS e classes de controle de visibilidade #}
-                    <div id="{{ section.id }}" class="apps-form-group verticalTab-content-item {% if section.active %}active{% endif %}">
+            {# 2. Coluna Principal (Conteúdo + Botões) #}
+            <div class="apps-form-main-column">
+                
+                {# Área de Scroll (Cards) #}
+                <div class="apps-form-content">
+                    {% for section in sections %}
                         
-                        {# Título da Sub-seção (opcional dentro da aba) #}
-                        {% if section.title %}
-                            <h4 class="apps-form-sub-section-title">{{ section.title }}</h4>
-                        {% endif %}
-                        
-                        {# Texto de ajuda #}
-                        {% if section.helper_text %}
-                            <p class="section-helper-text text-muted">{{ section.helper_text }}</p>
-                        {% endif %}
-
-                        {# Lógica A: Tabelas #}
-                        {% if section.is_table %}
-                            <div class="apps-table-wrapper">
-                                <table class="tb-form">
-                                    <thead>
-                                        <tr>
-                                            {% for header in section.headers %}
-                                                <th>{{ header }}</th>
-                                            {% endfor %}
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {% if section.rows %}
-                                            {% for row in section.rows %}
-                                                <tr>
-                                                    {% for value in row %}
-                                                        <td>{{ value }}</td>
-                                                    {% endfor %}
-                                                </tr>
-                                            {% endfor %}
-                                        {% else %}
-                                            <tr>
-                                                <td colspan="{{ section.headers|length }}">Nenhum dado encontrado.</td>
-                                            </tr>
-                                        {% endif %}
-                                    </tbody>
-                                </table>
-                            </div>
-
-                        {# Lógica B: Formulário Padrão (Campos soltos) #}
-                        {% elif section.form and not section.is_table %}
+                        <div id="{{ section.id }}" class="apps-form-group verticalTab-content-item {% if section.active %}active{% endif %}">
                             
-                            {# Erros gerais do formulário #}
-                            {% if section.form.non_field_errors %}
-                                <div class="alert alert-danger">
-                                    {{ section.form.non_field_errors }}
-                                </div>
+                            {% if section.title %}
+                                <h4 class="apps-form-sub-section-title">{{ section.title }}</h4>
+                            {% endif %}
+                            
+                            {% if section.helper_text %}
+                                <p class="section-helper-text text-muted">{{ section.helper_text }}</p>
                             {% endif %}
 
-                            <div class="apps-form-grid">
-                                {% for field in section.form %}
-                                    <div class="apps-form-field-wrapper">
-                                        <label for="{{ field.id_for_label }}">
-                                            {{ field.label }}
-                                            {% if field.field.required %} <span class="required">*</span>{% endif %}
-                                        </label>
+                            {% if section.is_table %}
+                                <div class="apps-table-wrapper">
+                                    <table class="tb-form">
+                                        <thead>
+                                            <tr>
+                                                {% for header in section.headers %}
+                                                    <th>{{ header }}</th>
+                                                {% endfor %}
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% if section.rows %}
+                                                {% for row in section.rows %}
+                                                    <tr>
+                                                        {% for value in row %}
+                                                            <td>{{ value }}</td>
+                                                        {% endfor %}
+                                                    </tr>
+                                                {% endfor %}
+                                            {% else %}
+                                                <tr>
+                                                    <td colspan="{{ section.headers|length }}">Nenhum dado encontrado.</td>
+                                                </tr>
+                                            {% endif %}
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                            {% elif section.form and not section.is_table %}
+                                
+                                {% if section.form.non_field_errors %}
+                                    <div class="alert alert-danger">
+                                        {{ section.form.non_field_errors }}
+                                    </div>
+                                {% endif %}
+
+                                <div class="apps-form-grid">
+                                    {% for field in section.form %}
+                                        <div class="apps-form-field-wrapper">
+                                            <label for="{{ field.id_for_label }}">
+                                                {{ field.label }}
+                                                {% if field.field.required %} <span class="required">*</span>{% endif %}
+                                            </label>
+                                            
+                                            {{ field }}
+                                            
+                                            {% if field.help_text %}
+                                                <small class="form-text text-muted">{{ field.help_text }}</small>
+                                            {% endif %}
+                                            
+                                            {% if field.errors %}
+                                                <div class="error-list">
+                                                    {% for error in field.errors %}
+                                                        <div class="error">{{ error }}</div>
+                                                    {% endfor %}
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    {% endfor %}
+                                </div>
+
+                            {% elif section.formset %}
+                                
+                                {{ section.formset.management_form }}
+                                
+                                {% if section.formset.non_form_errors %}
+                                    <div class="alert alert-danger">
+                                        {{ section.formset.non_form_errors }}
+                                    </div>
+                                {% endif %}
+
+                                <div class="apps-formset-container">
+                                    {% for form in section.formset %}
                                         
-                                        {{ field }}
-                                        
-                                        {% if field.help_text %}
-                                            <small class="form-text text-muted">{{ field.help_text }}</small>
-                                        {% endif %}
-                                        
-                                        {% if field.errors %}
-                                            <div class="error-list">
-                                                {% for error in field.errors %}
-                                                    <div class="error">{{ error }}</div>
+                                        <div class="apps-formset-item">
+                                            {% if form.non_field_errors %}
+                                                <div class="error-list mb-2">
+                                                    {{ form.non_field_errors }}
+                                                </div>
+                                            {% endif %}
+
+                                            {% for hidden in form.hidden_fields %}
+                                                {{ hidden }}
+                                            {% endfor %}
+
+                                            <div class="apps-form-grid">
+                                                {% for field in form.visible_fields %}
+                                                    <div class="apps-form-field-wrapper">
+                                                        
+                                                        {% if field.name == 'DELETE' %}
+                                                            <div class="checkbox-delete-wrapper">
+                                                                <label for="{{ field.id_for_label }}" class="label-delete">
+                                                                    {{ field }} {{ field.label }}
+                                                                </label>
+                                                            </div>
+                                                        {% else %}
+                                                            <label for="{{ field.id_for_label }}">
+                                                                {{ field.label }}
+                                                                {% if field.field.required %} <span class="required">*</span>{% endif %}
+                                                            </label>
+
+                                                            {{ field }}
+
+                                                            {% if field.help_text %}
+                                                                <small class="form-text text-muted">{{ field.help_text }}</small>
+                                                            {% endif %}
+
+                                                            {% if field.errors %}
+                                                                <div class="error-list">
+                                                                    {% for error in field.errors %}
+                                                                        <div class="error">{{ error }}</div>
+                                                                    {% endfor %}
+                                                                </div>
+                                                            {% endif %}
+                                                        {% endif %}
+                                                    </div>
                                                 {% endfor %}
                                             </div>
-                                        {% endif %}
-                                    </div>
-                                {% endfor %}
-                            </div>
-
-                        {# Lógica C: Formsets (Endereços, Contatos, etc) #}
-                        {% elif section.formset %}
-                            
-                            {{ section.formset.management_form }}
-                            
-                            {# Exibe erros gerais do formset (Ex: limite máximo atingido) #}
-                            {% if section.formset.non_form_errors %}
-                                <div class="alert alert-danger">
-                                    {{ section.formset.non_form_errors }}
-                                </div>
-                            {% endif %}
-
-                            <div class="apps-formset-container">
-                                {% for form in section.formset %}
-                                    
-                                    <div class="apps-formset-item">
-                                        {# Erros gerais deste form específico dentro do formset #}
-                                        {% if form.non_field_errors %}
-                                            <div class="error-list mb-2">
-                                                {{ form.non_field_errors }}
-                                            </div>
-                                        {% endif %}
-
-                                        {% for hidden in form.hidden_fields %}
-                                            {{ hidden }}
-                                        {% endfor %}
-
-                                        <div class="apps-form-grid">
-                                            {% for field in form.visible_fields %}
-                                                <div class="apps-form-field-wrapper">
-                                                    
-                                                    {% if field.name == 'DELETE' %}
-                                                        <div class="checkbox-delete-wrapper">
-                                                            <label for="{{ field.id_for_label }}" class="label-delete">
-                                                                {{ field }} {{ field.label }}
-                                                            </label>
-                                                        </div>
-                                                    {% else %}
-                                                        <label for="{{ field.id_for_label }}">
-                                                            {{ field.label }}
-                                                            {% if field.field.required %} <span class="required">*</span>{% endif %}
-                                                        </label>
-
-                                                        {{ field }}
-
-                                                        {% if field.help_text %}
-                                                            <small class="form-text text-muted">{{ field.help_text }}</small>
-                                                        {% endif %}
-
-                                                        {% if field.errors %}
-                                                            <div class="error-list">
-                                                                {% for error in field.errors %}
-                                                                    <div class="error">{{ error }}</div>
-                                                                {% endfor %}
-                                                            </div>
-                                                        {% endif %}
-                                                    {% endif %}
-                                                </div>
-                                            {% endfor %}
                                         </div>
-                                    </div>
-                                    
-                                    {% if not forloop.last %}
-                                        <hr class="formset-separator">
-                                    {% endif %}
-                                    
-                                {% endfor %}
-                            </div>
-                            
-                            <div class="apps-formset-actions">
-                                <button type="button" class="btn btn-sm btn-secondary btn-add-row">
-                                    <i class="fas fa-plus"></i> Adicionar
-                                </button>
-                            </div>
+                                        
+                                        {% if not forloop.last %}
+                                            <hr class="formset-separator">
+                                        {% endif %}
+                                        
+                                    {% endfor %}
+                                </div>
+                                
+                                <div class="apps-formset-actions">
+                                    <button type="button" class="btn btn-sm btn-secondary btn-add-row">
+                                        <i class="fas fa-plus"></i> Adicionar
+                                    </button>
+                                </div>
 
-                        {% endif %} 
-                    </div> {% endfor %}
-            </div> </div> <div class="apps-form-btn-group">
-            <button type="submit" class="btn-save" title="Salvar">Salvar</button>
-            {% for button in buttons %}
-                <a class="{{ button.class }}" href="{{ button.url }}" role="button" title="{{ button.title }}">{{ button.text }}</a>
-            {% endfor %}
-            
-            {% if not buttons and return_url %}
-                 <a class="btn-cancel" href="{{ return_url }}" role="button" title="Voltar">Voltar</a>
-            {% endif %}
+                            {% endif %} 
+                        </div> 
+                    {% endfor %}
+                </div> 
+
+                {# Botões do Rodapé (Agora dentro da coluna da direita) #}
+                <div class="apps-form-btn-group">
+                    <button type="submit" class="btn-save btn-dark" title="Salvar">Salvar</button>
+                    {% for button in buttons %}
+                        <a class="{{ button.class }} btn-dark" href="{{ button.url }}" role="button" title="{{ button.title }}">{{ button.text }}</a>
+                    {% endfor %}
+                    
+                    {% if not buttons and return_url %}
+                         <a class="btn-cancel btn-light" href="{{ return_url }}" role="button" title="Voltar">Voltar</a>
+                    {% endif %}
+                </div>
+
+            </div> {# Fim da Main Column #}
+
         </div>
     </form>
 </div>
