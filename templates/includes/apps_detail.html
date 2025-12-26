@@ -1,15 +1,24 @@
-<!-- templates/includes/apps_detail.html -->
+{# templates/includes/apps_detail.html #}
 
-<div class="container-verticalTab">
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ title }}{% endblock title %}
+{% block body_class %}body-apps-list{% endblock body_class %}
+{% block header_title %}{{ title }}{% endblock header_title %}
+
+{% block content %}
+
+<div class="container-apps-detail">
     <div class="verticalTab-sidebar">
         {% for tab in tabs %}
-            <div class="verticalTab {{ tab.class }}" data-content="{{ tab.id }}">
+            <div class="verticalTab {{ tab.class }} {% if tab.active %}active{% endif %}" data-content="{{ tab.id }}">
                 <i class="{{ tab.icon }}"></i>
                 <span>{{ tab.label }}</span>
             </div>
         {% endfor %}
     </div>
-    <!-- Conteúdo das Guias-->
+
     <div class="verticalTab-content-wrapper">
         <div class="verticalTab-content">
             {% for section in sections %}
@@ -28,31 +37,41 @@
                                 </thead>
                                 <tbody>
                                     {% if section.fields %}
-                                        {% for field in section.fields %}
+                                        {% for row in section.fields %}
                                             <tr>
-                                                {% for value in field.values %}
-                                                    <td>{{ value }}</td>
+                                                {% for value in row.values %}
+                                                    <td>{{ value|default:"-" }}</td>
                                                 {% endfor %}
                                             </tr>
                                         {% endfor %}
                                     {% else %}
                                         <tr>
-                                            <td colspan="{{ section.table_headers|length }}">Nenhum dado encontrado.</td>
+                                            <td colspan="{{ section.table_headers|length }}">
+                                                Nenhum registro encontrado.
+                                            </td>
                                         </tr>
                                     {% endif %}
                                 </tbody>
                             </table>
                         </div>
+                    
+                    {% elif section.custom_html %}
+                        <div class="apps-detail-custom">
+                            {{ section.custom_html|safe }}
+                        </div>
+
                     {% else %}
                         <div class="apps-detail-group">
                             {% for field in section.fields %}
                                 {% if field.label %}
                                     <p class="p-detail">
                                         <span class="apps-detail-label {{ field.label_class }}">{{ field.label }} </span>
-                                        <span class="apps-detail-value {{ field.value_class }}">{{ field.value }}</span>
+                                        <span class="apps-detail-value {{ field.value_class }}">{{ field.value|default:"-" }}</span>
                                     </p>
                                 {% else %}
-                                    <p class="p-detail">{{ field.value }}</p>
+                                    <p class="p-detail full-width">
+                                        <span class="apps-detail-value">{{ field.value }}</span>
+                                    </p>
                                 {% endif %}
                             {% endfor %}
                         </div>
@@ -60,14 +79,14 @@
                 </div>
             {% endfor %}
         </div>
-        <!-- Grupo de botões -->
-        <div class="verticalTab-btn-group">
+
+        <div class="apps-detail-btn-group">
             {% for button in buttons %}
                 <a
-                    class="{{ button.class }} btn-dark"
+                    class="{{ button.class }}"
                     href="{{ button.url }}"
                     role="button"
-                    aria-label="{{ aria_label }}"
+                    title="{{ button.title }}"
                     {% if button.data %}
                         {% for key, value in button.data.items %}
                             data-{{ key }}="{{ value }}"
@@ -80,3 +99,5 @@
         </div>
     </div>
 </div>
+
+{% endblock content %}
