@@ -11,7 +11,6 @@ from common.views import (
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.utils.html import format_html
-from django.utils.safestring import mark_safe
 
 from .forms import ClientAddressFormSet, ClientContactFormSet, ClientForm
 from .models import Client
@@ -64,7 +63,6 @@ class ClientListView(CommonListView):
 # 3. DETALHES
 class ClientDetailView(CommonDetailView):
     model = Client
-    template_name = 'clients/client_detail.html'
     return_url = reverse_lazy('clients:list')
 
     def get_context_data(self, **kwargs):
@@ -73,15 +71,15 @@ class ClientDetailView(CommonDetailView):
 
         # ABAS (Tabs)
         context['tabs'] = [
-            {'id': 'tab-dados', 'label': 'Dados Cadastrais', 'active': True},
-            {'id': 'tab-enderecos', 'label': f'Endereços ({client.addresses.count()})'},
-            {'id': 'tab-contatos', 'label': f'Contatos ({client.contacts.count()})'},
-            {'id': 'tab-orcamentos', 'label': 'Orçamentos (Futuro)'},
+            {'id': 'tab-dados', 'label': 'Dados Cadastrais', 'icon': 'fas fa-user', 'active': True},
+            {'id': 'tab-enderecos', 'label': f'Endereços ({client.addresses.count()})', 'icon': 'fas fa-map-marker-alt'},
+            {'id': 'tab-contatos', 'label': f'Contatos ({client.contacts.count()})', 'icon': 'fas fa-address-book'},
+            {'id': 'tab-orcamentos', 'label': 'Orçamentos', 'icon': 'fas fa-file-invoice-dollar'},
         ]
 
         # SEÇÕES (Conteúdo de cada aba)
         context['sections'] = [
-            # Aba 1: Dados
+            # --- Aba 1: Dados Gerais (Grid Label/Value) ---
             {
                 'id': 'tab-dados',
                 'active': True,
@@ -101,9 +99,9 @@ class ClientDetailView(CommonDetailView):
                 'id': 'tab-enderecos',
                 'title': 'Endereços Cadastrados',
                 'is_table': True,
-                'headers': ['Cidade', 'Logradouro', 'Bairro', 'CEP'],
-                'rows': [
-                    [addr.city, f"{addr.street}, {addr.number}", addr.district, addr.zip_code]
+                'table_headers': ['Cidade', 'Logradouro', 'Bairro', 'CEP'],
+                'fields': [
+                    {'values': [addr.city, f"{addr.street}, {addr.number}", addr.district, addr.zip_code]}
                     for addr in client.addresses.all()
                 ]
             },
@@ -112,17 +110,17 @@ class ClientDetailView(CommonDetailView):
                 'id': 'tab-contatos',
                 'title': 'Contatos Cadastrados',
                 'is_table': True,
-                'headers': ['Tipo', 'Valor', 'Obs'],
-                'rows': [
-                    [ct.contact_type, ct.value, ct.notes]
+                'table_headers': ['Tipo', 'Contato', 'Observação'],
+                'fields': [
+                    {'values': [ct.contact_type, ct.value, ct.notes]}
                     for ct in client.contacts.all()
                 ]
             },
-            # Aba 4: Orçamentos (Vazio por enquanto)
+            # Aba 4: Orçamentos (Implantação Futura)
             {
                 'id': 'tab-orcamentos',
                 'title': 'Histórico de Orçamentos',
-                'content_html': '<p class="text-muted">Nenhum orçamento emitido ainda.</p>'
+                'custom_html': '<p class="p-detail" style="color: var(--text-secondary);">Funcionalidade de orçamentos em desenvolvimento.</p>'
             }
         ]
         return context

@@ -194,6 +194,7 @@ class CommonDetailView(LoginRequiredMixin, DetailView):
     """
     title = ""
     return_url = ""
+    template_name = 'includes/apps_detail.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -225,9 +226,16 @@ class CommonDetailView(LoginRequiredMixin, DetailView):
                 {
                     'title': 'Dados Principais',
                     'active': True,
+                    'id': 'main-data',
                     'fields': [{'label': field.verbose_name, 'value': getattr(obj, field.name)} for field in obj._meta.fields]
                 }
             ]
+
+        # Se não houver abas definidas, cria uma aba única para essa seção
+            if 'tabs' not in context:
+                context['tabs'] = [
+                    {'id': 'main-data', 'label': 'Geral', 'icon': 'fas fa-info-circle', 'active': True}
+                ]
 
         return context
 
