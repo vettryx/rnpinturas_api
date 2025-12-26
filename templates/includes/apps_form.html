@@ -1,5 +1,14 @@
 {# templates/includes/apps_form.html #}
 
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ title }}{% endblock title %}
+{% block body_class %}body-apps-list{% endblock body_class %}
+{% block header_title %}{{ title }}{% endblock header_title %}
+
+{% block content %}
+
 <div class="container-apps-form">
     <form method="post" enctype="multipart/form-data" class="apps-form">
         {% csrf_token %}
@@ -142,3 +151,5 @@
         </div>
     </form>
 </div>
+
+{% endblock content %}
