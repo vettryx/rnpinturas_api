@@ -174,11 +174,15 @@ class CommonFormMixin:
         return context
 
 class CommonCreateView(LoginRequiredMixin, CommonFormMixin, CreateView):
+    template_name = 'includes/apps_form.html'
+
     def form_valid(self, form):
         messages.success(self.request, "Registro criado com sucesso!")
         return super().form_valid(form)
 
 class CommonUpdateView(LoginRequiredMixin, CommonFormMixin, UpdateView):
+    template_name = 'includes/apps_form.html'
+
     def form_valid(self, form):
         messages.success(self.request, "Registro atualizado com sucesso!")
         return super().form_valid(form)

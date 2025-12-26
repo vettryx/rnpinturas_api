@@ -2,7 +2,7 @@
 
 /* --- ESTRUTURA GERAL DO FORMULÁRIO --- */
 .container-apps-form {
-    max-width: 1000px;
+    max-width: 1200px; /* Aumentei um pouco para acomodar a sidebar */
     width: 100%;
     margin: 2rem auto;
     padding: 0 1.5rem;
@@ -15,28 +15,101 @@
     width: 100%;
 }
 
-/* --- GRUPOS DE CAMPOS (CARDS) --- */
-.apps-form-group-edit-sub {
+/* --- NOVO LAYOUT: SIDEBAR + CONTEÚDO --- */
+.apps-form-layout-wrapper {
+    display: flex;
+    gap: 2rem;
+    align-items: flex-start;
+}
+
+/* Fallback para quando não houver abas (ocupa 100%) */
+.apps-form-layout-wrapper.no-tabs {
+    display: block;
+}
+
+/* --- SIDEBAR (ABAS VERTICAIS) --- */
+.apps-form-sidebar {
+    width: 260px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    position: sticky;
+    top: 2rem; /* Mantém o menu visível ao rolar */
+}
+
+.verticalTab {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 1.25rem;
+    background-color: var(--bg-body); /* Ou transparente */
+    color: var(--text-secondary);
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+}
+
+.verticalTab i {
+    font-size: 1.1rem;
+    width: 20px;
+    text-align: center;
+}
+
+.verticalTab:hover {
+    background-color: var(--bg-card);
+    color: var(--cor-brand-primary);
+}
+
+.verticalTab.active {
+    background-color: var(--bg-card);
+    color: var(--cor-brand-primary);
+    border-color: var(--borda-suave);
+    box-shadow: var(--sombra-card);
+    font-weight: 600;
+    border-left: 4px solid var(--cor-brand-primary); /* Destaque visual */
+}
+
+/* --- ÁREA DE CONTEÚDO --- */
+.apps-form-content {
+    flex: 1;
+    min-width: 0; /* Impede overflow em flex items */
+}
+
+/* --- GRUPOS DE CAMPOS (CARDS) & VISIBILIDADE --- */
+.apps-form-group {
     background-color: var(--bg-card);
     border: 1px solid var(--borda-suave);
     border-radius: 12px;
     box-shadow: var(--sombra-card);
     margin-bottom: 2rem;
     padding: 2rem;
-    
-    /* Layout Flex para os campos */
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1.5rem;
-    
-    /* CRUCIAL: Impede que inputs pequenos estiquem na altura de textareas vizinhos */
-    align-items: flex-start; 
-    
     position: relative;
-    overflow: hidden;
+    overflow: visible; /* Alterado para visible para permitir dropdowns passarem */
 }
 
-/* Título da Seção */
+/* Lógica de Tabs JS */
+.verticalTab-content-item {
+    display: none;
+    opacity: 0;
+    transition: opacity 0.3s ease-in;
+}
+
+.verticalTab-content-item.active {
+    display: block;
+    opacity: 1;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Título da Seção Interna */
 .apps-form-sub-section-title {
     width: 100%;
     font-family: 'Fredoka', sans-serif;
@@ -51,15 +124,20 @@
     text-align: left;
 }
 
+/* --- GRID SYSTEM INTERNO (Substitui o display flex genérico anterior) --- */
+.apps-form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+    align-items: start;
+}
+
 /* --- WRAPPER (CONTAINER DO LABEL + INPUT) --- */
-/* Esta classe substitui o uso antigo de .apps-form-input no container */
 .apps-form-field-wrapper {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
-    /* Flexibilidade: Mínimo 300px, ocupa espaço disponível */
-    flex: 1 1 300px; 
-    margin-bottom: 0.5rem;
+    width: 100%;
 }
 
 .apps-form-field-wrapper label {
@@ -69,7 +147,14 @@
     margin: 0;
 }
 
-/* --- ESTILIZAÇÃO DO INPUT (Classe definida no forms.py) --- */
+/* --- ESTILIZAÇÃO DO INPUT (Herda estilos globais, reforça se necessário) --- */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="date"],
+select,
+textarea,
 .apps-form-input {
     width: 100%;
     padding: 0.75rem 1rem;
@@ -81,28 +166,10 @@
     font-size: 1rem;
     transition: all 0.2s ease-in-out;
     outline: none;
-    box-sizing: border-box; /* Garante que padding não estoure largura */
-}
-
-/* Estilo genérico para inputs que por ventura não tenham a classe (segurança) */
-input[type="text"],
-input[type="email"],
-input[type="password"],
-input[type="number"],
-input[type="date"],
-select,
-textarea {
-    /* Herda os mesmos estilos básicos para manter consistência */
-    padding: 0.75rem 1rem;
-    background-color: var(--bg-body);
-    border: 1px solid var(--borda-suave);
-    border-radius: 6px;
-    color: var(--text-primary);
-    outline: none;
+    box-sizing: border-box; 
 }
 
 /* Efeito de Foco */
-.apps-form-input:focus,
 input:focus,
 select:focus,
 textarea:focus {
@@ -112,39 +179,49 @@ textarea:focus {
 }
 
 /* Textarea Específico */
-textarea.apps-form-input,
 textarea {
     min-height: 100px;
     resize: vertical;
-    width: 100%;
 }
 
-/* Mensagens de erro e ajuda */
-.form-text.text-muted {
-    font-size: 0.8rem;
-    color: var(--text-secondary);
-    opacity: 0.8;
+/* --- FORMSETS (ITENS REPETÍVEIS) --- */
+.apps-formset-item {
+    background-color: var(--bg-body); /* Leve contraste dentro do card */
+    padding: 1.5rem;
+    border-radius: 8px;
+    border: 1px solid var(--borda-suave);
+    margin-bottom: 1rem;
 }
 
-.error {
-    color: var(--cor-status-danger);
-    font-size: 0.85rem;
-    margin-top: 0.25rem;
-    font-weight: 500;
+.formset-separator {
+    border: 0;
+    height: 1px;
+    background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0));
+    margin: 1.5rem 0;
 }
 
-/* --- BOTÕES DE AÇÃO --- */
+.checkbox-delete-wrapper {
+    margin-top: 1.8rem; /* Alinha com os inputs visualmente */
+    display: flex;
+    align-items: center;
+}
+
+.label-delete {
+    color: var(--cor-status-danger) !important;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* --- BOTÕES --- */
 .apps-form-btn-group {
     display: flex;
-    justify-content: flex-start;
+    justify-content: flex-end; /* Botões à direita por padrão */
     gap: 1rem;
-    background-color: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
-    margin-top: 0;
-    padding: 1rem 2rem 3rem 2rem;
+    padding: 1rem 0;
     width: 100%;
-    box-sizing: border-box;
+    margin-top: 1rem;
 }
 
 .btn-save {
@@ -162,6 +239,32 @@ textarea {
     filter: brightness(1.1);
 }
 
+/* --- ALERTAS E MENSAGENS --- */
+.alert {
+    padding: 1rem;
+    border-radius: 6px;
+    margin-bottom: 1.5rem;
+    font-size: 0.9rem;
+}
+.alert-danger {
+    background-color: rgba(220, 53, 69, 0.1);
+    color: #dc3545;
+    border: 1px solid rgba(220, 53, 69, 0.2);
+}
+
+.form-text.text-muted {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    opacity: 0.8;
+}
+
+.error {
+    color: var(--cor-status-danger);
+    font-size: 0.85rem;
+    margin-top: 0.25rem;
+    font-weight: 500;
+}
+
 /* --- TABELAS --- */
 .tb-form {
     width: 100%;
@@ -172,12 +275,8 @@ textarea {
     overflow: hidden;
 }
 
-.tb-form thead {
-    background-color: var(--bg-body);
-    color: var(--text-primary);
-}
-
 .tb-form th {
+    background-color: var(--bg-body);
     font-weight: 600;
     text-transform: uppercase;
     font-size: 0.85rem;
@@ -193,19 +292,32 @@ textarea {
     color: var(--text-primary);
 }
 
-.tb-form tbody tr:last-child td {
-    border-bottom: none;
-}
+/* --- RESPONSIVIDADE --- */
+@media (max-width: 768px) {
+    .apps-form-layout-wrapper {
+        flex-direction: column;
+    }
 
-.tb-form tbody tr:nth-child(even) td {
-    background-color: var(--bg-body);
-}
+    .apps-form-sidebar {
+        width: 100%;
+        position: static;
+        flex-direction: row;
+        overflow-x: auto; /* Scroll horizontal para abas no mobile */
+        padding-bottom: 0.5rem;
+    }
 
-/* Ajuste para Select2 (plugin JS comum) */
-.select2-container .select2-selection--single {
-    height: 45px !important; 
-    border: 1px solid var(--borda-suave) !important;
-    display: flex !important;
-    align-items: center !important;
-    border-radius: 6px !important;
+    .verticalTab {
+        white-space: nowrap;
+        border-left: 1px solid transparent;
+        border-bottom: 3px solid transparent;
+    }
+
+    .verticalTab.active {
+        border-left: 1px solid transparent;
+        border-bottom: 3px solid var(--cor-brand-primary);
+    }
+    
+    .apps-form-grid {
+        grid-template-columns: 1fr; /* Uma coluna no mobile */
+    }
 }

@@ -128,7 +128,6 @@ class ClientDetailView(CommonDetailView):
 class ClientCreateView(CommonCreateView):
     model = Client
     form_class = ClientForm
-    template_name = 'clients/client_form.html'
     success_url = reverse_lazy('clients:list')
     title = "Novo Cliente"
     return_url = reverse_lazy('clients:list')
@@ -208,7 +207,6 @@ class ClientCreateView(CommonCreateView):
 class ClientUpdateView(CommonUpdateView):
     model = Client
     form_class = ClientForm
-    template_name = 'clients/client_form.html'
     success_url = reverse_lazy('clients:list')
     title = "Editar Cliente"
     return_url = reverse_lazy('clients:list')
