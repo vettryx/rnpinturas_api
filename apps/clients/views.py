@@ -44,6 +44,7 @@ class ClientListView(CommonListView):
     ]
 
     table_headers = [
+        {'field': 'id', 'label': 'ID'},
         {'field': 'name', 'label': 'Nome'},
         {'field': 'cpf_cnpj', 'label': 'Documento'},
         {'field': 'idle', 'label': 'Inativo?'},
@@ -54,6 +55,7 @@ class ClientListView(CommonListView):
         status = "Sim" if item.idle else "Não"
 
         return [
+            item.id,
             format_html('<a href="{}">{}</a>', detail_url, item.name),
             item.cpf_cnpj,
             status,
