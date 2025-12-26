@@ -5,6 +5,7 @@ import unicodedata
 
 from common.models import AddressBase, ContactBase, IdleBase, NoteBase
 from django.db import models
+from django.db.models import Q
 
 
 class Client(IdleBase):
@@ -35,7 +36,6 @@ class Client(IdleBase):
     )
     cpf_cnpj = models.CharField(
         max_length=20,
-        unique=True,
         blank=True,
         null=True,
         verbose_name="CPF/CNPJ"
@@ -52,6 +52,14 @@ class Client(IdleBase):
         verbose_name_plural = "Clientes"
         db_table = "clients"
         ordering = ['name']
+
+    constraints = [
+            models.UniqueConstraint(
+                fields=['cpf_cnpj'],
+                condition=Q(cpf_cnpj__isnull=False) & ~Q(cpf_cnpj=""),
+                name='unique_cpf_cnpj_not_null'
+            )
+        ]
 
     def save(self, *args, **kwargs):
         # Garante que o nome seja salvo em caixa alta
