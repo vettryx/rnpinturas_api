@@ -136,23 +136,34 @@ class CommonFormMixin:
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        form = context['form']
+        form = context.get('form')
 
-        # Gera sections automaticamente se não forem definidas manualmente na view filha
-        if 'sections' not in context:
+        # Gera sections automaticamente APENAS se não forem definidas na view filha
+        if 'sections' not in context and form:
             context['sections'] = [
                 {
+                    'id': 'general',
                     'title': 'Dados do Registro',
-                    'fields': list(form)
+                    'fields': list(form),
+                    'form': form,
+                    'active': True,
                 }
             ]
+
+        # Garante que, se houver sections mas não tabs, a primeira section seja active
+        # para evitar tabs ocultas se o usuario esquecer o flag 'active'
+        sections = context.get('sections')
+        if sections:
+            has_active = any(s.get('active') for s in sections)
+            if not has_active:
+                sections[0]['active'] = True
 
         # Gera botões padrão
         if 'buttons' not in context:
             context['buttons'] = [
                  {
                     'class': 'btn-return',
-                    'url': self.return_url,
+                    'url': self.return_url or '#',
                     'title': 'Retornar',
                     'text': 'Retornar',
                 },
