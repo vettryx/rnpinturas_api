@@ -43,31 +43,46 @@ def update_packages():
 
     poetry_exe = get_poetry_executable()
 
-    # 1. Verificar pacotes desatualizados
-    print("Buscando pacotes desatualizados...")
-    # check=False pois se não houver output, não é erro de execução
-    outdated_output = run_poetry_command(
-        poetry_exe, ["show", "--outdated"], check=False
-    ).strip()
+    # 1. Verificar pacotes REAIS que podem ser atualizados (Simulação)
+    print("Simulando atualização para verificar viabilidade...")
 
-    if not outdated_output:
-        print("Tudo limpo! Não há pacotes desatualizados.")
-        # Mesmo se não houver atualizações, regeneramos o arquivo para garantir
-        # que ele tenha as dependências de dev, caso não tivesse antes.
-    else:
-        num_outdated = len(outdated_output.splitlines())
-        print(f"\nPacotes desatualizados encontrados: {num_outdated}")
-        print(outdated_output)
-        print("-" * 40)
+    simulation_output = run_poetry_command(
+        poetry_exe, ["update", "--dry-run"], check=False
+    )
 
-        confirm = input("Deseja prosseguir com a atualização em massa? (s/n): ").lower()
-        if confirm != 's':
-            print("Cancelado.")
-            return
+    # CORREÇÃO AQUI:
+    # Agora verificamos se o output contém "0 installs, 0 updates".
+    # Isso cobre o caso onde ele lista tudo como "Skipped".
+    if "No dependencies to install or update" in simulation_output or \
+       "0 installs, 0 updates" in simulation_output:
 
-        # 2. Atualizar dependências
-        print("\nIniciando atualização...")
-        run_poetry_command(poetry_exe, ["update"])
+        print("\nTudo limpo! Nenhuma atualização pendente.")
+
+        # Regenera o requirements.txt para garantir que as libs de dev estejam lá
+        print("Regenerando requirements.txt para garantir integridade...")
+        run_poetry_command(poetry_exe, [
+            "export",
+            "-f", "requirements.txt",
+            "--output", "requirements.txt",
+            "--without-hashes",
+            "--with", "dev"
+        ])
+        print("Processo concluído.")
+        return
+
+    # Se chegou aqui, é porque TEM atualização real (números diferentes de 0)
+    print("\nAtualizações disponíveis e viáveis encontradas:")
+    print(simulation_output.strip())
+    print("-" * 40)
+
+    confirm = input("Deseja aplicar essas atualizações? (s/n): ").lower()
+    if confirm != 's':
+        print("Cancelado.")
+        return
+
+    # 2. Atualizar dependências (Agora é pra valer)
+    print("\nIniciando atualização real...")
+    run_poetry_command(poetry_exe, ["update"])
 
     # 3. Exportar requirements.txt (COM DEV)
     print("\nRegenerando requirements.txt (incluindo desenvolvimento)...")
