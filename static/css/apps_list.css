@@ -1,21 +1,5 @@
 /* static/css/apps_list.css */
 
-/* --- CONFIGURAÇÕES DE SCROLLBAR --- */
-::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
-}
-::-webkit-scrollbar-track {
-    background: transparent;
-}
-::-webkit-scrollbar-thumb {
-    background: var(--borda-suave); 
-    border-radius: 3px;
-}
-::-webkit-scrollbar-thumb:hover {
-    background: var(--cor-brand-primary);
-}
-
 /* ==========================================================================
    LAYOUT DESKTOP (PADRÃO)
    ========================================================================== */

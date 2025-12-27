@@ -1,9 +1,22 @@
 /* static/css/apps_home.css */
 
-/* --- SCROLLBAR --- */
-.container-apps-home ::-webkit-scrollbar { width: 6px; height: 6px; }
-.container-apps-home ::-webkit-scrollbar-track { background: transparent; }
-.container-apps-home ::-webkit-scrollbar-thumb { background: var(--borda-suave); border-radius: 3px; }
+/* ==========================================================================
+   CONFIGURAÇÕES DE SCROLLBAR
+   ========================================================================== */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+::-webkit-scrollbar-thumb {
+    background: var(--borda-suave); 
+    border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: var(--cor-brand-primary);
+}
 
 /* ==========================================================================
    LAYOUT PRINCIPAL
