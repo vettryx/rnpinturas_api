@@ -1,13 +1,10 @@
 {# templates/includes/apps_confirm_delete.html #}
+
 {% extends "base.html" %}
 {% load static %}
 
 {% block title %}{{ title }}{% endblock title %}
 {% block body_class %}body-apps-delete{% endblock body_class %}
-
-{% block extra_css %}
-    <link rel="stylesheet" href="{% static 'css/apps_delete.css' %}">
-{% endblock extra_css %}
 
 {% block content %}
 <div class="container-apps-delete">
