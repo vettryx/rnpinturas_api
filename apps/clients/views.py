@@ -18,8 +18,57 @@ from .models import Client
 
 # 1. HOME (Dashboard do Cliente)
 class ClientHomeView(CommonTemplateView):
-    template_name = 'clients/client_home.html'
-    title = "Visão Geral de Clientes"
+    template_name = 'includes/apps_home.html'
+    title = "Dashboard de Clientes" # Mudamos o título para soar mais profissional
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        # --- Lógica de KPIs ---
+        total_clients = Client.objects.count()
+        active_clients = Client.objects.filter(idle=False).count()
+        inactive_clients = Client.objects.filter(idle=True).count()
+
+        context['kpis'] = [
+            {
+                'label': 'Total de Clientes',
+                'value': total_clients,
+                'style': '', # Padrão azul
+                'footer': 'Base completa'
+            },
+            {
+                'label': 'Clientes Ativos',
+                'value': active_clients,
+                'style': 'success', # Borda verde
+                'footer': 'Em operação'
+            },
+            {
+                'label': 'Inativos',
+                'value': inactive_clients,
+                'style': 'alert', # Borda laranja
+                'footer': 'Arquivados'
+            }
+        ]
+
+        # --- Ações Rápidas (Para deixar dinâmico no template) ---
+        context['actions_list'] = [
+            {'label': 'Novo Cliente', 'url': reverse_lazy('clients:new'), 'class': 'btn-new btn-transparent'},
+            {'label': 'Gerenciar Lista', 'url': reverse_lazy('clients:list'), 'class': 'btn-list btn-transparent'},
+        ]
+
+        # --- Itens Recentes (Últimos 5 cadastrados) ---
+        # Assumindo que seu model tem 'created_at' ou 'id' auto-incremento
+        last_clients = Client.objects.order_by('-id')[:5]
+
+        context['recent_items'] = []
+        for c in last_clients:
+            context['recent_items'].append({
+                'label': c.name,
+                'url': reverse_lazy('clients:detail', args=[c.pk]),
+                'meta': f"CNPJ/CPF: {c.cpf_cnpj}" # ou data de criação
+            })
+
+        return context
 
 # 2. LISTA
 class ClientListView(CommonListView):
