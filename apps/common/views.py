@@ -225,6 +225,19 @@ class CommonDeleteView(LoginRequiredMixin, DeleteView):
         ]
         return context
 
+    def render_to_response(self, context, **response_kwargs):
+        """
+        Se for requisição AJAX (fetch/axios), retorna apenas o partial do cartão.
+        """
+        if self.request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            return self.response_class(
+                request=self.request,
+                template='includes/partial_delete_card.html',
+                context=context,
+                **response_kwargs
+            )
+        return super().render_to_response(context, **response_kwargs)
+
     def form_valid(self, form):
         messages.success(self.request, "Registro excluído com sucesso!")
         return super().form_valid(form)

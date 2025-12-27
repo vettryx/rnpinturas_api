@@ -106,3 +106,43 @@
     box-shadow: none !important;
     transform: none !important;
 }
+
+/* --- ESTILOS DO MODAL (POP-UP) --- */
+
+/* Fundo escuro que cobre a tela inteira */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6); /* Preto transparente */
+    backdrop-filter: blur(3px); /* Desfoque suave no fundo */
+    z-index: 9999;
+    
+    display: flex; /* Centraliza o cartão */
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+    
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+/* Quando o modal está ativo */
+.modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Ajuste para o cartão quando estiver dentro do modal */
+.modal-overlay .delete-card {
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5); /* Sombra mais forte para dar profundidade */
+    transform: scale(0.95);
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.modal-overlay.active .delete-card {
+    transform: scale(1);
+}
