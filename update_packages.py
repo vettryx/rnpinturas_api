@@ -1,89 +1,84 @@
 # update_packages.py
 
+import shutil
 import subprocess
 import sys
 
 
-def run_command(command):
+def get_poetry_executable() -> str:
     """
-    Executa um comando no terminal e retorna o resultado.
+    Busca o caminho absoluto do executável do Poetry e valida se é seguro.
+    """
+    path = shutil.which("poetry")
 
-    Args:
-        command (str): O comando a ser executado no terminal.
+    if path is None:
+        print("Erro crítico: 'poetry' não encontrado no PATH.")
+        sys.exit(1)
 
-    Returns:
-        str: Saída do comando.
+    return path
+
+
+def run_poetry_command(executable: str, args: list[str], check: bool = True) -> str:
+    """
+    Executa comandos do poetry de forma encapsulada.
     """
     try:
-        # Adicionei capture_output=True que é mais moderno que stdout=PIPE
+        # O comando é montado com o executável validado + argumentos
         result = subprocess.run(
-            command,
+            [executable, *args],
             capture_output=True,
             text=True,
-            shell=True,
-            check=True
+            check=check,
+            shell=False
         )
         return result.stdout
     except subprocess.CalledProcessError as e:
-        print(f"Erro ao executar o comando '{command}':")
-        print(e.stderr)
+        print(f"Erro ao executar comando: {' '.join([executable, *args])}")
+        print(f"Detalhes: {e.stderr}")
         sys.exit(1)
 
+
 def update_packages():
-    """
-    Verifica pacotes desatualizados via Poetry, realiza a atualização segura
-    e exporta um requirements.txt para compatibilidade (caso necessário).
-    """
     print("--- Verificando dependências do projeto RN Pinturas ---")
 
+    poetry_exe = get_poetry_executable()
+
     # 1. Verificar pacotes desatualizados
-    # O comando 'poetry show --outdated' lista o que pode ser atualizado
-    # dentro das restrições do seu pyproject.toml
-    try:
-        # check=False pois se não houver nada desatualizado, o poetry pode não retornar nada
-        # mas não é erro.
-        result = subprocess.run(
-            "poetry show --outdated",
-            capture_output=True,
-            text=True,
-            shell=True
-        )
-        outdated_output = result.stdout.strip()
-    except Exception as e:
-        print(f"Erro ao verificar pacotes: {e}")
-        return
+    print("Buscando pacotes desatualizados...")
+    # check=False pois se não houver output, não é erro de execução
+    outdated_output = run_poetry_command(
+        poetry_exe, ["show", "--outdated"], check=False
+    ).strip()
 
     if not outdated_output:
-        print("Tudo limpo! Não há pacotes desatualizados conforme o pyproject.toml.")
+        print("Tudo limpo! Não há pacotes desatualizados.")
         return
 
-    # Conta quantas linhas (pacotes) existem
     num_outdated = len(outdated_output.splitlines())
     print(f"\nPacotes desatualizados encontrados: {num_outdated}")
-    print("Lista de pacotes a serem atualizados:")
     print(outdated_output)
     print("-" * 40)
 
-    # Pergunta de segurança (opcional, pode remover se quiser automação total)
     confirm = input("Deseja prosseguir com a atualização em massa? (s/n): ").lower()
     if confirm != 's':
-        print("Atualização cancelada.")
+        print("Cancelado.")
         return
 
-    # 2. Atualizando os pacotes
-    # No Poetry, usamos 'poetry update'. Ele atualiza o poetry.lock
-    # respeitando as regras do pyproject.toml.
-    print("\nIniciando atualização das dependências (isso resolve o grafo de dependências)...")
-    run_command("poetry update")
+    # 2. Atualizar dependências
+    print("\nIniciando atualização...")
+    run_poetry_command(poetry_exe, ["update"])
 
-    # 3. Regenerar o requirements.txt (Opcional no fluxo Poetry, mas útil para deploy)
-    # Nota: Requer o plugin de exportação em versões mais novas do Poetry,
-    # ou o comando built-in dependendo da versão.
-    print("\nExportando requirements.txt atualizado (para compatibilidade/deploy)...")
-    # --without-hashes deixa o arquivo mais limpo, similar ao pip freeze antigo
-    run_command("poetry export -f requirements.txt --output requirements.txt --without-hashes")
+    # 3. Exportar requirements.txt
+    print("\nRegenerando requirements.txt...")
+    run_poetry_command(poetry_exe, [
+        "export",
+        "-f", "requirements.txt",
+        "--output", "requirements.txt",
+        "--without-hashes"
+    ])
 
-    print("\nProcesso concluído! O arquivo 'poetry.lock' e 'requirements.txt' foram atualizados.")
+    print("\nProcesso concluído com sucesso!")
+
 
 if __name__ == "__main__":
     update_packages()
