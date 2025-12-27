@@ -43,6 +43,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    # Terceiros
+    'storages',
+
     # Apps Personalizados (RN Pinturas)
     'cities',
     'clients',
@@ -150,9 +153,35 @@ STATIC_URL = 'static/'
 STATICFILES_DIRS = [BASE_DIR / "static"]
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
-# Compressão e Cache para produção
-if not DEBUG:
-    STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+# --- CONFIGURAÇÃO DE MÍDIA E UPLOAD (Hostinger FTP) ---
+# URL pública para acessar os arquivos (usado pelo Front)
+MEDIA_URL = os.getenv('SFTP_PUBLIC_URL', '/djangoApi_media/')
+
+# Configuração Unificada de Armazenamento (Django 4.2+)
+STORAGES = {
+    # 1. Arquivos Estáticos (CSS/JS) - Whitenoise
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage"
+                   if not DEBUG else "django.contrib.staticfiles.storage.StaticFilesStorage",
+    },
+
+    # 2. Arquivos de Mídia (Uploads) - SFTPStorage
+    "default": {
+        "BACKEND": "storages.backends.sftpstorage.SFTPStorage",
+        "OPTIONS": {
+            "host": os.getenv('SFTP_HOST'),
+            "root_path": os.getenv('SFTP_ROOT_PATH'),
+            "params": {
+                "port": int(os.getenv('SFTP_PORT') or 22),
+                "username": os.getenv('SFTP_USER'),
+                "password": os.getenv('SFTP_PASSWORD'),
+                "allow_agent": False,
+                "look_for_keys": False,
+            },
+            "file_mode": 0o644,
+        },
+    },
+}
 
 # --- SEGURANÇA E COOKIES (Produção) ---
 # Só ativa se DEBUG=False para não travar o localhost
@@ -161,4 +190,4 @@ if not DEBUG:
     CSRF_COOKIE_SECURE = True
     SECURE_BROWSER_XSS_FILTER = True
     SECURE_CONTENT_TYPE_NOSNIFF = True
-    # SECURE_SSL_REDIRECT = True # Cuidado ao ativar isso antes de ter HTTPS configurado
+    # SECURE_SSL_REDIRECT = True
