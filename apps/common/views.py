@@ -188,8 +188,45 @@ class CommonUpdateView(LoginRequiredMixin, CommonFormMixin, UpdateView):
         return super().form_valid(form)
 
 class CommonDeleteView(LoginRequiredMixin, DeleteView):
+    """
+    Padroniza a confirmação de exclusão.
+    Se 'return_url' não for definido, tenta usar o 'success_url'.
+    """
+    template_name = 'includes/apps_confirm_delete.html'
+    title = "Confirmar Exclusão"
+    return_url = None
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        obj = self.object
+
+        # Define URL de cancelamento (Prioridade: return_url > success_url)
+        cancel_url = self.return_url or self.success_url
+
+        context['title'] = self.title
+        context['cancel_url'] = cancel_url
+        context['object_name'] = str(obj)
+
+        # Botões padronizados para o template renderizar
+        # Nota: O botão de confirmar é 'submit', o de cancelar é 'link'
+        context['buttons'] = [
+            {
+                'type': 'submit',
+                'class': 'btn-delete-confirm',
+                'text': 'Sim, excluir permanentemente',
+                'icon': 'fas fa-trash-alt'
+            },
+            {
+                'type': 'link',
+                'url': cancel_url,
+                'class': 'btn-return',
+                'text': 'Cancelar operação'
+            }
+        ]
+        return context
+
     def form_valid(self, form):
-        messages.success(self.request, "Registro excluído!")
+        messages.success(self.request, "Registro excluído com sucesso!")
         return super().form_valid(form)
 
 class CommonTemplateView(LoginRequiredMixin, TemplateView):

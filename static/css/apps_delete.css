@@ -1,0 +1,108 @@
+/* static/css/apps_delete.css */
+
+/* --- Container Principal --- */
+.container-apps-delete {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 60vh;
+    padding: 2rem;
+    background-color: var(--bg-body); /* Respeita o fundo do tema */
+}
+
+/* --- Cartão de Alerta --- */
+.delete-card {
+    background-color: var(--bg-card); /* Branco no light, escuro no dark */
+    border-radius: 8px;
+    box-shadow: var(--sombra-card);
+    max-width: 500px;
+    width: 100%;
+    overflow: hidden;
+    border-left: 5px solid var(--cor-status-danger); /* Vermelho global */
+}
+
+/* --- Cabeçalho --- */
+.delete-card-header {
+    padding: 1.5rem;
+    background-color: var(--bg-card);
+    border-bottom: 1px solid var(--borda-suave);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.delete-card-header i {
+    font-size: 1.8rem;
+    color: var(--cor-status-danger);
+}
+
+.delete-card-header h2 {
+    margin: 0;
+    font-size: 1.25rem;
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+/* --- Corpo --- */
+.delete-card-body {
+    padding: 1.5rem;
+    color: var(--text-secondary);
+    font-size: 1rem;
+    line-height: 1.5;
+}
+
+.delete-object-name {
+    font-weight: 700;
+    color: var(--text-primary); /* Garante leitura no dark mode */
+    display: block;
+    margin: 0.5rem 0;
+}
+
+.delete-warning-text {
+    font-size: 0.9rem;
+    color: var(--cor-status-danger);
+    margin-top: 1rem;
+    font-weight: 500;
+}
+
+/* --- Rodapé --- */
+.delete-card-footer {
+    padding: 1.5rem;
+    /* Usa o bg-body para criar um contraste sutil com o cartão em ambos os temas */
+    background-color: var(--bg-body); 
+    border-top: 1px solid var(--borda-suave);
+    
+    display: flex;
+    justify-content: center; 
+    align-items: center;
+}
+
+/* Resets Estruturais (Mantidos da sua correção) */
+.delete-card-footer form {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    background: transparent !important;
+    box-shadow: none !important;
+    border: none !important;
+}
+
+.apps-delete-btn-group {
+    display: flex;
+    gap: 15px; 
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+
+    background-color: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    cursor: default;
+}
+
+.apps-delete-btn-group:hover {
+    background-color: transparent !important;
+    box-shadow: none !important;
+    transform: none !important;
+}

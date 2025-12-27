@@ -324,5 +324,5 @@ class ClientUpdateView(CommonUpdateView):
 # 6. EXCLUIR
 class ClientDeleteView(CommonDeleteView):
     model = Client
-    template_name = 'clients/client_confirm_delete.html'
     success_url = reverse_lazy('clients:list')
+    title = "Excluir Cliente"

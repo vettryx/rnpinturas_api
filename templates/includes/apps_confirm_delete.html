@@ -1,0 +1,58 @@
+{# templates/includes/apps_confirm_delete.html #}
+
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ title }}{% endblock title %}
+{% block body_class %}body-apps-delete{% endblock body_class %}
+
+{% block header_title %}{{ title }}{% endblock header_title %}
+
+{% block content %}
+
+<div class="container-apps-delete">
+    
+    <div class="delete-card">
+        <div class="delete-card-header">
+            <i class="fas fa-exclamation-triangle"></i>
+            <h2>{{ title }}</h2>
+        </div>
+        
+        <div class="delete-card-body">
+            <p>Você tem certeza que deseja remover o registro abaixo?</p>
+            
+            <span class="delete-object-name">
+                "{{ object_name }}"
+            </span>
+
+            <p class="delete-warning-text">
+                <i class="fas fa-info-circle"></i> Essa ação não poderá ser desfeita.
+            </p>
+        </div>
+
+        <div class="delete-card-footer">
+            <form method="post">
+                {% csrf_token %}
+                
+                <div class="apps-delete-btn-group">
+                    {% for btn in buttons %}
+                        {% if btn.type == 'submit' %}
+                            {# Botão que submete o form (Excluir) #}
+                            <button type="submit" class="{{ btn.class }}">
+                                {% if btn.icon %}<i class="{{ btn.icon }}"></i>{% endif %} {{ btn.text }}
+                            </button>
+                        {% else %}
+                            {# Botão Link (Cancelar) #}
+                            <a href="{{ btn.url }}" class="{{ btn.class }}">
+                                {{ btn.text }}
+                            </a>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </form>
+        </div>
+    </div>
+
+</div>
+
+{% endblock content %}
