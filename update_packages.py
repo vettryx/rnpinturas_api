@@ -52,29 +52,31 @@ def update_packages():
 
     if not outdated_output:
         print("Tudo limpo! Não há pacotes desatualizados.")
-        return
+        # Mesmo se não houver atualizações, regeneramos o arquivo para garantir
+        # que ele tenha as dependências de dev, caso não tivesse antes.
+    else:
+        num_outdated = len(outdated_output.splitlines())
+        print(f"\nPacotes desatualizados encontrados: {num_outdated}")
+        print(outdated_output)
+        print("-" * 40)
 
-    num_outdated = len(outdated_output.splitlines())
-    print(f"\nPacotes desatualizados encontrados: {num_outdated}")
-    print(outdated_output)
-    print("-" * 40)
+        confirm = input("Deseja prosseguir com a atualização em massa? (s/n): ").lower()
+        if confirm != 's':
+            print("Cancelado.")
+            return
 
-    confirm = input("Deseja prosseguir com a atualização em massa? (s/n): ").lower()
-    if confirm != 's':
-        print("Cancelado.")
-        return
+        # 2. Atualizar dependências
+        print("\nIniciando atualização...")
+        run_poetry_command(poetry_exe, ["update"])
 
-    # 2. Atualizar dependências
-    print("\nIniciando atualização...")
-    run_poetry_command(poetry_exe, ["update"])
-
-    # 3. Exportar requirements.txt
-    print("\nRegenerando requirements.txt...")
+    # 3. Exportar requirements.txt (COM DEV)
+    print("\nRegenerando requirements.txt (incluindo desenvolvimento)...")
     run_poetry_command(poetry_exe, [
         "export",
         "-f", "requirements.txt",
         "--output", "requirements.txt",
-        "--without-hashes"
+        "--without-hashes",
+        "--with", "dev"
     ])
 
     print("\nProcesso concluído com sucesso!")
