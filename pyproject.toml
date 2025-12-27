@@ -1,12 +1,15 @@
+# ==============================================================================
+# 1. METADADOS DO PROJETO & DEPENDÊNCIAS DE PRODUÇÃO
+# ==============================================================================
 [project]
 name = "rnpinturas_api"
 version = "1.0.0"
-description = ""
-authors = [
-    {name = "André Ventura",email = "ti@asventura.com.br"}
-]
+description = "API para o sistema de gestão da RN Pinturas"
 readme = "README.md"
 requires-python = ">=3.14,<4.0"
+authors = [
+    { name = "André Ventura", email = "ti@asventura.com.br" }
+]
 dependencies = [
     "django (>=6.0,<7.0)",
     "python-dotenv (>=1.2.1,<2.0.0)",
@@ -17,11 +20,9 @@ dependencies = [
     "requests (>=2.32.5,<3.0.0)"
 ]
 
-
-[build-system]
-requires = ["poetry-core>=2.0.0,<3.0.0"]
-build-backend = "poetry.core.masonry.api"
-
+# ==============================================================================
+# 2. DEPENDÊNCIAS DE DESENVOLVIMENTO
+# ==============================================================================
 [dependency-groups]
 dev = [
     "ruff (>=0.14.10,<0.15.0)",
@@ -29,6 +30,15 @@ dev = [
     "taskipy (>=1.14.1,<2.0.0)"
 ]
 
+# ==============================================================================
+# 3. CONFIGURAÇÕES DE FERRAMENTAS (TOOLS)
+# ==============================================================================
+
+# --- TASKIPY (Automação de Tarefas) ---
+[tool.taskipy.tasks]
+update = "python update_packages.py"
+
+# --- RUFF (Linter & Formatter) ---
 [tool.ruff]
 line-length = 100
 target-version = "py314"
@@ -48,61 +58,55 @@ skip-magic-trailing-comma = false
 line-ending = "auto"
 
 [tool.ruff.lint]
-# Grupos principais recomendados (muito comum em projetos Django 2025)
 select = [
-    "E",      # pycodestyle errors
-    "W",      # pycodestyle warnings
-    "F",      # pyflakes (unused imports, etc)
-    "I",      # isort (import sorting)
-    "UP",     # pyupgrade (modernizações python)
-    "B",      # bugbear (bugs comuns)
-    "C4",     # comprehensions melhoradas
-    "PIE",    # pieces of cake (simplificações)
-    "PL",     # pylint-like (muitos acham bom equilíbrio)
-    "RUF",    # regras específicas do ruff
-    "DJ",     # flake8-django (regras específicas do Django!)
-    "C90",    # complexidade mccabe (opcional)
-    "S",      # flake8-bandit para SQL injection etc.
+    "E",    # pycodestyle errors
+    "W",    # pycodestyle warnings
+    "F",    # pyflakes
+    "I",    # isort
+    "UP",   # pyupgrade
+    "B",    # bugbear
+    "C4",   # comprehensions
+    "PIE",  # misc fixes
+    "PL",   # pylint
+    "RUF",  # ruff specific
+    "DJ",   # flake8-django
+    "C90",  # mccabe
+    "S",    # bandit (security)
 ]
-
-# Ignorar algumas regras comuns em projetos Django
 ignore = [
-    "E501",     # line too long (já controlamos com line-length)
-    "DJ001",    # nullable string fields — muitos usam null=True em CharField
-    "F401",     # unused import — signals e apps.py quebram muito
-    "D100",     # missing docstring in public module (opcional)
-    "D101",     # missing docstring in public class
-    "ANN",      # anotações de tipo (deixe mypy cuidar disso)
-    "RUF012",   # ignora mutable defaults em models (comum em Django, ex: managers, Meta.indexes)
+    "E501",   # line too long (gerenciado pelo formatter)
+    "DJ001",  # nullable string (comum em Django)
+    "F401",   # unused import (comum em apps.py e signals)
+    "D100",   # missing docstring module
+    "D101",   # missing docstring class
+    "ANN",    # type annotations (deixamos para o mypy)
+    "RUF012", # mutable defaults (comum em Django models)
 ]
 
-# Ignorar regras por arquivo/pasta (muito importante no Django)
 [tool.ruff.lint.per-file-ignores]
-"**/*migrations/*.py" = ["E", "F", "W", "I", "PL", "UP", "DJ"]  # migrations ignoram quase tudo
-"**/tests/**.py"      = ["S101", "ANN", "D", "PLR2004"]        # testes podem usar assert, sem docstring pesada
-"**/settings.py"      = ["E402", "F401"]                       # imports locais e django.setup()
-"**/apps.py"          = ["F401"]                               # signals normalmente importam sem usar
-"**/*admin*.py"       = ["RUF012"]                             # mutable default args em admin são comuns
+"**/*migrations/*.py" = ["E", "F", "W", "I", "PL", "UP", "DJ"]
+"**/tests/**.py"      = ["S101", "ANN", "D", "PLR2004"]
+"**/settings.py"      = ["E402", "F401"]
+"**/apps.py"          = ["F401"]
+"**/*admin*.py"       = ["RUF012"]
+# Exceção de segurança para o script de automação
+"update_packages.py"  = ["S603", "S607"]
 
+# --- MYPY (Checagem de Tipos Estática) ---
 [tool.mypy]
 python_version = "3.14"
 warn_unused_ignores = true
 show_error_codes = true
 strict = false
+mypy_path = [".", "apps"]
 
-# Muito importante: diz pro mypy onde estão seus apps/código fonte
-mypy_path = [
-    ".",        # raiz do projeto (para imports absolutos se precisar)
-    "apps",     # pasta que contém todos os apps (common, cities, etc.)
-]
-
-# ignora var-annotated em models (redundante com django-stubs)
 [[tool.mypy.overrides]]
-module = [
-    "apps.*.models",  # todos os models em qualquer app
-    "*.models",
-]
+module = ["apps.*.models", "*.models"]
 disable_error_code = ["var-annotated"]
 
-[tool.taskipy.tasks]
-update = "python update_packages.py"
+# ==============================================================================
+# 4. SISTEMA DE BUILD (POETRY CORE)
+# ==============================================================================
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
