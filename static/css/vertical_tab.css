@@ -1,0 +1,144 @@
+/* static/css/vertical_tab.css */
+
+/* --- LAYOUT DE ABAS VERTICAIS --- */
+.container-verticalTab {
+    max-width: 1400px;
+    width: 100%;
+    margin: 2rem auto;
+    display: flex;
+    gap: 2rem;
+    padding: 0 1.5rem;
+    align-items: flex-start; /* Impede que o menu estique se o conteúdo for longo */
+}
+
+/* --- SIDEBAR (MENU LATERAL) --- */
+.verticalTab-sidebar {
+    width: 280px;
+    flex-shrink: 0; /* Não deixa o menu encolher */
+    display: flex;
+    flex-direction: column;
+    background-color: var(--bg-card);
+    border-radius: 12px;
+    box-shadow: var(--sombra-card);
+    overflow: hidden; /* Para o arredondamento funcionar */
+    border: 1px solid var(--borda-suave);
+    padding: 0.5rem 0;
+}
+
+.verticalTab {
+    display: flex;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border-left: 4px solid transparent; /* Indicador de ativo */
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.verticalTab i {
+    margin-right: 12px;
+    font-size: 1.1rem;
+    width: 24px; /* Largura fixa para alinhar ícones */
+    text-align: center;
+    color: var(--text-secondary);
+}
+
+.verticalTab span {
+    font-family: 'Fredoka', sans-serif;
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Estado Hover */
+.verticalTab:hover {
+    background-color: var(--bg-body);
+    color: var(--cor-brand-primary);
+}
+.verticalTab:hover i {
+    color: var(--cor-brand-primary);
+}
+
+/* Estado Ativo (Selecionado via JS) */
+.verticalTab.active {
+    background-color: rgba(3, 152, 158, 0.08); /* Fundo sutil da marca */
+    color: var(--cor-brand-primary);
+    border-left-color: var(--cor-brand-primary);
+    font-weight: 700;
+}
+
+.verticalTab.active i {
+    color: var(--cor-brand-primary);
+}
+
+/* --- ÁREA DE CONTEÚDO (DIREITA) --- */
+.verticalTab-content-wrapper {
+    flex: 1; /* Ocupa o resto do espaço */
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    min-width: 0; /* Fix para tabelas responsivas dentro de flex items */
+}
+
+.verticalTab-content {
+    background-color: var(--bg-card);
+    border-radius: 12px;
+    box-shadow: var(--sombra-card);
+    border: 1px solid var(--borda-suave);
+    padding: 2rem;
+    min-height: 400px;
+}
+
+/* Itens de conteúdo (ocultos por padrão, JS ativa um) */
+.verticalTab-content-item {
+    display: none;
+    animation: fadeIn 0.3s ease;
+}
+
+.verticalTab-content-item.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Grupo de Botões (Geralmente no topo ou rodapé da aba) */
+.verticalTab-btn-group {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.8rem;
+    margin-bottom: 1rem;
+}
+
+/* --- RESPONSIVIDADE --- */
+@media (max-width: 992px) {
+    .container-verticalTab {
+        flex-direction: column; /* Empilha: Menu em cima, conteúdo embaixo */
+        gap: 1.5rem;
+    }
+
+    .verticalTab-sidebar {
+        width: 100%;
+        flex-direction: row; /* Menu horizontal no mobile */
+        overflow-x: auto; /* Scroll se tiver muitas abas */
+        padding: 0.5rem;
+        border-bottom: 1px solid var(--borda-suave);
+    }
+
+    .verticalTab {
+        flex: 0 0 auto; /* Itens não encolhem */
+        border-left: none;
+        border-bottom: 3px solid transparent;
+        padding: 0.8rem 1.2rem;
+        border-radius: 6px;
+    }
+
+    .verticalTab.active {
+        border-left: none;
+        border-bottom-color: var(--cor-brand-primary);
+        background-color: transparent;
+    }
+}

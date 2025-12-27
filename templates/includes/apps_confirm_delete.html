@@ -1,0 +1,13 @@
+{# templates/includes/apps_confirm_delete.html #}
+
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ title }}{% endblock title %}
+{% block body_class %}body-apps-delete{% endblock body_class %}
+
+{% block content %}
+<div class="container-apps-delete">
+    {% include "includes/partial_delete_card.html" %}
+</div>
+{% endblock content %}

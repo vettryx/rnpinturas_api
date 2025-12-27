@@ -1,7 +1,9 @@
 # apps/clients/admin.py
 
 from django.contrib import admin
+
 from .models import Client, ClientAddress, ClientContact
+
 
 class ClientContactInline(admin.TabularInline):
     """
@@ -27,7 +29,7 @@ class ClientAdmin(admin.ModelAdmin):
     list_display = ('name', 'person_type', 'cpf_cnpj', 'idle')
     search_fields = ('name', 'fantasy_name', 'cpf_cnpj')
     list_filter = ('person_type', 'idle')
-    
+
     # Adiciona os formulários filhos dentro do formulário pai
     inlines = [ClientContactInline, ClientAddressInline]
 

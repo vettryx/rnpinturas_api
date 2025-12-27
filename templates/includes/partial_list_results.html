@@ -1,0 +1,21 @@
+{# templates/includes/partial_list_results.html #}
+
+<div class="apps-list-content-header">
+    <div class="records-selector">
+         {% include "includes/records_per_page_selector.html" with action_url=request.path %}
+    </div>
+    
+    <div class="counter-display">
+        {% include "includes/record_counter.html" with page_obj=page_obj %}
+    </div>
+</div>
+
+<div class="apps-list-table-area custom-scrollbar">
+    <div class="tb-list">
+        {% include "includes/table.html" %}
+    </div>
+</div>
+
+<div class="apps-list-content-footer">
+    {% include "includes/pagination.html" with page_obj=page_obj query_params=query_params %}
+</div>

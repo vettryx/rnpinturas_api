@@ -1,0 +1,103 @@
+{# templates/includes/apps_detail.html #}
+
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ title }}{% endblock title %}
+{% block body_class %}body-apps-list{% endblock body_class %}
+{% block header_title %}{{ title }}{% endblock header_title %}
+
+{% block content %}
+
+<div class="container-apps-detail">
+    <div class="verticalTab-sidebar">
+        {% for tab in tabs %}
+            <div class="verticalTab {{ tab.class }} {% if tab.active %}active{% endif %}" data-content="{{ tab.id }}">
+                <i class="{{ tab.icon }}"></i>
+                <span>{{ tab.label }}</span>
+            </div>
+        {% endfor %}
+    </div>
+
+    <div class="verticalTab-content-wrapper">
+        <div class="verticalTab-content">
+            {% for section in sections %}
+                <div id="{{ section.id }}" class="verticalTab-content-item {% if section.active %}active{% endif %}">
+                    <h6 class="apps-detail-sub-section-title">{{ section.title }}</h6>
+                    
+                    {% if section.is_table %}
+                        <div class="apps-detail-tb">
+                            <table class="tb-detail">
+                                <thead>
+                                    <tr>
+                                        {% for header in section.table_headers %}
+                                            <th>{{ header }}</th>
+                                        {% endfor %}
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% if section.fields %}
+                                        {% for row in section.fields %}
+                                            <tr>
+                                                {% for value in row.values %}
+                                                    <td>{{ value|default:"-" }}</td>
+                                                {% endfor %}
+                                            </tr>
+                                        {% endfor %}
+                                    {% else %}
+                                        <tr>
+                                            <td colspan="{{ section.table_headers|length }}">
+                                                Nenhum registro encontrado.
+                                            </td>
+                                        </tr>
+                                    {% endif %}
+                                </tbody>
+                            </table>
+                        </div>
+                    
+                    {% elif section.custom_html %}
+                        <div class="apps-detail-custom">
+                            {{ section.custom_html|safe }}
+                        </div>
+
+                    {% else %}
+                        <div class="apps-detail-group">
+                            {% for field in section.fields %}
+                                {% if field.label %}
+                                    <p class="p-detail">
+                                        <span class="apps-detail-label {{ field.label_class }}">{{ field.label }} </span>
+                                        <span class="apps-detail-value {{ field.value_class }}">{{ field.value|default:"-" }}</span>
+                                    </p>
+                                {% else %}
+                                    <p class="p-detail full-width">
+                                        <span class="apps-detail-value">{{ field.value }}</span>
+                                    </p>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+
+        <div class="apps-detail-btn-group">
+            {% for button in buttons %}
+                <a
+                    class="{{ button.class }}"
+                    href="{{ button.url }}"
+                    role="button"
+                    title="{{ button.title }}"
+                    {% if button.data %}
+                        {% for key, value in button.data.items %}
+                            data-{{ key }}="{{ value }}"
+                        {% endfor %}
+                    {% endif %}
+                >
+                    {{ button.text }}
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+{% endblock content %}

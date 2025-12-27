@@ -1,0 +1,274 @@
+/* static/css/home.css */
+
+/* Container Principal */
+.dashboard-wrapper {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem;
+    width: 100%;
+}
+
+/* Seção de Boas Vindas */
+.welcome-section {
+    margin-bottom: 2rem;
+}
+
+.welcome-section h3 {
+    font-size: 1.8rem;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.welcome-section .subtitle {
+    color: var(--text-secondary);
+    font-size: 1rem;
+}
+
+/* --- 1. GRIDS DE KPI (TOPO) --- */
+.kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+}
+
+.kpi-card {
+    background-color: var(--bg-card);
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: var(--sombra-card);
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border-left: 5px solid transparent; /* Faixa colorida lateral */
+}
+
+.kpi-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+}
+
+.kpi-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+.kpi-data {
+    display: flex;
+    flex-direction: column;
+}
+
+.kpi-value {
+    font-family: 'Fredoka', sans-serif;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1.2;
+}
+
+.kpi-label {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+/* Cores Específicas dos KPIs */
+/* Pendente (Amarelo) */
+.kpi-card.status-pending { border-left-color: var(--cor-status-warning); }
+.kpi-card.status-pending .kpi-icon { background-color: rgba(255, 235, 59, 0.15); color: #FBC02D; }
+
+/* Em Andamento (Azul/Teal) */
+.kpi-card.status-progress { border-left-color: var(--cor-status-info); }
+.kpi-card.status-progress .kpi-icon { background-color: rgba(3, 152, 158, 0.15); color: var(--base-teal); }
+
+/* Aguardando Pagamento (Laranja/Vermelho) */
+.kpi-card.status-waiting { border-left-color: var(--cor-status-danger); }
+.kpi-card.status-waiting .kpi-icon { background-color: rgba(244, 67, 54, 0.15); color: var(--base-red); }
+
+/* Finalizado (Verde) */
+.kpi-card.status-success { border-left-color: var(--cor-status-success); }
+.kpi-card.status-success .kpi-icon { background-color: rgba(76, 175, 80, 0.15); color: var(--base-green); }
+
+
+/* --- LAYOUT PRINCIPAL (APPS + TABELA) --- */
+.main-layout-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.5fr; /* Apps ocupam menos espaço que a tabela em telas grandes */
+    gap: 2rem;
+}
+
+@media (max-width: 992px) {
+    .main-layout-grid {
+        grid-template-columns: 1fr; /* Coluna única em mobile/tablet */
+    }
+}
+
+.section-title {
+    font-size: 1.2rem;
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+    border-left: 4px solid var(--cor-brand-primary);
+    padding-left: 10px;
+}
+
+/* --- 2. GRID DE APPS --- */
+.app-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 1rem;
+}
+
+.app-card {
+    background-color: var(--bg-card);
+    border-radius: 8px;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    box-shadow: var(--sombra-card);
+    transition: all 0.2s ease;
+    border: 1px solid var(--borda-suave);
+    height: 100%;
+}
+
+.app-card:hover {
+    border-color: var(--cor-brand-primary);
+    background-color: var(--base-gray-100); /* Leve destaque no hover claro */
+    transform: translateY(-3px);
+}
+
+[data-theme="dark"] .app-card:hover {
+    background-color: #15222e;
+}
+
+.app-icon-container {
+    font-size: 2rem;
+    color: var(--cor-brand-primary);
+    margin-bottom: 0.8rem;
+}
+
+.app-name {
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 500;
+    font-size: 0.9rem;
+    color: var(--text-primary);
+}
+
+
+/* --- 3. TABELA SIMPLES (RECENTES) --- */
+.recent-activity-section {
+    background-color: var(--bg-card);
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: var(--sombra-card);
+    border: 1px solid var(--borda-suave);
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.btn-link {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--cor-brand-primary);
+}
+
+.simple-table-container {
+    overflow-x: auto;
+}
+
+.simple-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+.simple-table th {
+    text-align: left;
+    padding: 1rem;
+    color: var(--text-secondary);
+    font-weight: 600;
+    border-bottom: 2px solid var(--borda-suave);
+}
+
+.simple-table td {
+    padding: 1rem;
+    color: var(--text-primary);
+    border-bottom: 1px solid var(--borda-suave);
+}
+
+.simple-table tr:last-child td {
+    border-bottom: none;
+}
+
+/* Badges de Status na Tabela */
+.badge {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.badge-pending { background-color: rgba(255, 235, 59, 0.2); color: #F9A825; }
+.badge-progress { background-color: rgba(3, 152, 158, 0.2); color: var(--base-teal); }
+.badge-success { background-color: rgba(76, 175, 80, 0.2); color: var(--base-green); }
+
+/* --- Badges de Status na Tabela (Correção de Contraste) --- */
+.badge {
+    padding: 6px 10px;
+    border-radius: 20px; /* Mais arredondado */
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: inline-block;
+    text-align: center;
+    min-width: 80px;
+}
+
+/* Texto escuro no fundo claro para melhor leitura */
+.badge-pending { 
+    background-color: #FFF9C4; /* Amarelo bem claro */
+    color: #FBC02D; /* Amarelo escuro/Laranja */
+    border: 1px solid rgba(251, 192, 45, 0.3);
+}
+
+.badge-progress { 
+    background-color: #E0F7FA; /* Azul bem claro */
+    color: #006064; /* Ciano escuro */
+    border: 1px solid rgba(0, 96, 100, 0.3);
+}
+
+.badge-success { 
+    background-color: #E8F5E9; /* Verde bem claro */
+    color: #2E7D32; /* Verde escuro */
+    border: 1px solid rgba(46, 125, 50, 0.3);
+}
+
+/* Ajuste para o Modo Escuro das Badges */
+[data-theme="dark"] .badge-pending { 
+    background-color: rgba(251, 192, 45, 0.15); 
+    color: #FFF176; 
+}
+[data-theme="dark"] .badge-progress { 
+    background-color: rgba(3, 152, 158, 0.15); 
+    color: #80DEEA; 
+}
+[data-theme="dark"] .badge-success { 
+    background-color: rgba(76, 175, 80, 0.15); 
+    color: #A5D6A7; 
+}

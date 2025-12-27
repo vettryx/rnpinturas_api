@@ -1,0 +1,330 @@
+/* static/css/apps_form.css */
+
+/* ==========================================================================
+   2. ESTRUTURA DE LAYOUT
+   ========================================================================== */
+.container-apps-form {
+    max-width: 1400px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 1.5rem;
+    font-family: 'Montserrat', sans-serif;
+    
+    /* Altura fixa para Dashboard: Tela inteira - Cabeçalho */
+    height: calc(100vh - 140px); 
+    overflow: hidden; 
+    
+    display: flex;
+    flex-direction: column;
+}
+
+.apps-form {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Wrapper Geral (Sidebar + Coluna Principal) */
+.apps-form-layout-wrapper {
+    display: flex;
+    gap: 1.5rem;
+    align-items: flex-start;
+    flex: 1; 
+    min-height: 0;
+    overflow: hidden; 
+}
+
+/* ==========================================================================
+   3. SIDEBAR (ESQUERDA)
+   ========================================================================== */
+.apps-form-sidebar {
+    width: 280px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    height: 100%;
+    overflow-y: auto;
+    padding-right: 5px;
+}
+
+/* Estilo das Abas */
+.verticalTab {
+    background-color: transparent;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    padding: 1rem 1.2rem;
+    color: var(--text-secondary);
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.2s ease;
+}
+
+.verticalTab:hover {
+    background-color: var(--bg-card);
+    color: var(--cor-brand-primary);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
+}
+
+.verticalTab i {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    width: 20px;
+    text-align: center;
+}
+.verticalTab:hover i,
+.verticalTab.active i {
+    color: var(--cor-brand-primary);
+}
+
+.verticalTab.active {
+    background-color: var(--bg-card);
+    color: var(--cor-brand-primary);
+    border: 1px solid var(--borda-suave);
+    box-shadow: var(--sombra-card);
+    border-left: 4px solid var(--cor-brand-primary);
+}
+
+/* ==========================================================================
+   4. COLUNA PRINCIPAL (DIREITA)
+   ========================================================================== */
+.apps-form-main-column {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-width: 0; /* Impede overflow horizontal do flex */
+}
+
+/* Área de Scroll (Cards) */
+.apps-form-content {
+    flex: 1; /* Ocupa todo espaço disponível */
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    overflow-y: auto; 
+    overflow-x: hidden;
+    padding-right: 1rem; 
+    padding-bottom: 1rem;
+}
+
+/* Card do Formulário */
+.apps-form-group {
+    background-color: var(--bg-card);
+    border: 1px solid var(--borda-suave);
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    padding: 2rem;
+    
+    /* Controle de Abas */
+    display: none; 
+    opacity: 0;
+    transition: opacity 0.3s ease-in;
+}
+
+.apps-form-group.active {
+    display: block;
+    opacity: 1;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.apps-form-sub-section-title {
+    font-family: 'Fredoka', sans-serif;
+    font-size: 1rem;
+    color: var(--text-primary);
+    font-weight: 700;
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--borda-suave);
+    padding-bottom: 0.8rem;
+    margin-bottom: 1.5rem;
+}
+
+.section-helper-text {
+    margin-top: -1rem;
+    margin-bottom: 1.5rem;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+/* ==========================================================================
+   5. BOTÕES (RODAPÉ CLEAN)
+   ========================================================================== */
+.apps-form-btn-group {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    
+    /* Layout Fixo */
+    flex-shrink: 0;
+    margin-top: 1.5rem; /* Um pouco mais de espaço do conteúdo */
+    padding: 0;         /* Remove padding para não criar área clicável vazia */
+
+    /* FORÇA VISUAL: Garante que não pareça uma caixa */
+    background: transparent !important; 
+    border: none !important;
+    box-shadow: none !important;
+    
+    /* Garante que o container em si não tenha interação de hover */
+    transition: none !important;
+    transform: none !important;
+    z-index: 10;
+}
+
+/* Garante que NENHUM efeito de hover aconteça no container (caso tenha herdado) */
+.apps-form-btn-group:hover {
+    background: transparent !important;
+    box-shadow: none !important;
+    transform: none !important;
+}
+
+/* Estilo dos Botões (Mantidos) */
+.btn-save {
+    background-color: var(--cor-brand-primary);
+    color: #fff;
+    padding: 0.8rem 2rem;
+    border-radius: 6px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: filter 0.2s, transform 0.2s; /* Adicionei transform suave no botão */
+    font-size: 0.95rem;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1); /* Sombra suave só no botão */
+}
+.btn-save:hover {
+    filter: brightness(1.05);
+    transform: translateY(-2px); /* Efeito de clique só no botão */
+    box-shadow: 0 6px 12px rgba(3, 152, 158, 0.25);
+}
+
+.btn-cancel {
+    background-color: var(--bg-body);
+    color: var(--text-primary);
+    padding: 0.8rem 1.5rem;
+    border-radius: 6px;
+    border: 1px solid var(--borda-suave);
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: all 0.2s;
+}
+.btn-cancel:hover {
+    background-color: var(--borda-suave);
+    color: var(--text-secondary);
+}
+
+/* ==========================================================================
+   6. INPUTS E CAMPOS
+   ========================================================================== */
+.apps-form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+    align-items: start;
+}
+
+.apps-form-field-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    width: 100%;
+}
+.apps-form-field-wrapper label {
+    color: var(--text-primary);
+    font-weight: 600;
+    font-size: 0.85rem;
+}
+.required { color: var(--cor-status-danger); font-weight: bold; }
+
+input[type="text"], input[type="email"], input[type="password"],
+input[type="number"], input[type="date"], select, textarea {
+    background-color: var(--bg-body);
+    border: 1px solid var(--borda-suave);
+    border-radius: 6px;
+    padding: 0.7rem 1rem;
+    font-size: 0.95rem;
+    color: var(--text-primary);
+    width: 100%;
+    outline: none;
+    font-family: 'Montserrat', sans-serif;
+    transition: all 0.2s;
+    appearance: none; -webkit-appearance: none;
+}
+input:focus, select:focus, textarea:focus {
+    border-color: var(--cor-brand-primary);
+    background-color: var(--bg-card);
+    box-shadow: 0 0 0 3px rgba(3, 152, 158, 0.1);
+}
+textarea { min-height: 120px; resize: vertical; }
+
+/* Select Icon */
+select {
+    background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%2303989E%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+    background-repeat: no-repeat;
+    background-position: right .7em top 50%;
+    background-size: .65em auto;
+    padding-right: 2.5rem;
+}
+[data-theme="dark"] select {
+    background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%2304dbe4%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+}
+
+/* ==========================================================================
+   7. FORMSETS E TABELAS
+   ========================================================================== */
+.apps-formset-container { display: flex; flex-direction: column; gap: 1rem; }
+.apps-formset-item {
+    background-color: var(--bg-body);
+    border: 1px solid var(--borda-suave);
+    border-radius: 8px;
+    padding: 1.5rem;
+}
+.formset-separator { border: 0; height: 1px; background: var(--borda-suave); margin: 1rem 0; }
+
+.tb-form {
+    width: 100%; border-collapse: separate; border-spacing: 0;
+    border: 1px solid var(--borda-suave); border-radius: 8px; overflow: hidden; margin-bottom: 1rem;
+}
+.tb-form th {
+    background-color: var(--cor-brand-primary); color: white;
+    font-size: 0.75rem; font-weight: 700; text-transform: uppercase; padding: 0.8rem 1rem; text-align: left;
+}
+.tb-form td {
+    padding: 0.8rem 1rem; border-bottom: 1px solid var(--borda-suave);
+    background-color: var(--bg-card); color: var(--text-primary); font-size: 0.9rem;
+}
+.tb-form tr:last-child td { border-bottom: none; }
+
+.error-list { margin-top: 0.3rem; }
+.error { color: var(--cor-status-danger); font-size: 0.8rem; font-weight: 600; }
+.alert-danger {
+    background-color: rgba(244, 67, 54, 0.1); color: var(--cor-status-danger);
+    padding: 1rem; border-radius: 8px; border: 1px solid rgba(244, 67, 54, 0.2); margin-bottom: 1.5rem;
+}
+.btn-add-row {
+    background-color: var(--bg-body); color: var(--cor-brand-primary);
+    border: 1px dashed var(--cor-brand-primary); padding: 0.6rem 1.2rem;
+    border-radius: 6px; font-weight: 600; cursor: pointer;
+}
+.checkbox-delete-wrapper { margin-top: 2rem; display: flex; align-items: center; }
+.label-delete { color: var(--cor-status-danger) !important; cursor: pointer; gap: 0.5rem; }
+
+/* ==========================================================================
+   8. RESPONSIVIDADE
+   ========================================================================== */
+@media (max-width: 992px) {
+    .container-apps-form { height: auto; overflow: visible; padding: 1rem; }
+    .apps-form-layout-wrapper { flex-direction: column; overflow: visible; }
+    .apps-form-sidebar { width: 100%; height: auto; flex-direction: row; overflow-x: auto; padding-bottom: 0.5rem; }
+    .apps-form-content { height: auto; overflow: visible; padding-right: 0; }
+    .apps-form-btn-group { flex-direction: column-reverse; }
+    .apps-form-btn-group button, .apps-form-btn-group a { width: 100%; }
+}

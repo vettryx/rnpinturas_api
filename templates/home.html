@@ -1,0 +1,133 @@
+<!-- templates/home.html -->
+
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Dashboard - RN Pinturas{% endblock %}
+
+{% block body_class %}body-home{% endblock %}
+
+{% block header_title %}Visão Geral{% endblock %}
+
+{% block content %}
+<div class="dashboard-wrapper">
+    {% if request.user.is_authenticated %}
+        
+        <div class="welcome-section">
+            <h3>Olá, {{ request.user.first_name }}!</h3>
+            <p class="subtitle">Aqui está o resumo das atividades da RN Pinturas hoje.</p>
+        </div>
+
+        <section class="kpi-grid">
+            <div class="kpi-card status-pending">
+                <div class="kpi-icon"><i class="fa fa-clock"></i></div>
+                <div class="kpi-data">
+                    <span class="kpi-value">5</span> <span class="kpi-label">Orçamentos Pendentes</span>
+                </div>
+            </div>
+
+            <div class="kpi-card status-progress">
+                <div class="kpi-icon"><i class="fa fa-paint-roller"></i></div>
+                <div class="kpi-data">
+                    <span class="kpi-value">3</span>
+                    <span class="kpi-label">Obras em Andamento</span>
+                </div>
+            </div>
+
+            <div class="kpi-card status-waiting">
+                <div class="kpi-icon"><i class="fa fa-hand-holding-usd"></i></div>
+                <div class="kpi-data">
+                    <span class="kpi-value">2</span>
+                    <span class="kpi-label">Aguardando Pagamento</span>
+                </div>
+            </div>
+
+            <div class="kpi-card status-success">
+                <div class="kpi-icon"><i class="fa fa-check-circle"></i></div>
+                <div class="kpi-data">
+                    <span class="kpi-value">12</span>
+                    <span class="kpi-label">Finalizados (Mês)</span>
+                </div>
+            </div>
+        </section>
+
+        <div class="main-layout-grid">
+            <section class="apps-section">
+                <h4 class="section-title">Acesso Rápido</h4>
+                <div class="app-cards-grid">
+                    <a href="/testCenter" class="app-card">
+                        <div class="app-icon-container"><i class="fa fa-school"></i></div>
+                        <span class="app-name">Centro de Provas</span>
+                    </a>
+                    
+                    <a href="/certifications" class="app-card">
+                        <div class="app-icon-container"><i class="fa fa-certificate"></i></div>
+                        <span class="app-name">Certificações</span>
+                    </a>
+                    
+                    <a href="/certifiers" class="app-card">
+                        <div class="app-icon-container"><i class="fa fa-user-check"></i></div>
+                        <span class="app-name">Certificadores</span>
+                    </a>
+                    
+                    <a href="/clients" class="app-card">
+                        <div class="app-icon-container"><i class="fa fa-users"></i></div>
+                        <span class="app-name">Clientes</span>
+                    </a>
+
+                    <a href="/financeiro" class="app-card">
+                        <div class="app-icon-container"><i class="fa fa-calculator"></i></div>
+                        <span class="app-name">Financeiro</span>
+                    </a>
+                </div>
+            </section>
+
+            <section class="recent-activity-section">
+                <div class="section-header">
+                    <h4 class="section-title">Últimos Orçamentos</h4>
+                    <a href="#" class="btn-link">Ver todos</a>
+                </div>
+                
+                <div class="simple-table-container">
+                    <table class="simple-table">
+                        <thead>
+                            <tr>
+                                <th>Cliente</th>
+                                <th>Data</th>
+                                <th>Status</th>
+                                <th>Valor</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Condomínio Jardins</td>
+                                <td>22/12/2025</td>
+                                <td><span class="badge badge-pending">Pendente</span></td>
+                                <td>R$ 4.500,00</td>
+                            </tr>
+                            <tr>
+                                <td>Escola Viver</td>
+                                <td>20/12/2025</td>
+                                <td><span class="badge badge-progress">Em Andamento</span></td>
+                                <td>R$ 12.000,00</td>
+                            </tr>
+                            <tr>
+                                <td>Sra. Maria Silva</td>
+                                <td>18/12/2025</td>
+                                <td><span class="badge badge-success">Finalizado</span></td>
+                                <td>R$ 1.200,00</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+
+    {% else %}
+        <div class="logged-out-state">
+            <p>Você não está autenticado.</p>
+            <a href="{% url 'login' %}" class="btn-primary">Fazer Login</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

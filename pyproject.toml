@@ -1,22 +1,116 @@
+# ==============================================================================
+# 1. METADADOS DO PROJETO & DEPENDÊNCIAS DE PRODUÇÃO
+# ==============================================================================
 [project]
-name = "rnpinturas-api"
-version = "0.1.0"
-description = ""
-authors = [
-    {name = "André Ventura",email = "ti@asventura.com.br"}
-]
+name = "rnpinturas_api"
+version = "1.0.0"
+description = "API para o sistema de gestão da RN Pinturas"
 readme = "README.md"
-requires-python = ">=3.14"
+requires-python = ">=3.14,<4.0"
+authors = [
+    { name = "André Ventura", email = "ti@asventura.com.br" }
+]
 dependencies = [
     "django (>=6.0,<7.0)",
     "python-dotenv (>=1.2.1,<2.0.0)",
     "pymysql (>=1.1.2,<2.0.0)",
     "weasyprint (>=67.0,<68.0)",
     "gunicorn (>=23.0.0,<24.0.0)",
-    "whitenoise (>=6.11.0,<7.0.0)"
+    "whitenoise (>=6.11.0,<7.0.0)",
+    "requests (>=2.32.5,<3.0.0)",
+    "django-storages (>=1.14.6,<2.0.0)",
+    "paramiko (>=4.0.0,<5.0.0)",
+    "pillow (>=12.0.0,<13.0.0)"
 ]
 
+# ==============================================================================
+# 2. DEPENDÊNCIAS DE DESENVOLVIMENTO
+# ==============================================================================
+[dependency-groups]
+dev = [
+    "ruff (>=0.14.10,<0.15.0)",
+    "djlint (>=1.36.4,<2.0.0)",
+    "taskipy (>=1.14.1,<2.0.0)",
+    "psutil (<7.0.0)"
+]
 
+# ==============================================================================
+# 3. CONFIGURAÇÕES DE FERRAMENTAS (TOOLS)
+# ==============================================================================
+
+# --- TASKIPY (Automação de Tarefas) ---
+[tool.taskipy.tasks]
+update = "python update_packages.py"
+
+# --- RUFF (Linter & Formatter) ---
+[tool.ruff]
+line-length = 100
+target-version = "py314"
+indent-width = 4
+extend-exclude = [
+    "migrations",
+    "venv",
+    ".venv",
+    ".git",
+    "__pycache__",
+]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"
+
+[tool.ruff.lint]
+select = [
+    "E",    # pycodestyle errors
+    "W",    # pycodestyle warnings
+    "F",    # pyflakes
+    "I",    # isort
+    "UP",   # pyupgrade
+    "B",    # bugbear
+    "C4",   # comprehensions
+    "PIE",  # misc fixes
+    "PL",   # pylint
+    "RUF",  # ruff specific
+    "DJ",   # flake8-django
+    "C90",  # mccabe
+    "S",    # bandit (security)
+]
+ignore = [
+    "E501",   # line too long (gerenciado pelo formatter)
+    "DJ001",  # nullable string (comum em Django)
+    "F401",   # unused import (comum em apps.py e signals)
+    "D100",   # missing docstring module
+    "D101",   # missing docstring class
+    "ANN",    # type annotations (deixamos para o mypy)
+    "RUF012", # mutable defaults (comum em Django models)
+]
+
+[tool.ruff.lint.per-file-ignores]
+"**/*migrations/*.py" = ["E", "F", "W", "I", "PL", "UP", "DJ"]
+"**/tests/**.py"      = ["S101", "ANN", "D", "PLR2004"]
+"**/settings.py"      = ["E402", "F401"]
+"**/apps.py"          = ["F401"]
+"**/*admin*.py"       = ["RUF012"]
+# Exceção de segurança para o script de automação
+"update_packages.py"  = ["S603", "S607"]
+
+# --- MYPY (Checagem de Tipos Estática) ---
+[tool.mypy]
+python_version = "3.14"
+warn_unused_ignores = true
+show_error_codes = true
+strict = false
+mypy_path = [".", "apps"]
+
+[[tool.mypy.overrides]]
+module = ["apps.*.models", "*.models"]
+disable_error_code = ["var-annotated"]
+
+# ==============================================================================
+# 4. SISTEMA DE BUILD (POETRY CORE)
+# ==============================================================================
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"

@@ -1,7 +1,8 @@
 # apps/cities/models.py
 
-from django.db import models
 from common.models import IdleBase
+from django.db import models
+
 
 class UF(IdleBase):
     """
@@ -25,8 +26,8 @@ class City(IdleBase):
     Cidades.
     """
     uf = models.ForeignKey(
-        UF, 
-        on_delete=models.PROTECT, 
+        UF,
+        on_delete=models.PROTECT,
         verbose_name="Estado",
         related_name="cities"
     )

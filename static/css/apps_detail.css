@@ -1,0 +1,320 @@
+/* static/css/apps_detail.css */
+
+/* ==========================================================================
+   LAYOUT GERAL (Desktop First)
+   ========================================================================== */
+.container-apps-detail {
+    display: grid;
+    grid-template-columns: 280px 1fr; /* Sidebar fixa, Conteúdo fluido */
+    grid-template-rows: 100%;
+    gap: 1.5rem;
+    height: calc(100vh - 140px);
+    width: 100%;
+    padding: 1rem 1.5rem 1.5rem 1.5rem;
+    overflow: hidden;
+    font-family: 'Montserrat', sans-serif;
+}
+
+/* ==========================================================================
+   SIDEBAR (Navegação)
+   ========================================================================== */
+.verticalTab-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    height: 100%;
+    overflow-y: auto;
+    padding-right: 5px;
+}
+
+.verticalTab {
+    background-color: var(--bg-card);
+    border: 1px solid transparent;
+    border-radius: 12px;
+    padding: 1rem 1.2rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--text-secondary);
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: all 0.2s ease-in-out;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+}
+
+.verticalTab i {
+    font-size: 1.1rem;
+    width: 24px;
+    text-align: center;
+}
+
+.verticalTab:hover {
+    background-color: var(--bg-body);
+    color: var(--cor-brand-primary);
+    transform: translateX(5px);
+}
+
+.verticalTab.active {
+    background-color: var(--cor-brand-primary);
+    color: #fff;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    border-color: var(--cor-brand-primary);
+}
+.verticalTab.active:hover {
+    transform: none;
+}
+
+/* ==========================================================================
+   WRAPPER E CONTEÚDO (Correção da Caixa Branca)
+   ========================================================================== */
+.verticalTab-content-wrapper {
+    /* O Wrapper agora é transparente, apenas organiza o layout */
+    background-color: transparent !important;
+    box-shadow: none !important;
+    border: none !important;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; 
+    position: relative;
+}
+
+.verticalTab-content {
+    /* O estilo de CARD (Fundo Branco) vai APENAS no conteúdo */
+    background-color: var(--bg-card);
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    border: 1px solid var(--borda-suave);
+    
+    flex-grow: 1; /* Ocupa todo espaço disponível menos os botões */
+    overflow-y: auto; /* Scroll apenas dentro do card branco */
+    padding: 2rem;
+}
+
+/* Itens de Conteúdo */
+.verticalTab-content-item {
+    display: none;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.verticalTab-content-item.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.apps-detail-sub-section-title {
+    font-family: 'Fredoka', sans-serif;
+    font-size: 1rem;
+    color: var(--cor-brand-primary);
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--borda-suave);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 600;
+}
+
+/* ==========================================================================
+   GRID DE DADOS
+   ========================================================================== */
+.apps-detail-group {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); 
+    gap: 2rem 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.p-detail {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin: 0;
+}
+.p-detail.full-width { grid-column: 1 / -1; }
+
+.apps-detail-label {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+.apps-detail-value {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1rem;
+    color: var(--text-primary);
+    font-weight: 500;
+    border-bottom: 1px solid transparent;
+    word-break: break-word;
+}
+.p-detail:hover .apps-detail-value { color: var(--cor-brand-primary); }
+
+/* ==========================================================================
+   TABELAS
+   ========================================================================== */
+.apps-detail-tb {
+    width: 100%;
+    overflow-x: auto;
+    border: 1px solid var(--borda-suave);
+    border-radius: 8px;
+    margin-bottom: 1rem;
+}
+
+.tb-detail {
+    width: 100%;
+    border-collapse: collapse;
+    white-space: nowrap;
+}
+
+.tb-detail thead th {
+    background-color: var(--cor-brand-primary);
+    color: white;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 1rem 1.5rem;
+    text-align: left;
+    position: sticky;
+    top: 0;
+    z-index: 5;
+}
+
+[data-theme="dark"] .tb-detail thead th { color: var(--base-dark-blue) !important; }
+
+.tb-detail tbody td {
+    padding: 0.8rem 1.5rem;
+    color: var(--text-primary);
+    border-bottom: 1px solid var(--borda-suave);
+    font-size: 0.9rem;
+    vertical-align: middle;
+    background-color: var(--bg-card);
+}
+.tb-detail tbody tr:hover td {
+    background-color: var(--bg-body);
+    color: var(--cor-brand-primary);
+}
+
+/* ==========================================================================
+   BOTÕES DE AÇÃO (Desktop & Geral)
+   ========================================================================== */
+.apps-detail-btn-group {
+    display: flex;
+    justify-content: flex-end; /* Alinha à direita no desktop */
+    gap: 1rem;
+    width: 100%;
+    margin-top: 1.5rem; /* Separa do card branco */
+    
+    /* Removemos qualquer estilo de caixa */
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+    
+    /* Garante que o container não mexa ao passar o mouse */
+    transform: none !important;
+    transition: none !important;
+}
+
+/* O hover só deve afetar os botões individuais (a tag 'a'), não a div */
+.apps-detail-btn-group:hover {
+    transform: none !important;
+    background: transparent !important;
+}
+
+/* ==========================================================================
+   MOBILE & TABLET
+   ========================================================================== */
+@media (max-width: 992px) {
+    .container-apps-detail {
+        display: flex;
+        flex-direction: column;
+        height: auto !important;
+        min-height: 100vh;
+        overflow-y: visible !important;
+        padding: 1rem 0.8rem;
+        gap: 1.2rem;
+    }
+
+    /* Sidebar Horizontal (Pills) */
+    .verticalTab-sidebar {
+        flex-direction: row;
+        overflow-x: auto;
+        padding: 5px 2px 10px 2px;
+        gap: 10px;
+        height: auto;
+        min-height: auto;
+        border-bottom: none;
+        margin-bottom: 0;
+        scrollbar-width: none;
+    }
+    .verticalTab-sidebar::-webkit-scrollbar { display: none; }
+
+    .verticalTab {
+        min-width: fit-content;
+        white-space: nowrap;
+        padding: 0.6rem 1.2rem;
+        font-size: 0.85rem;
+        background-color: transparent;
+        border: 1px solid var(--borda-suave);
+        border-radius: 50px;
+        color: var(--text-secondary);
+        box-shadow: none;
+        margin: 0;
+    }
+    .verticalTab:hover { transform: none; } /* Remove hover de movimento no mobile */
+
+    .verticalTab.active {
+        background-color: var(--cor-brand-primary);
+        color: #fff;
+        border-color: var(--cor-brand-primary);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        transform: translateY(-1px);
+    }
+    
+    .verticalTab i { display: none; }
+
+    /* Card de Conteúdo no Mobile */
+    .verticalTab-content {
+        padding: 1.5rem;
+        border-radius: 16px;
+        background-color: var(--bg-card);
+        border: 1px solid var(--borda-suave);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+    }
+
+    .apps-detail-group {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    /* Tabela Responsiva */
+    .apps-detail-tb {
+        display: block;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    .tb-detail th, .tb-detail td { white-space: nowrap; }
+
+    /* Botões Mobile */
+    .apps-detail-btn-group {
+        flex-direction: row;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 4rem;
+    }
+    
+    .apps-detail-btn-group a {
+        flex: 1;
+        text-align: center;
+        padding: 0.9rem 0.5rem;
+        font-size: 0.9rem;
+        border-radius: 10px;
+        justify-content: center;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.06); 
+    }
+}

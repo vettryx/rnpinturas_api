@@ -5,10 +5,11 @@ Configurações do Django para o projeto RN Pinturas.
 Baseado na estrutura moderna com Pathlib e boas práticas de produção.
 """
 
-from pathlib import Path
-from dotenv import load_dotenv
 import os
 import sys
+from pathlib import Path
+
+from dotenv import load_dotenv
 
 # --- CONFIGURAÇÃO DE CAMINHOS ---
 # Definição do diretório base do projeto (BASE_DIR)
@@ -41,7 +42,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    
+
+    # Terceiros
+    'storages',
+
     # Apps Personalizados (RN Pinturas)
     'cities',
     'clients',
@@ -80,6 +84,9 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
+            "libraries": {
+                "custom_filters": "templatetags.custom_filters",
+            },
         },
     },
 ]
@@ -129,6 +136,11 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# --- LOGIN / LOGOUT ---
+LOGIN_URL = "login"
+LOGIN_REDIRECT_URL = "home"
+LOGOUT_REDIRECT_URL = "login"
+
 # --- INTERNACIONALIZAÇÃO ---
 LANGUAGE_CODE = 'pt-br'
 TIME_ZONE = 'America/Sao_Paulo'
@@ -141,9 +153,35 @@ STATIC_URL = 'static/'
 STATICFILES_DIRS = [BASE_DIR / "static"]
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
-# Compressão e Cache para produção
-if not DEBUG:
-    STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+# --- CONFIGURAÇÃO DE MÍDIA E UPLOAD (Hostinger FTP) ---
+# URL pública para acessar os arquivos (usado pelo Front)
+MEDIA_URL = os.getenv('SFTP_PUBLIC_URL', '/djangoApi_media/')
+
+# Configuração Unificada de Armazenamento (Django 4.2+)
+STORAGES = {
+    # 1. Arquivos Estáticos (CSS/JS) - Whitenoise
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage"
+                   if not DEBUG else "django.contrib.staticfiles.storage.StaticFilesStorage",
+    },
+
+    # 2. Arquivos de Mídia (Uploads) - SFTPStorage
+    "default": {
+        "BACKEND": "storages.backends.sftpstorage.SFTPStorage",
+        "OPTIONS": {
+            "host": os.getenv('SFTP_HOST'),
+            "root_path": os.getenv('SFTP_ROOT_PATH'),
+            "params": {
+                "port": int(os.getenv('SFTP_PORT') or 22),
+                "username": os.getenv('SFTP_USER'),
+                "password": os.getenv('SFTP_PASSWORD'),
+                "allow_agent": False,
+                "look_for_keys": False,
+            },
+            "file_mode": 0o644,
+        },
+    },
+}
 
 # --- SEGURANÇA E COOKIES (Produção) ---
 # Só ativa se DEBUG=False para não travar o localhost
@@ -152,4 +190,4 @@ if not DEBUG:
     CSRF_COOKIE_SECURE = True
     SECURE_BROWSER_XSS_FILTER = True
     SECURE_CONTENT_TYPE_NOSNIFF = True
-    # SECURE_SSL_REDIRECT = True # Cuidado ao ativar isso antes de ter HTTPS configurado
+    # SECURE_SSL_REDIRECT = True

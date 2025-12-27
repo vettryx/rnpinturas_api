@@ -1,3 +1,5 @@
+# rnpinturas/asgi.py
+
 """
 ASGI config for rnpinturas project.
 

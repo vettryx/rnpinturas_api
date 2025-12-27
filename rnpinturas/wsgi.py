@@ -1,3 +1,5 @@
+# rnpinturas/wsgi.py
+
 """
 WSGI config for rnpinturas project.
 

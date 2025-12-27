@@ -1,3 +1,6 @@
+# apps/clients/apps.py
+
+
 from django.apps import AppConfig
 
 

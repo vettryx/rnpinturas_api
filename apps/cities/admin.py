@@ -1,7 +1,9 @@
 # apps/cities/admin.py
 
 from django.contrib import admin
+
 from .models import UF, City
+
 
 @admin.register(UF)
 class UFAdmin(admin.ModelAdmin):
