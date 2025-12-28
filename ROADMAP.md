@@ -19,9 +19,9 @@ Este documento lista as funcionalidades planejadas, em progresso e concluídas p
 - [ ] Configuração SMTP no `.env` (Envio de e-mails).
 - [ ] Tela de "Alterar Senha" (para usuário logado).
 - [ ] Fluxo de "Esqueci a Senha" (Reset Password):
-- [ ] Formulário de solicitação de e-mail.
-- [ ] Template de e-mail enviado.
-- [ ] Tela de confirmação e nova senha.
+  - [ ] Formulário de solicitação de e-mail.
+  - [ ] Template de e-mail enviado.
+  - [ ] Tela de confirmação e nova senha.
 
 ### 🛡️ Fase 3: Hardening (Segurança Avançada)
 
