@@ -1,0 +1,62 @@
+{# templates/two_factor/profile/profile.html #}
+
+{% extends "two_factor/_base.html" %}
+{% load i18n %}
+
+{% block title %}Segurança da Conta | RN Pinturas{% endblock title %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0"><i class="fas fa-user-shield"></i> Gerenciar Segurança (2FA)</h4>
+                </div>
+                <div class="card-body">
+                    
+                    {% if default_device %}
+                        <div class="alert alert-success">
+                            <i class="fas fa-check-circle"></i> Autenticação em Duas Etapas está <strong>ATIVA</strong>.
+                        </div>
+                    {% else %}
+                        <div class="alert alert-warning">
+                            <i class="fas fa-exclamation-triangle"></i> Autenticação em Duas Etapas está <strong>DESATIVADA</strong>.
+                        </div>
+                    {% endif %}
+
+                    <hr>
+
+                    <h5><i class="fas fa-file-invoice"></i> Códigos de Reserva</h5>
+                    <p class="text-muted small">
+                        Se você perder seu celular, esses códigos são a única forma de recuperar sua conta.
+                        {% if backup_tokens == 0 %}
+                            <span class="text-danger fw-bold">Você não tem mais códigos! Gere novos imediatamente.</span>
+                        {% else %}
+                            Você tem <strong>{{ backup_tokens }}</strong> código(s) restante(s).
+                        {% endif %}
+                    </p>
+                    
+                    <a href="{% url 'two_factor:backup_tokens' %}" class="btn btn-outline-primary btn-sm mb-4">
+                        <i class="fas fa-list-ol"></i> Gerenciar Códigos de Reserva
+                    </a>
+
+                    <hr>
+
+                    <h5 class="text-danger"><i class="fas fa-ban"></i> Zona de Perigo</h5>
+                    <p class="text-muted small">
+                        Desabilitar a verificação em duas etapas deixará sua conta menos segura.
+                    </p>
+
+                    <form method="post" action="{% url 'two_factor:disable' %}" onsubmit="return confirm('Tem certeza que deseja remover a proteção da sua conta?');">
+                        {% csrf_token %}
+                        <button class="btn btn-danger" type="submit">
+                            <i class="fas fa-trash-alt"></i> Desabilitar 2FA
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

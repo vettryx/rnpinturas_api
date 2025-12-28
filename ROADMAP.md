@@ -25,9 +25,9 @@ Este documento lista as funcionalidades planejadas, em progresso e concluídas p
 
 ### 🛡️ Fase 3: Hardening (Segurança Avançada)
 
-- [ ] Proteção contra Brute-Force (Limitar tentativas de login) com `django-axes`.
-- [ ] Autenticação de Dois Fatores (2FA) com `django-two-factor-auth`.
-- [ ] Integração com Google Authenticator.
+- [x] Proteção contra Brute-Force (Limitar tentativas de login) com `django-axes`.
+- [x] Autenticação de Dois Fatores (2FA) com `django-two-factor-auth`.
+- [x] Integração com Google Authenticator.
 
 ### 🎨 Fase 4: UX e Auditoria
 

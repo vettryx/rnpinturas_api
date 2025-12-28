@@ -33,7 +33,14 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    # --- SEGURANÇA AVANÇADA (2FA) ---
+    'django_otp',
+    'django_otp.plugins.otp_static',
+    'django_otp.plugins.otp_totp',
+    'two_factor',
+
     # Terceiros
+    'axes',
     'storages',
 
     # Apps Personalizados (RN Pinturas)
@@ -54,8 +61,10 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django_otp.middleware.OTPMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'axes.middleware.AxesMiddleware',
 ]
 
 ROOT_URLCONF = 'rnpinturas.urls'
@@ -125,10 +134,18 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# --- CONFIGURAÇÃO DE BACKENDS DE AUTENTICAÇÃO ---
+AUTHENTICATION_BACKENDS = [
+    # O Axes precisa ser o PRIMEIRO para monitorar
+    'axes.backends.AxesBackend',
+    # O padrão do Django para logar com usuário e senha
+    'django.contrib.auth.backends.ModelBackend',
+]
+
 # --- LOGIN / LOGOUT ---
-LOGIN_URL = "login"
+LOGIN_URL = "two_factor:login"
 LOGIN_REDIRECT_URL = "home"
-LOGOUT_REDIRECT_URL = "login"
+LOGOUT_REDIRECT_URL = "two_factor:login"
 
 # --- INTERNACIONALIZAÇÃO ---
 LANGUAGE_CODE = 'pt-br'
@@ -180,3 +197,24 @@ if not DEBUG:
     SECURE_BROWSER_XSS_FILTER = True
     SECURE_CONTENT_TYPE_NOSNIFF = True
     # SECURE_SSL_REDIRECT = True
+
+# --- SEGURANÇA CONTRA FORÇA BRUTA (AXES) ---
+
+# Quantas chances o usuário tem antes de ser bloqueado?
+AXES_FAILURE_LIMIT = 5
+
+# Quanto tempo (em horas) ele fica bloqueado?
+AXES_COOLOFF_TIME = 1
+
+# COMO O BLOQUEIO DEVE FUNCIONAR (Sintaxe Nova)
+# 'username' = Bloqueia só o usuário (padrão)
+# 'ip' = Bloqueia o IP todo (afeta todo mundo naquele wifi)
+# 'combination_user_and_ip' = Bloqueia aquele usuário especificamente naquele IP (Mais seguro e preciso)
+AXES_LOCK_OUT_BY = 'combination_user_and_ip'
+
+# Resetar o contador se ele acertar a senha? (Sim)
+AXES_RESET_ON_SUCCESS = True
+
+# Mensagem de erro que aparece para o usuário (Opcional, mas boa prática)
+AXES_LOCKOUT_TEMPLATE = None # Usa o padrão do Django ou define um template seu depois
+AXES_LOCKOUT_PARAMETERS = ["username", "ip_address"]

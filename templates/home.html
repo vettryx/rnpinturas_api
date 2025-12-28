@@ -126,7 +126,7 @@
     {% else %}
         <div class="logged-out-state">
             <p>Você não está autenticado.</p>
-            <a href="{% url 'login' %}" class="btn-primary">Fazer Login</a>
+            <a href="{% url 'two_factor:login' %}" class="btn-primary">Fazer Login</a>
         </div>
     {% endif %}
 </div>
