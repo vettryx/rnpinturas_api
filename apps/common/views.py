@@ -3,6 +3,7 @@
 from http import HTTPStatus
 
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse
 from django.urls import reverse_lazy
@@ -307,6 +308,7 @@ class CommonDetailView(LoginRequiredMixin, DetailView):
 
 
 @require_http_methods(["GET"])
+@login_required
 def api_busca_cep(request, cep):
     """
     Endpoint API para retornar dados do CEP para o front-end.

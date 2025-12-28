@@ -34,9 +34,23 @@
                 </button>
                 
                 {% if request.user.is_authenticated %}
-                <div class="user-profile">
-                    <small>Olá, {{ request.user.first_name }}</small>
-                </div>
+        
+                    <div class="user-profile">
+                        <small>Olá, <strong>{{ request.user.first_name|default:request.user.username }}</strong></small>
+                    </div>
+
+                    <form action="{% url 'logout' %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-icon" title="Sair do Sistema">
+                            <i class="fa fa-sign-out-alt"></i> </button>
+                    </form>
+
+                {% else %}
+                    
+                    <a href="{% url 'login' %}" class="btn-icon" title="Fazer Login">
+                        <i class="fa fa-sign-in-alt"></i>
+                    </a>
+
                 {% endif %}
             </div>
         </div>

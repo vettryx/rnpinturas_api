@@ -5,17 +5,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="description" content="{% block meta_description %}Sistema corporativo de gestão da RN Pinturas{% endblock meta_description %}">
+    <meta name="keywords" content="{% block meta_keywords %}gestão, pintura, RN Pinturas, sistema corporativo{% endblock meta_keywords %}">
+
     <title>Centro de Provas - Login</title>
     {% load static %}
     <!-- Fontes e estilos CSS -->
-    {% include 'css_includes.html' %}
+    {% include "css_includes.html" %}
 </head>
 <body class="login-page">
     <div class="login-container">
         <!-- Adicionando a imagem de destaque -->
         <div class="login-image">
-            <img src="{% static 'shared-styles/images/venturix_logo.png' %}" 
-                    alt="Logo Venturix" class="logo">
+            <img src="{% static "shared-styles/images/venturix_logo.png" %}" 
+                    alt="Logo Venturix" class="logo" width="200" height="auto">
         </div>
 
         <div class="login-box">
@@ -35,6 +39,6 @@
         </div>
     </div>
     <!-- Rodapé -->
-    {% include 'includes/footer.html' %}
+    {% include "includes/footer.html" %}
 </body>
 </html>

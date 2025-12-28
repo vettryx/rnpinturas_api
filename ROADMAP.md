@@ -8,11 +8,11 @@ Este documento lista as funcionalidades planejadas, em progresso e concluídas p
 
 ### 📍 Fase 1: Autenticação Essencial (Auth Básica)
 
-- [ ] Configuração de URLs de Auth (`django.contrib.auth.urls`).
-- [ ] View e Template de Login Personalizado.
-- [ ] Configuração de Logout e Redirecionamento.
-- [ ] Proteção de Rotas com `@login_required` em todas as views do sistema.
-- [ ] Ajuste de `LOGIN_REDIRECT_URL` e `LOGOUT_REDIRECT_URL`.
+- [x] Configuração de URLs de Auth (`django.contrib.auth.urls`).
+- [x] View e Template de Login Personalizado.
+- [x] Configuração de Logout e Redirecionamento.
+- [x] Proteção de Rotas com `@login_required` em todas as views do sistema.
+- [x] Ajuste de `LOGIN_REDIRECT_URL` e `LOGOUT_REDIRECT_URL`.
 
 ### 📧 Fase 2: Gestão de Senhas e E-mail
 

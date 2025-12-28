@@ -12,25 +12,15 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 # --- CONFIGURAÇÃO DE CAMINHOS ---
-# Definição do diretório base do projeto (BASE_DIR)
 BASE_DIR = Path(__file__).resolve().parent.parent
-
-# Adiciona a pasta 'apps' ao Python Path
-# Isso permite importar 'clients' direto, ao invés de 'apps.clients'
 sys.path.append(str(BASE_DIR / 'apps'))
-
-# Carrega o arquivo .env para variáveis de ambiente
 load_dotenv(os.path.join(BASE_DIR, ".env"))
 
 # --- SEGURANÇA BÁSICA ---
 SECRET_KEY = os.getenv("SECRET_KEY")
-
-# Configuração do modo de depuração (DEBUG) baseado na variável de ambiente
 DEBUG = os.getenv("DEBUG", "False") == "True"
 
-# Configuração dos hosts permitidos (ALLOWED_HOSTS) para produção
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
-# Adiciona domínios do Render automaticamente se estiverem no ambiente
 if os.getenv("RENDER_EXTERNAL_HOSTNAME"):
     ALLOWED_HOSTS.append(os.getenv("RENDER_EXTERNAL_HOSTNAME"))
 
@@ -56,7 +46,7 @@ INSTALLED_APPS = [
     'services',
 ]
 
-# Configuração dos middlewares (MIDDLEWARE)
+# --- MIDDLEWARE ---
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
@@ -68,10 +58,9 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-# Configuração da URL principal (ROOT_URLCONF)
 ROOT_URLCONF = 'rnpinturas.urls'
 
-# Configuração dos templates (TEMPLATES)
+# --- TEMPLATES ---
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -153,11 +142,9 @@ STATIC_URL = 'static/'
 STATICFILES_DIRS = [BASE_DIR / "static"]
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
-# --- CONFIGURAÇÃO DE MÍDIA E UPLOAD (Hostinger FTP) ---
-# URL pública para acessar os arquivos (usado pelo Front)
+# --- CONFIGURAÇÃO DE MÍDIA E UPLOAD (SFTP) ---
 MEDIA_URL = os.getenv('SFTP_PUBLIC_URL', '/djangoApi_media/')
 
-# Configuração Unificada de Armazenamento (Django 4.2+)
 STORAGES = {
     # 1. Arquivos Estáticos (CSS/JS) - Whitenoise
     "staticfiles": {
@@ -183,8 +170,10 @@ STORAGES = {
     },
 }
 
-# --- SEGURANÇA E COOKIES (Produção) ---
+# --- SEGURANÇA E SESSÃO ---
 # Só ativa se DEBUG=False para não travar o localhost
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
 if not DEBUG:
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
