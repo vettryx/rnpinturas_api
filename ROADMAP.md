@@ -31,8 +31,8 @@ Este documento lista as funcionalidades planejadas, em progresso e concluídas p
 
 ### 🎨 Fase 4: UX e Auditoria
 
-- [ ] Navbar Dinâmica (Mostrar nome do usuário / Botão Entrar ou Sair).
-- [ ] Página de Perfil do Usuário (Meus Dados).
+- [x] Navbar Dinâmica (Mostrar nome do usuário / Botão Entrar ou Sair).
+- [x] Página de Perfil do Usuário (Meus Dados).
 - [ ] Logs de Acesso (Auditoria básica).
 
 ---

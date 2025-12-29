@@ -33,6 +33,10 @@ urlpatterns = [
     # URL de Rotas de Autenticação (2FA)
     path('', include(tf_urls)),
 
+    # URLs de Troca de Senha
+    path('account/password/', auth_views.PasswordChangeView.as_view(), name='password_change'),
+    path('account/password/done/', auth_views.PasswordChangeDoneView.as_view(), name='password_change_done'),
+
     # URL de Rotas de Logout
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
 

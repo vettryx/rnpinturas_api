@@ -36,7 +36,11 @@
                 {% if request.user.is_authenticated %}
         
                     <div class="user-profile">
-                        <small>Olá, <strong>{{ request.user.first_name|default:request.user.username }}</strong></small>
+                        <small>Olá, 
+                            <a href="{% url 'two_factor:profile' %}" title="Acessar Meu Perfil">
+                                <strong>{{ request.user.first_name|default:request.user.username }}</strong>
+                            </a>
+                        </small>
                     </div>
 
                     <form action="{% url 'logout' %}" method="post">
