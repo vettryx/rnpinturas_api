@@ -115,6 +115,9 @@ else:
         }
     }
 
+# Definição Global de ID Automático
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
 # --- VALIDAÇÃO DE SENHA ---
 AUTH_PASSWORD_VALIDATORS = [
     {
