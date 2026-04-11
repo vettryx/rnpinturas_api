@@ -19,6 +19,7 @@ from .models import Client, ClientAddress, ClientContact
 
 logger = logging.getLogger(__name__)
 
+
 class ClientForm(forms.ModelForm):
     name = forms.CharField(
         label="Nome / Razão Social",
@@ -84,7 +85,7 @@ class ClientForm(forms.ModelForm):
     idle = forms.TypedChoiceField(
         label="Cliente Inativo?",
         choices=Client.SIM_NAO,
-        coerce=lambda x: x == 'True' or x is True,
+        coerce=lambda x: x == "True" or x is True,
         widget=forms.Select(
             attrs={
                 "class": "apps-form-input select2",
@@ -95,13 +96,13 @@ class ClientForm(forms.ModelForm):
     class Meta:
         model = Client
         fields = [
-            'name',
-            'fantasy_name',
-            'person_type',
-            'cpf_cnpj',
-            'rg_ie',
-            'idle',
-            'notes',
+            "name",
+            "fantasy_name",
+            "person_type",
+            "cpf_cnpj",
+            "rg_ie",
+            "idle",
+            "notes",
         ]
 
 
@@ -117,7 +118,7 @@ class ClientAddressForm(forms.ModelForm):
     )
     city = forms.ModelChoiceField(
         label="Cidade",
-        queryset=City.objects.none().order_by('name'),
+        queryset=City.objects.none().order_by("name"),
         widget=forms.Select(
             attrs={
                 "class": "apps-form-input select2-ajax city-input",
@@ -167,12 +168,12 @@ class ClientAddressForm(forms.ModelForm):
     class Meta:
         model = ClientAddress
         fields = [
-            'zip_code',
-            'city',
-            'street',
-            'number',
-            'complement',
-            'district',
+            "zip_code",
+            "city",
+            "street",
+            "number",
+            "complement",
+            "district",
         ]
 
     def __init__(self, *args, **kwargs):
@@ -180,25 +181,24 @@ class ClientAddressForm(forms.ModelForm):
 
         # LÓGICA DE PERFORMANCE OTIMIZADA
         # Descobre o nome exato do campo no request.POST (trata standalone e formsets)
-        city_field_name = f"{self.prefix}-city" if self.prefix else 'city'
+        city_field_name = f"{self.prefix}-city" if self.prefix else "city"
 
         if self.data and city_field_name in self.data:
             # 1. Requisição POST: O usuário tentou salvar algo
             try:
                 city_id = int(self.data.get(city_field_name))
-                self.fields['city'].queryset = City.objects.filter(pk=city_id)
+                self.fields["city"].queryset = City.objects.filter(pk=city_id)
             except (ValueError, TypeError):
                 logger.debug(f"Input inválido no campo city: {self.data.get(city_field_name)}")
         elif self.instance and self.instance.pk and self.instance.city_id:
             # 2. Requisição GET (Edição): O cliente já tem uma cidade salva
-            self.fields['city'].queryset = City.objects.filter(pk=self.instance.city_id)
-
+            self.fields["city"].queryset = City.objects.filter(pk=self.instance.city_id)
 
 
 class ClientContactForm(forms.ModelForm):
     contact_type = forms.ModelChoiceField(
         label="Tipo de Contato",
-        queryset=AuxContactType.objects.filter(idle=False).order_by('name'),
+        queryset=AuxContactType.objects.filter(idle=False).order_by("name"),
         widget=forms.Select(
             attrs={
                 "class": "apps-form-input select2",
@@ -233,9 +233,9 @@ class ClientContactForm(forms.ModelForm):
     class Meta:
         model = ClientContact
         fields = [
-            'contact_type',
-            'value',
-            'notes',
+            "contact_type",
+            "value",
+            "notes",
         ]
 
 

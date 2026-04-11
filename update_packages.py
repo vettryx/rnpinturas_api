@@ -17,23 +17,21 @@ def get_poetry_executable() -> str:
 
     return path
 
+
 def run_poetry_command(executable: str, args: list[str], check: bool = True) -> str:
     """
     Executa comandos do poetry de forma encapsulada.
     """
     try:
         result = subprocess.run(
-            [executable, *args],
-            capture_output=True,
-            text=True,
-            check=check,
-            shell=False
+            [executable, *args], capture_output=True, text=True, check=check, shell=False
         )
         return result.stdout
     except subprocess.CalledProcessError as e:
         print(f"Erro ao executar comando: {' '.join([executable, *args])}")
         print(f"Detalhes: {e.stderr}")
         sys.exit(1)
+
 
 def export_requirements():
     """
@@ -48,19 +46,19 @@ def export_requirements():
         print(f"Erro crítico ao gerar requirements.txt: {e}")
         sys.exit(1)
 
+
 def update_packages():
     print("--- Verificando dependências do projeto RN Pinturas ---")
 
     poetry_exe = get_poetry_executable()
 
     print("Simulando atualização para verificar viabilidade...")
-    simulation_output = run_poetry_command(
-        poetry_exe, ["update", "--dry-run"], check=False
-    )
+    simulation_output = run_poetry_command(poetry_exe, ["update", "--dry-run"], check=False)
 
-    if "No dependencies to install or update" in simulation_output or \
-       "0 installs, 0 updates" in simulation_output:
-
+    if (
+        "No dependencies to install or update" in simulation_output
+        or "0 installs, 0 updates" in simulation_output
+    ):
         print("\nTudo limpo! Nenhuma atualização pendente.")
 
         print("Regenerando requirements.txt para garantir integridade...")
@@ -73,7 +71,7 @@ def update_packages():
     print("-" * 40)
 
     confirm = input("Deseja aplicar essas atualizações? (s/n): ").lower()
-    if confirm != 's':
+    if confirm != "s":
         print("Cancelado.")
         return
 
@@ -84,6 +82,7 @@ def update_packages():
     export_requirements()
 
     print("\nProcesso concluído com sucesso!")
+
 
 if __name__ == "__main__":
     update_packages()
