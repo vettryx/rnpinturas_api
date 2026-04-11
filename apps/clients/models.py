@@ -1,11 +1,20 @@
-# apps/clients/models.py
+"""
+==============================================================================
+Módulo: Modelos de Clientes (Clients Models)
+Caminho: apps/clients/models.py
+==============================================================================
+
+Define a entidade central de clientes (Customer) da RN Pinturas,
+incluindo seus dados de faturamento, contatos e endereços.
+"""
 
 import re
 import unicodedata
 
 from common.models import AddressBase, ContactBase, IdleBase, NoteBase
+from django.contrib import admin
 from django.db import models
-from django.db.models import Q
+from django.db.models import Max, Q
 
 
 class Client(IdleBase):
@@ -62,7 +71,14 @@ class Client(IdleBase):
         ]
 
     def save(self, *args, **kwargs):
-        # Garante que o nome seja salvo em caixa alta
+        # 1. Geração automática do ID caso esteja vazio
+        if not self.id:
+            # Busca o maior uid atualmente cadastrado na tabela
+            max_id = Client.objects.aggregate(Max('id'))['id__max']
+            # Se não existir nenhum cliente ainda, começa do 1, senão soma 1 ao maior
+            self.id = (max_id or 0) + 1
+
+        # 2. Garante que o nome seja salvo em caixa alta e sem acentos
         if self.name:
             normalized = unicodedata.normalize('NFKD', self.name)
             clean_name = normalized.encode('ASCII', 'ignore').decode('utf-8')
@@ -73,18 +89,31 @@ class Client(IdleBase):
             clean_fantasy = normalized_fantasy.encode('ASCII', 'ignore').decode('utf-8')
             self.fantasy_name = clean_fantasy.strip().upper()
 
-        # Limpeza de CPF/CNPJ (Mantém apenas números)
+        # 3. Limpeza de CPF/CNPJ (Mantém apenas números)
         if self.cpf_cnpj:
             self.cpf_cnpj = re.sub(r'[^0-9]', '', self.cpf_cnpj)
 
-        # Limpeza de RG/IE (Remove pontos, traços e barras)
+        # 4. Limpeza de RG/IE (Remove pontos, traços e barras)
         if self.rg_ie:
             self.rg_ie = re.sub(r'[\.\-\/]', '', self.rg_ie).strip().upper()
 
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return self.name
+        return f"[{self.id_formatted}] {self.name}"
+
+    @property
+    @admin.display(description="ID", ordering="id")
+    def id_formatted(self):
+        """
+        Retorna o ID formatado com no mínimo 6 dígitos e separador (ex: 000.011).
+        Ideal para usar em templates e painéis administrativos.
+        """
+        if not self.id:
+            return "000.000"
+
+        id_str = f"{self.id:06d}"
+        return f"{id_str[:-3]}.{id_str[-3:]}"
 
 
 class ClientAddress(NoteBase, AddressBase):

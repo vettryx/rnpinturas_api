@@ -1,4 +1,12 @@
-# apps/clients/urls.py
+"""
+==============================================================================
+Módulo: Roteamento (URLs)
+Caminho: apps/clients/urls.py
+==============================================================================
+
+Define as rotas (endpoints) específicas do módulo de clientes.
+Mapeia as URLs para as respectivas views (Listagem, Criação, Edição, etc.).
+"""
 
 from django.urls import path
 

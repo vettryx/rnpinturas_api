@@ -1,6 +1,16 @@
-# apps/clients/admin.py
+"""
+==============================================================================
+Módulo: Administração (Admin)
+Caminho: apps/clients/admin.py
+==============================================================================
+
+Registra os modelos de clientes e contatos no painel administrativo
+do Django para gerenciamento rápido via interface web.
+"""
 
 from django.contrib import admin
+from django.db import models
+from django.forms import Textarea
 
 from .models import Client, ClientAddress, ClientContact
 
@@ -8,21 +18,35 @@ from .models import Client, ClientAddress, ClientContact
 class ClientContactInline(admin.TabularInline):
     """
     Permite adicionar contatos diretamente na tela do Cliente.
-    TabularInline deixa os campos um ao lado do outro (mais compacto).
     """
     model = ClientContact
-    extra = 1  # Quantas linhas vazias aparecem por padrão
-    classes = ['collapse'] # Permite esconder/mostrar a seção
+    extra = 1
+    classes = ['collapse']
+    fields = ('contact_type', 'value', 'notes')
+    formfield_overrides = {
+        models.TextField: {'widget': Textarea(attrs={'rows': 2, 'cols': 40})},
+    }
 
 class ClientAddressInline(admin.StackedInline):
     """
     Permite adicionar endereços na tela do Cliente.
-    StackedInline empilha os campos (melhor para formulários grandes como endereço).
     """
     model = ClientAddress
     extra = 0
-    autocomplete_fields = ['city']  # Busca inteligente de cidade (Requer configuração no CityAdmin)
+    autocomplete_fields = ['city']
     classes = ['collapse']
+    fields = (
+        'zip_code',
+        'street',
+        'number',
+        'complement',
+        'district',
+        'city',
+        'notes'
+    )
+    formfield_overrides = {
+        models.TextField: {'widget': Textarea(attrs={'rows': 3})},
+    }
 
 @admin.register(Client)
 class ClientAdmin(admin.ModelAdmin):
