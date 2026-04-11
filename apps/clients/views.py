@@ -16,6 +16,7 @@ from common.views import (
     CommonTemplateView,
     CommonUpdateView,
 )
+from django.db import transaction
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.utils.html import format_html
@@ -120,6 +121,12 @@ class ClientListView(CommonListView):
 class ClientDetailView(CommonDetailView):
     model = Client
     return_url = reverse_lazy('clients:list')
+
+    def get_object(self, queryset=None):
+        return super().get_queryset().prefetch_related(
+            'addresses__city',
+            'contacts__contact_type'
+        ).get(pk=self.kwargs.get('pk'))
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -244,16 +251,17 @@ class ClientCreateView(CommonCreateView):
         contact_formset = context['contact_formset']
 
         if form.is_valid() and address_formset.is_valid() and contact_formset.is_valid():
-            # 1. Salva o cliente (Pai)
-            self.object = form.save()
+            with transaction.atomic():
+                # 1. Salva o cliente (Pai)
+                self.object = form.save()
 
-            # 2. Salva Endereços
-            address_formset.instance = self.object
-            address_formset.save()
+                # 2. Salva Endereços
+                address_formset.instance = self.object
+                address_formset.save()
 
-            # 3. Salva Contatos
-            contact_formset.instance = self.object
-            contact_formset.save()
+                # 3. Salva Contatos
+                contact_formset.instance = self.object
+                contact_formset.save()
 
             return redirect(self.success_url)
         else:
@@ -267,6 +275,12 @@ class ClientUpdateView(CommonUpdateView):
     success_url = reverse_lazy('clients:list')
     title = "Editar Cliente"
     return_url = reverse_lazy('clients:list')
+
+    def get_object(self, queryset=None):
+        return super().get_queryset().prefetch_related(
+            'addresses__city',
+            'contacts__contact_type'
+        ).get(pk=self.kwargs.get('pk'))
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -317,13 +331,14 @@ class ClientUpdateView(CommonUpdateView):
         contact_formset = context['contact_formset']
 
         if form.is_valid() and address_formset.is_valid() and contact_formset.is_valid():
-            self.object = form.save()
+            with transaction.atomic():
+                self.object = form.save()
 
-            address_formset.instance = self.object
-            address_formset.save()
+                address_formset.instance = self.object
+                address_formset.save()
 
-            contact_formset.instance = self.object
-            contact_formset.save()
+                contact_formset.instance = self.object
+                contact_formset.save()
 
             return redirect(self.success_url)
         else:

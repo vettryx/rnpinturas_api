@@ -25,7 +25,6 @@ class ClientForm(forms.ModelForm):
         widget=forms.TextInput(
             attrs={
                 "class": "apps-form-input",
-                "id": "client-name",
                 "placeholder": "Digite o Nome ou Razão Social",
                 "autofocus": True,
             }
@@ -37,7 +36,6 @@ class ClientForm(forms.ModelForm):
         widget=forms.TextInput(
             attrs={
                 "class": "apps-form-input",
-                "id": "client-fantasy-name",
                 "placeholder": "Digite o Nome Fantasia (opcional)",
             }
         ),
@@ -48,7 +46,6 @@ class ClientForm(forms.ModelForm):
         widget=forms.Select(
             attrs={
                 "class": "apps-form-input select2",
-                "id": "client-person-type",
                 "placeholder": "Selecione o Certificador",
             }
         ),
@@ -59,7 +56,6 @@ class ClientForm(forms.ModelForm):
         widget=forms.TextInput(
             attrs={
                 "class": "apps-form-input cpf-cnpj-mask",
-                "id": "client-cpf-cnpj",
                 "placeholder": "Digite o documento",
             }
         ),
@@ -70,7 +66,6 @@ class ClientForm(forms.ModelForm):
         widget=forms.TextInput(
             attrs={
                 "class": "apps-form-input",
-                "id": "client-rg-ie",
                 "placeholder": "Digite o RG ou IE",
             }
         ),
@@ -81,7 +76,6 @@ class ClientForm(forms.ModelForm):
         widget=forms.Textarea(
             attrs={
                 "class": "apps-form-input",
-                "id": "client-notes",
                 "placeholder": "Observações gerais sobre o cliente",
                 "rows": 3,
             }
@@ -94,7 +88,6 @@ class ClientForm(forms.ModelForm):
         widget=forms.Select(
             attrs={
                 "class": "apps-form-input select2",
-                "id": "client-idle",
             }
         ),
     )
@@ -118,19 +111,17 @@ class ClientAddressForm(forms.ModelForm):
         widget=forms.TextInput(
             attrs={
                 "class": "apps-form-input zip-code-input zip-code-mask cep-input",
-                "id": "client-address-zip-code",
                 "placeholder": "Digite o CEP",
             }
         ),
     )
     city = forms.ModelChoiceField(
         label="Cidade",
-        queryset=City.objects.all().order_by('name'),
+        queryset=City.objects.none().order_by('name'),
         widget=forms.Select(
             attrs={
                 "class": "apps-form-input select2-ajax city-input",
                 "data-ajax-url": "/cities/api/autocomplete/",
-                "id": "client-address-city",
                 "placeholder": "Selecione a Cidade",
             }
         ),
@@ -140,7 +131,6 @@ class ClientAddressForm(forms.ModelForm):
         widget=forms.TextInput(
             attrs={
                 "class": "apps-form-input logradouro-input",
-                "id": "client-address-street",
                 "placeholder": "Digite o Logradouro",
             }
         ),
@@ -150,7 +140,6 @@ class ClientAddressForm(forms.ModelForm):
         widget=forms.TextInput(
             attrs={
                 "class": "apps-form-input",
-                "id": "client-address-number",
                 "placeholder": "Digite o Número",
             }
         ),
@@ -161,7 +150,6 @@ class ClientAddressForm(forms.ModelForm):
         widget=forms.TextInput(
             attrs={
                 "class": "apps-form-input complemento-input",
-                "id": "client-address-complement",
                 "placeholder": "Digite o Complemento (opcional)",
             }
         ),
@@ -171,7 +159,6 @@ class ClientAddressForm(forms.ModelForm):
         widget=forms.TextInput(
             attrs={
                 "class": "apps-form-input bairro-input",
-                "id": "client-address-district",
                 "placeholder": "Digite o Bairro",
             }
         ),
@@ -191,32 +178,20 @@ class ClientAddressForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        # LÓGICA DE PERFORMANCE (O Pulo do Gato)
-        # Por padrão, queryset vazio para não renderizar 5000 options no HTML
-        self.fields['city'].queryset = City.objects.none()
+        # LÓGICA DE PERFORMANCE OTIMIZADA
+        # Descobre o nome exato do campo no request.POST (trata standalone e formsets)
+        city_field_name = f"{self.prefix}-city" if self.prefix else 'city'
 
-        # 1. Se tiver dados no POST (tentando salvar), carrega a cidade enviada para validar
-        if 'city' in self.data:
+        if self.data and city_field_name in self.data:
+            # 1. Requisição POST: O usuário tentou salvar algo
             try:
-                city_id = int(self.data.get('city'))
+                city_id = int(self.data.get(city_field_name))
                 self.fields['city'].queryset = City.objects.filter(pk=city_id)
             except (ValueError, TypeError):
-                pass  # Input inválido, deixa vazio e o Django gerencia o erro field required
-
-        # 2. Se for edição (instance já existe), carrega a cidade atual
-        elif self.instance.pk and self.instance.city:
-            self.fields['city'].queryset = City.objects.filter(pk=self.instance.city.pk)
-
-        # 3. Formset Management (O prefixo muda em formsets: 'address_set-0-city')
-        elif self.prefix:
-            # Tenta achar o campo no POST usando o prefixo (ex: clients-address-0-city)
-            field_name = f"{self.prefix}-city"
-            if self.data and field_name in self.data:
-                try:
-                    city_id = int(self.data.get(field_name))
-                    self.fields['city'].queryset = City.objects.filter(pk=city_id)
-                except Exception as e:
-                    logger.debug(f"Input inválido no campo city do formset: {e}")
+                logger.debug(f"Input inválido no campo city: {self.data.get(city_field_name)}")
+        elif self.instance and self.instance.pk and self.instance.city_id:
+            # 2. Requisição GET (Edição): O cliente já tem uma cidade salva
+            self.fields['city'].queryset = City.objects.filter(pk=self.instance.city_id)
 
 
 

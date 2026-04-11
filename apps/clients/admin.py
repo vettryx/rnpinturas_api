@@ -27,6 +27,7 @@ class ClientContactInline(admin.TabularInline):
         models.TextField: {'widget': Textarea(attrs={'rows': 2, 'cols': 40})},
     }
 
+
 class ClientAddressInline(admin.StackedInline):
     """
     Permite adicionar endereços na tela do Cliente.
@@ -47,6 +48,7 @@ class ClientAddressInline(admin.StackedInline):
     formfield_overrides = {
         models.TextField: {'widget': Textarea(attrs={'rows': 3})},
     }
+
 
 @admin.register(Client)
 class ClientAdmin(admin.ModelAdmin):
