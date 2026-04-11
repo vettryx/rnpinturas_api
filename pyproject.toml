@@ -44,6 +44,7 @@ dev = [
 # --- TASKIPY (Automação de Tarefas) ---
 [tool.taskipy.tasks]
 update = "python update_packages.py"
+lint = "ruff check . --fix && ruff format ."
 
 # --- RUFF (Linter & Formatter) ---
 [tool.ruff]
