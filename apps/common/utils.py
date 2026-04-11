@@ -8,6 +8,7 @@ from cities.models import City
 
 logger = logging.getLogger(__name__)
 
+
 def buscar_dados_cep(cep):
     """
     Busca dados do CEP na BrasilAPI.
@@ -40,8 +41,7 @@ def buscar_dados_cep(cep):
                     # Tenta filtrar por nome exato e sigla do estado
                     # Assumindo que seu model City tem relacionamento com UF via 'uf__sigla'
                     city_obj = City.objects.filter(
-                        name__iexact=cidade_nome_api,
-                        uf__sigla__iexact=uf_api
+                        name__iexact=cidade_nome_api, uf__sigla__iexact=uf_api
                     ).first()
                 except Exception:
                     # Se der erro no filtro do estado (ex: campo tem outro nome),
@@ -56,7 +56,7 @@ def buscar_dados_cep(cep):
                 "cidade_id": city_obj.pk if city_obj else None,
                 "cidade_nome": str(city_obj) if city_obj else cidade_nome_api,
                 "uf": uf_api,
-                "encontrou_cidade_local": city_obj is not None
+                "encontrou_cidade_local": city_obj is not None,
             }
 
         elif response.status_code == HTTPStatus.NOT_FOUND:
