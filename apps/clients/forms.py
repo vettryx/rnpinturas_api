@@ -11,6 +11,7 @@ de clientes via interface web tradicional (quando não usar DRF).
 import logging
 
 from cities.models import City
+from common.forms import AddressBaseForm, ContactBaseForm, NoteBaseForm
 from common.models import AuxContactType
 from django import forms
 from django.forms import inlineformset_factory
@@ -85,65 +86,11 @@ class ClientForm(forms.ModelForm):
         ]
 
 
-class ClientAddressForm(forms.ModelForm):
-    zip_code = forms.CharField(
-        label="CEP",
-        widget=forms.TextInput(
-            attrs={
-                "class": "apps-form-input zip-code-input zip-code-mask cep-input",
-                "placeholder": "Digite o CEP",
-            }
-        ),
-    )
-    city = forms.ModelChoiceField(
-        label="Cidade",
-        queryset=City.objects.none().order_by("name"),
-        widget=forms.Select(
-            attrs={
-                "class": "apps-form-input select2-ajax city-input",
-                "data-ajax-url": "/cities/api/autocomplete/",
-                "placeholder": "Selecione a Cidade",
-            }
-        ),
-    )
-    street = forms.CharField(
-        label="Logradouro (Rua/Av)",
-        widget=forms.TextInput(
-            attrs={
-                "class": "apps-form-input logradouro-input",
-                "placeholder": "Digite o Logradouro",
-            }
-        ),
-    )
-    number = forms.CharField(
-        label="Número",
-        widget=forms.TextInput(
-            attrs={
-                "class": "apps-form-input",
-                "placeholder": "Digite o Número",
-            }
-        ),
-    )
-    complement = forms.CharField(
-        label="Complemento",
-        required=False,
-        widget=forms.TextInput(
-            attrs={
-                "class": "apps-form-input complemento-input",
-                "placeholder": "Digite o Complemento (opcional)",
-            }
-        ),
-    )
-    district = forms.CharField(
-        label="Bairro",
-        widget=forms.TextInput(
-            attrs={
-                "class": "apps-form-input bairro-input",
-                "placeholder": "Digite o Bairro",
-            }
-        ),
-    )
-
+class ClientAddressForm(AddressBaseForm, NoteBaseForm):
+    """
+    Herda toda a estrutura de endereço e performance do AddressBaseForm,
+    mais o campo de observações do NoteBaseForm.
+    """
     class Meta:
         model = ClientAddress
         fields = [
@@ -174,41 +121,10 @@ class ClientAddressForm(forms.ModelForm):
             self.fields["city"].queryset = City.objects.filter(pk=self.instance.city_id)
 
 
-class ClientContactForm(forms.ModelForm):
-    contact_type = forms.ModelChoiceField(
-        label="Tipo de Contato",
-        queryset=AuxContactType.objects.filter(idle=False).order_by("name"),
-        widget=forms.Select(
-            attrs={
-                "class": "apps-form-input select2",
-                "id": "client-contact-type",
-                "placeholder": "Selecione o Tipo de Contato",
-            }
-        ),
-    )
-    value = forms.CharField(
-        label="Valor (Tel/Email)",
-        widget=forms.TextInput(
-            attrs={
-                "class": "apps-form-input",
-                "id": "client-contact-value",
-                "placeholder": "Digite o Valor do Contato",
-            }
-        ),
-    )
-    notes = forms.CharField(
-        label="Observações",
-        required=False,
-        widget=forms.Textarea(
-            attrs={
-                "class": "apps-form-input",
-                "id": "client-contact-notes",
-                "placeholder": "Observações sobre o contato",
-                "rows": 3,
-            }
-        ),
-    )
-
+class ClientContactForm(ContactBaseForm, NoteBaseForm):
+    """
+    Herda estrutura de contato do ContactBaseForm e observações do NoteBaseForm.
+    """
     class Meta:
         model = ClientContact
         fields = [
