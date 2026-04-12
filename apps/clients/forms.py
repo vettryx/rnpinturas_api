@@ -101,24 +101,6 @@ class ClientAddressForm(AddressBaseForm, NoteBaseForm):
             "district",
         ]
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        # LÓGICA DE PERFORMANCE OTIMIZADA
-        # Descobre o nome exato do campo no request.POST (trata standalone e formsets)
-        city_field_name = f"{self.prefix}-city" if self.prefix else "city"
-
-        if self.data and city_field_name in self.data:
-            # 1. Requisição POST: O usuário tentou salvar algo
-            try:
-                city_id = int(self.data.get(city_field_name))
-                self.fields["city"].queryset = City.objects.filter(pk=city_id)
-            except (ValueError, TypeError):
-                logger.debug(f"Input inválido no campo city: {self.data.get(city_field_name)}")
-        elif self.instance and self.instance.pk and self.instance.city_id:
-            # 2. Requisição GET (Edição): O cliente já tem uma cidade salva
-            self.fields["city"].queryset = City.objects.filter(pk=self.instance.city_id)
-
 
 class ClientContactForm(ContactBaseForm, NoteBaseForm):
     """
