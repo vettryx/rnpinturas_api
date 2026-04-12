@@ -20,6 +20,7 @@ logger = logging.getLogger(__name__)
 
 class NoteBaseForm(forms.ModelForm):
     """Molde genérico para formulários que possuem apenas Observações."""
+
     notes = forms.CharField(
         label="Observações",
         required=False,
@@ -35,6 +36,7 @@ class NoteBaseForm(forms.ModelForm):
 
 class IdleBaseForm(NoteBaseForm):
     """Molde genérico para formulários que possuem Observações e Status Inativo."""
+
     SIM_NAO = [
         (False, "Não"),
         (True, "Sim"),
@@ -58,6 +60,7 @@ class AddressBaseForm(forms.ModelForm):
     Já inclui a lógica de performance (Select2 AJAX) para não carregar
     milhares de cidades no HTML simultaneamente.
     """
+
     zip_code = forms.CharField(
         label="CEP",
         required=False,
@@ -70,7 +73,7 @@ class AddressBaseForm(forms.ModelForm):
     )
     city = forms.ModelChoiceField(
         label="Cidade",
-        queryset=City.objects.none().order_by('name'),
+        queryset=City.objects.none().order_by("name"),
         widget=forms.Select(
             attrs={
                 "class": "apps-form-input select2-ajax city-input",
@@ -124,23 +127,28 @@ class AddressBaseForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
 
         # LÓGICA DE PERFORMANCE OTIMIZADA PARA QUALQUER APP
-        city_field_name = f"{self.prefix}-city" if self.prefix else 'city'
+        city_field_name = f"{self.prefix}-city" if self.prefix else "city"
 
         if self.data and city_field_name in self.data:
             try:
                 city_id = int(self.data.get(city_field_name))
-                self.fields['city'].queryset = City.objects.filter(pk=city_id)
+                self.fields["city"].queryset = City.objects.filter(pk=city_id)
             except (ValueError, TypeError):
                 logger.debug(f"Input inválido no campo city: {self.data.get(city_field_name)}")
-        elif hasattr(self, 'instance') and getattr(self.instance, 'pk', None) and getattr(self.instance, 'city_id', None):
-            self.fields['city'].queryset = City.objects.filter(pk=self.instance.city_id)
+        elif (
+            hasattr(self, "instance")
+            and getattr(self.instance, "pk", None)
+            and getattr(self.instance, "city_id", None)
+        ):
+            self.fields["city"].queryset = City.objects.filter(pk=self.instance.city_id)
 
 
 class ContactBaseForm(forms.ModelForm):
     """Molde genérico para Contatos."""
+
     contact_type = forms.ModelChoiceField(
         label="Tipo de Contato",
-        queryset=AuxContactType.objects.filter(idle=False).order_by('name'),
+        queryset=AuxContactType.objects.filter(idle=False).order_by("name"),
         widget=forms.Select(
             attrs={
                 "class": "apps-form-input select2",
