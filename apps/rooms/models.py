@@ -1,7 +1,14 @@
-# apps/rooms/models.py
+"""
+==============================================================================
+Módulo: Modelos de Cômodos (Rooms Models)
+Caminho: apps/rooms/models.py
+==============================================================================
 
-from django.db import models
+Define a entidade central de cômodos (Room) da RN Pinturas
+"""
+
 from common.models import IdleBase
+from django.db import models
 
 
 class Room(IdleBase):

@@ -1,6 +1,15 @@
-# apps/rooms/admin.py
+"""
+==============================================================================
+Módulo: Administração (Admin)
+Caminho: apps/rooms/admin.py
+==============================================================================
+
+Registra os modelos de salas no painel administrativo
+do Django para gerenciamento rápido via interface web.
+"""
 
 from django.contrib import admin
+
 from .models import Room, RoomPart
 
 
