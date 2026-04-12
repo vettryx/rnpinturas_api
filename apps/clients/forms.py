@@ -71,27 +71,6 @@ class ClientForm(forms.ModelForm):
             }
         ),
     )
-    notes = forms.CharField(
-        label="Observações",
-        required=False,
-        widget=forms.Textarea(
-            attrs={
-                "class": "apps-form-input",
-                "placeholder": "Observações gerais sobre o cliente",
-                "rows": 3,
-            }
-        ),
-    )
-    idle = forms.TypedChoiceField(
-        label="Cliente Inativo?",
-        choices=Client.SIM_NAO,
-        coerce=lambda x: x == "True" or x is True,
-        widget=forms.Select(
-            attrs={
-                "class": "apps-form-input select2",
-            }
-        ),
-    )
 
     class Meta:
         model = Client
