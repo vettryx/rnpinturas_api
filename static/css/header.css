@@ -1,44 +1,47 @@
 /* static/css/header.css */
 
-/* --- HEADER GERAL --- */
+/* ==========================================================================
+   HEADER GLOBAL
+   ========================================================================== */
+
 .main-header {
     background-color: var(--bg-header);
     border-bottom: 1px solid var(--borda-suave);
-    padding: 0.8rem 2rem; /* Altura ajustada */
+    padding: 0.8rem 2rem;
     box-shadow: 0 2px 4px rgba(0,0,0,0.05);
     transition: background-color 0.3s ease;
     width: 100%;
-    position: sticky; /* Opcional: mantem o header fixo no topo */
+    position: sticky;
     top: 0;
     z-index: 100;
 }
 
 .header-content {
-    display: flex; /* OBRIGATÓRIO para alinhar lado a lado */
-    justify-content: space-between; /* Espalha: Logo esq, Título centro, User dir */
-    align-items: center; /* Centraliza verticalmente */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     max-width: 1400px;
     margin: 0 auto;
     width: 100%;
 }
 
-/* 1. Área do Logo */
+/* --- ÁREA DO LOGO --- */
 .logo-area {
     display: flex;
     align-items: center;
-    flex: 0 0 200px; /* Largura fixa para não empurrar o título */
+    flex: 0 0 200px;
 }
 
 .logo {
-    max-height: 45px; /* Altura controlada da imagem */
+    max-height: 45px;
     width: auto;
     filter: var(--logo-filter); 
     transition: filter 0.3s;
 }
 
-/* 2. Área do Título */
+/* --- ÁREA DO TÍTULO --- */
 .title-area {
-    flex: 1; /* Ocupa todo o espaço central sobrando */
+    flex: 1;
     display: flex;
     justify-content: center;
 }
@@ -50,37 +53,16 @@
     letter-spacing: 1px;
     margin: 0;
     text-align: center;
-    white-space: nowrap; /* Evita quebra de linha no título */
+    white-space: nowrap;
 }
 
-/* 3. Área de Ações */
+/* --- ÁREA DE AÇÕES --- */
 .actions-area {
     display: flex;
     align-items: center;
     justify-content: flex-end;
     gap: 1rem;
-    flex: 0 0 200px; /* Mesma largura do logo para manter o título perfeitamente centralizado */
-}
-
-/* Botão de Tema */
-.btn-icon {
-    background: transparent;
-    border: 1px solid var(--borda-suave);
-    color: var(--text-primary);
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s;
-}
-
-.btn-icon:hover {
-    background-color: var(--cor-brand-primary);
-    color: white;
-    border-color: var(--cor-brand-primary);
+    flex: 0 0 200px;
 }
 
 .user-profile {
@@ -89,11 +71,15 @@
     font-weight: 500;
 }
 
-/* Responsividade para telas menores (Celulares) */
+.user-profile a {
+    color: var(--text-secondary);
+    text-decoration: none;
+}
+
+/* --- RESPONSIVIDADE --- */
 @media (max-width: 768px) {
     .header-content {
-        flex-direction: column; /* Empilha no celular */
-        gap: 10px;
+        flex-direction: column;
     }
     
     .logo-area, .actions-area {
@@ -103,6 +89,6 @@
     }
     
     .title-area {
-        display: none; /* Esconde o título no mobile para economizar espaço, ou diminua a fonte */
+        display: none;
     }
 }

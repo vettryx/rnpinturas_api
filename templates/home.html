@@ -3,11 +3,11 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Dashboard - RN Pinturas{% endblock %}
+{% block title %}Dashboard - RN Pinturas{% endblock title %}
 
-{% block body_class %}body-home{% endblock %}
+{% block body_class %}body-home{% endblock body_class %}
 
-{% block header_title %}Visão Geral{% endblock %}
+{% block header_title %}Visão Geral{% endblock header_title %}
 
 {% block content %}
 <div class="dashboard-wrapper">
@@ -126,8 +126,8 @@
     {% else %}
         <div class="logged-out-state">
             <p>Você não está autenticado.</p>
-            <a href="{% url 'login' %}" class="btn-primary">Fazer Login</a>
+            <a href="{% url 'two_factor:login' %}" class="btn-primary">Fazer Login</a>
         </div>
     {% endif %}
 </div>
-{% endblock %}
+{% endblock content %}

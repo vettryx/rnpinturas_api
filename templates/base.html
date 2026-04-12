@@ -21,23 +21,42 @@
     <header class="main-header">
         <div class="header-content">
             <div class="logo-area">
-                {# <img src="{% static 'shared-styles/images/venturix_logo.png' %}" alt="Logo Venturix" class="logo"> #}
+                <a href="{% url 'home' %}" title="Acessar Meu Perfil">
+                    <img src="{% static '#' %}" alt="Logo RN Pinturas" class="logo">
+                </a>
             </div>
 
             <div class="title-area">
                 <h2 class="page-title">{% block header_title %}RN PINTURAS{% endblock header_title %}</h2>
             </div>
 
-            <div class="actions-area">
+            <div class="actions-area">                
+                {% if request.user.is_authenticated %}
+        
+                    <div class="user-profile">
+                        <small>Olá, 
+                            <a href="{% url 'two_factor:profile' %}" title="Acessar Meu Perfil">
+                                <strong>{{ request.user.first_name|default:request.user.username }}</strong>
+                            </a>
+                        </small>
+                    </div>
+
+                    <form action="{% url 'logout' %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-icon" title="Sair do Sistema">
+                            <i class="fa fa-sign-out-alt"></i> </button>
+                    </form>
+
+                {% else %}
+                    
+                    <a href="{% url 'two_factor:login' %}" class="btn-icon" title="Fazer Login">
+                        <i class="fa fa-sign-in-alt"></i>
+                    </a>
+
+                {% endif %}
                 <button id="theme-toggle-btn" class="btn-icon" title="Alternar Tema">
                     <i class="fa fa-moon"></i>
                 </button>
-                
-                {% if request.user.is_authenticated %}
-                <div class="user-profile">
-                    <small>Olá, {{ request.user.first_name }}</small>
-                </div>
-                {% endif %}
             </div>
         </div>
     </header>

@@ -10,6 +10,7 @@ class NoteBase(models.Model):
     """
     Nível 1: Apenas Observações.
     """
+
     notes = models.TextField(blank=True, null=True, verbose_name="Observações")
 
     class Meta:
@@ -20,16 +21,13 @@ class IdleBase(NoteBase):
     """
     Nível 2: Observações + Inativo (Idle).
     """
+
     SIM_NAO = [
-        (False, 'Não'),
-        (True, 'Sim'),
+        (False, "Não"),
+        (True, "Sim"),
     ]
 
-    idle = models.BooleanField(
-        default=False,
-        verbose_name="Inativo?",
-        choices=SIM_NAO
-    )
+    idle = models.BooleanField(default=False, verbose_name="Inativo?", choices=SIM_NAO)
 
     class Meta:
         abstract = True
@@ -40,6 +38,7 @@ class AuxContactType(IdleBase):
     Tipos de contato (Ex: E-mail, WhatsApp, Telefone).
     Tabela: aux_contact_type
     """
+
     name = models.CharField(max_length=255, unique=True, verbose_name="Nome")
 
     class Meta:
@@ -56,6 +55,7 @@ class AuxStatus(IdleBase):
     Status de orçamentos/pedidos (Ex: Pendente, Aprovado, Cancelado).
     Tabela: aux_status
     """
+
     name = models.CharField(max_length=255, unique=True, verbose_name="Nome")
 
     class Meta:
@@ -72,6 +72,7 @@ class AuxUnitMeasure(IdleBase):
     Unidades de medida (Ex: m², un, kg, l).
     Tabela: aux_unit_measure
     """
+
     code = models.CharField(max_length=50, unique=True, verbose_name="Código (Sigla)")
     name = models.CharField(max_length=255, verbose_name="Nome")
 
@@ -90,41 +91,15 @@ class AddressBase(models.Model):
     Contém os campos e a lógica de limpeza (Upper/Strip).
     NÃO cria tabela no banco (abstract = True).
     """
-    city = models.ForeignKey(
-        'cities.City',
-        on_delete=models.PROTECT,
-        verbose_name="Cidade"
-    )
-    zip_code = models.CharField(
-        max_length=10,
-        blank=True,
-        null=True,
-        verbose_name="CEP"
-    )
+
+    city = models.ForeignKey("cities.City", on_delete=models.PROTECT, verbose_name="Cidade")
+    zip_code = models.CharField(max_length=10, blank=True, null=True, verbose_name="CEP")
     street = models.CharField(
-        max_length=255,
-        blank=True,
-        null=True,
-        verbose_name="Logradouro (Rua/Av)"
+        max_length=255, blank=True, null=True, verbose_name="Logradouro (Rua/Av)"
     )
-    number = models.CharField(
-        max_length=20,
-        blank=True,
-        null=True,
-        verbose_name="Número"
-    )
-    complement = models.CharField(
-        max_length=100,
-        blank=True,
-        null=True,
-        verbose_name="Complemento"
-    )
-    district = models.CharField(
-        max_length=100,
-        blank=True,
-        null=True,
-        verbose_name="Bairro"
-    )
+    number = models.CharField(max_length=20, blank=True, null=True, verbose_name="Número")
+    complement = models.CharField(max_length=100, blank=True, null=True, verbose_name="Complemento")
+    district = models.CharField(max_length=100, blank=True, null=True, verbose_name="Bairro")
 
     class Meta:
         abstract = True
@@ -144,14 +119,14 @@ class AddressBase(models.Model):
     def save(self, *args, **kwargs):
         # 1. Limpeza do CEP (Apenas Números)
         if self.zip_code:
-            self.zip_code = re.sub(r'[^0-9]', '', self.zip_code)
+            self.zip_code = re.sub(r"[^0-9]", "", self.zip_code)
 
         # 2. Função auxiliar interna para limpar textos
         def clean_text(text):
             if not text:
                 return None
-            normalized = unicodedata.normalize('NFKD', text)
-            clean = normalized.encode('ASCII', 'ignore').decode('utf-8')
+            normalized = unicodedata.normalize("NFKD", text)
+            clean = normalized.encode("ASCII", "ignore").decode("utf-8")
             return clean.strip().upper()
 
         # Aplica padronização (agora suportando campos vazios)
@@ -168,15 +143,11 @@ class ContactBase(models.Model):
     Molde Abstrato para Contatos.
     Contém a lógica complexa de formatação de telefone.
     """
+
     contact_type = models.ForeignKey(
-        AuxContactType,
-        on_delete=models.PROTECT,
-        verbose_name="Tipo de Contato"
+        AuxContactType, on_delete=models.PROTECT, verbose_name="Tipo de Contato"
     )
-    value = models.CharField(
-        max_length=255,
-        verbose_name="Valor (Tel/Email)"
-    )
+    value = models.CharField(max_length=255, verbose_name="Valor (Tel/Email)")
 
     class Meta:
         abstract = True
@@ -203,7 +174,7 @@ class ContactBase(models.Model):
             # Lógica para Telefones Brasil (+55)
             elif self.contact_type_id in PHONES_BR:
                 # Remove tudo que não for dígito
-                numbers = re.sub(r'[^0-9]', '', self.value)
+                numbers = re.sub(r"[^0-9]", "", self.value)
 
                 # (2 dígitos DDD + 9 dígitos número = 11)
                 MAX_LENGTH_WITHOUT_COUNTRY_CODE = 11
@@ -211,14 +182,14 @@ class ContactBase(models.Model):
                 # Se o usuário digitou sem o 55 (ex: 31999999999 - tem 10 ou 11 digitos), adicionamos
                 # Se ele já digitou 5531..., mantemos.
                 if len(numbers) <= MAX_LENGTH_WITHOUT_COUNTRY_CODE:
-                    numbers = '55' + numbers
+                    numbers = "55" + numbers
 
                 self.value = f"+{numbers}"
 
             # Lógica para Telefone Exterior (+Pais...)
             elif self.contact_type_id in PHONE_EXT:
                 # Apenas limpa caracteres não numéricos e garante o + no início
-                numbers = re.sub(r'[^0-9]', '', self.value)
+                numbers = re.sub(r"[^0-9]", "", self.value)
                 self.value = f"+{numbers}"
 
         super().save(*args, **kwargs)

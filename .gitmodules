@@ -1,0 +1,3 @@
+[submodule "static/core-theme"]
+	path = static/core-theme
+	url = https://github.com/vettryx/vettryx-ui-core.git

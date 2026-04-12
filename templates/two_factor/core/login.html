@@ -1,0 +1,84 @@
+{# templates/two_factor/core/login.html #}
+
+{% extends "base.html" %}
+{% load i18n static two_factor_tags %}
+
+{% block title %}Login | RN Pinturas{% endblock title %}
+
+{% block body_class %}login-page{% endblock body_class %}
+
+{% block content %}
+    <div class="login-container">
+        
+        <div class="login-image">
+            {# Ajuste o caminho da imagem se necessário para o logo da RN Pinturas #}
+            <img src="{% static 'shared-styles/images/venturix_logo.png' %}" 
+                 alt="Logo RN Pinturas" class="logo" width="200" height="auto">
+        </div>
+
+        <div class="login-box">
+            <h2>
+                {% if wizard.steps.current == 'auth' %}
+                    Acesso Restrito
+                {% elif wizard.steps.current == 'token' %}
+                    Autenticação de Dois Fatores
+                {% else %}
+                    Verificação de Segurança
+                {% endif %}
+            </h2>
+
+            <form action="" method="post">
+                {% csrf_token %}
+                
+                {{ wizard.management_form }}
+                
+                {% if wizard.form.forms %}
+                    {{ wizard.form.management_form }}
+                    {% for form in wizard.form.forms %}
+                        {% for field in form %}
+                            <div class="login-form-group">
+                                <label for="{{ field.id_for_label }}">{{ field.label }}:</label>
+                                {{ field }}
+                                {% if field.errors %}
+                                    <div class="error-message">
+                                        {{ field.errors.as_text }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    {% endfor %}
+                {% else %}
+                    {% for field in wizard.form %}
+                        <div class="login-form-group">
+                            <label for="{{ field.id_for_label }}">{{ field.label }}:</label>
+                            {{ field }}
+                            {% if field.errors %}
+                                <div class="error-message">
+                                    {{ field.errors.as_text }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+
+                <button type="submit" class="btn-access">
+                    {% if wizard.steps.current == 'auth' %}
+                        Próximo
+                    {% else %}
+                        Verificar
+                    {% endif %}
+                </button>
+
+                {% if wizard.steps.current == 'token' %}
+                    <div class="backup-token-area">
+                        <small>Não está com o celular? 
+                            <button name="wizard_goto_step" type="submit" value="backup" class="btn-link-backup">
+                                Usar código de backup
+                            </button>
+                        </small>
+                    </div>
+                {% endif %}
+            </form>
+        </div>
+    </div>
+{% endblock content %}

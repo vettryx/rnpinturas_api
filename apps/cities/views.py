@@ -8,7 +8,7 @@ MIN_QUERY_LENGTH = 2
 
 
 def city_autocomplete_view(request):
-    query = request.GET.get('term', '')
+    query = request.GET.get("term", "")
     cities = City.objects.none()
 
     if len(query) > MIN_QUERY_LENGTH:
@@ -21,9 +21,6 @@ def city_autocomplete_view(request):
         # Se não tiver __str__ configurado, usa só o nome para garantir que não quebre
         text_label = str(city)
 
-        results.append({
-            'id': city.id,
-            'text': text_label
-        })
+        results.append({"id": city.id, "text": text_label})
 
-    return JsonResponse({'results': results})
+    return JsonResponse({"results": results})

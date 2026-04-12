@@ -2,6 +2,7 @@
 # manage.py
 
 """Django's command-line utility for administrative tasks."""
+
 import os
 import sys
 
@@ -13,7 +14,8 @@ pymysql.version_info = (2, 2, 7, "final", 0)
 pymysql.install_as_MySQLdb()
 
 # Define os settings ANTES de rodar o main, no escopo global
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'rnpinturas.settings')
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "rnpinturas.settings")
+
 
 def main():
     """Run administrative tasks."""
@@ -26,5 +28,6 @@ def main():
             "forget to activate a virtual environment?"
         ) from exc
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()
