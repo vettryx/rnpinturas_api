@@ -102,7 +102,10 @@ class CommonListView(LoginRequiredMixin, ListView):
                 "header_buttons": buttons,
                 "search_fields": prepared_search,
                 "headers": self.table_headers,
-                "rows": [self.get_row_data(item) for item in context["page_obj"]],
+                "rows": [
+                    [cell if cell not in [None, ""] else "" for cell in self.get_row_data(item)]
+                    for item in context["page_obj"]
+                ],
                 "query_params": self.request.GET.urlencode(),
             }
         )
