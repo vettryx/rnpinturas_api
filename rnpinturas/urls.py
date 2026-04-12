@@ -43,6 +43,7 @@ urlpatterns = [
     # URLs dos Apps do Projeto
     path("", include("cities.urls")),
     path("", include("clients.urls")),
+    path("", include("materials.urls")),
     path("common/", include("common.urls")),
     path("orders/", include("orders.urls")),
 ]
