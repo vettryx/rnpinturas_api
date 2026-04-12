@@ -12,7 +12,6 @@ import logging
 
 from cities.models import City
 from common.forms import AddressBaseForm, ContactBaseForm, NoteBaseForm
-from common.models import AuxContactType
 from django import forms
 from django.forms import inlineformset_factory
 
