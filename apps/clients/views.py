@@ -77,12 +77,12 @@ class ClientHomeView(CommonTemplateView):
         last_clients = Client.objects.order_by("-id")[:5]
 
         context["recent_items"] = []
-        for c in last_clients:
+        for client in last_clients:
             context["recent_items"].append(
                 {
-                    "label": c.name,
-                    "url": reverse_lazy("clients:detail", args=[c.pk]),
-                    "meta": f"CNPJ/CPF: {c.cpf_cnpj}",  # ou data de criação
+                    "label": client.name,
+                    "url": reverse_lazy("clients:detail", args=[client.pk]),
+                    "meta": f"CNPJ/CPF: {client.cpf_cnpj}",
                 }
             )
 

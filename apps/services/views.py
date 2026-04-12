@@ -73,15 +73,15 @@ class ServiceHomeView(CommonTemplateView):
         ]
 
         # --- Itens Recentes (Últimos 5 Criados) ---
-        last_services = Service.objects.order_by("-created_at")[:5]
+        last_services = Service.objects.order_by("-id")[:5]
 
         context["recent_items"] = []
-        for c in last_services:
+        for service in last_services:
             context["recent_items"].append(
                 {
-                "name": c.name,
-                "url": reverse_lazy("services:detail", args=[c.pk]),
-                "meta": f"Código interno: {c.pk}",
+                "label": service.name,
+                "url": reverse_lazy("services:detail", args=[service.pk]),
+                "meta": "Inativo" if service.idle else "Ativo",
                 }
             )
 

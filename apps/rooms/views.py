@@ -87,12 +87,12 @@ class RoomHomeView(CommonTemplateView):
         last_rooms = Room.objects.order_by("-id")[:5]
 
         context["recent_items"] = []
-        for c in last_rooms:
+        for room in last_rooms:
             context["recent_items"].append(
                 {
-                    "name": c.name,
-                    "url": reverse_lazy("rooms:room_detail", args=[c.pk]),
-                    "meta": f"Código interno: {c.pk}",
+                    "label": room.name,
+                    "url": reverse_lazy("rooms:room_detail", args=[room.pk]),
+                    "meta": "Inativo" if room.idle else "Ativo",
                 }
             )
 

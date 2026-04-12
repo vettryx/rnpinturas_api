@@ -76,12 +76,12 @@ class MaterialHomeView(CommonTemplateView):
         last_materials = Material.objects.order_by("-id")[:5]
 
         context["recent_items"] = []
-        for c in last_materials:
+        for material in last_materials:
             context["recent_items"].append(
                 {
-                    "name": c.name,
-                    "url": reverse_lazy("materials:detail", args=[c.pk]),
-                    "meta": f"Código interno: {c.pk}",
+                    "label": material.name,
+                    "url": reverse_lazy("materials:detail", args=[material.pk]),
+                    "meta": "Inativo" if material.idle else "Ativo",
                 }
             )
 
