@@ -1,10 +1,10 @@
 """
 ==============================================================================
 Módulo: Visualizações e Controladores (Views)
-Caminho: apps/materials/views.py
+Caminho: apps/rooms/views.py
 ==============================================================================
 
-Contém a lógica de apresentação e endpoints da API para o módulo de materiais.
+Contém a lógica de apresentação e endpoints da API para o módulo de cômodos.
 Herdará as views genéricas do app 'common' para padronização.
 """
 
