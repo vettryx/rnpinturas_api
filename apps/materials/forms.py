@@ -34,7 +34,7 @@ class MaterialForm(IdleBaseForm):
         widget=forms.NumberInput(
             attrs={
                 "class": "apps-form-input",
-                "placeholder": "Digite o preço padrão (opcional)",
+                "placeholder": "Digite o preço sugerido (opcional)",
             }
         ),
     )
