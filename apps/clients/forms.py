@@ -85,6 +85,7 @@ class ClientAddressForm(AddressBaseForm, NoteBaseForm):
     Herda toda a estrutura de endereço e performance do AddressBaseForm,
     mais o campo de observações do NoteBaseForm.
     """
+
     class Meta:
         model = ClientAddress
         fields = [
@@ -101,6 +102,7 @@ class ClientContactForm(ContactBaseForm, NoteBaseForm):
     """
     Herda estrutura de contato do ContactBaseForm e observações do NoteBaseForm.
     """
+
     class Meta:
         model = ClientContact
         fields = [

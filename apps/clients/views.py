@@ -25,7 +25,7 @@ from .forms import ClientAddressFormSet, ClientContactFormSet, ClientForm
 from .models import Client
 
 
-# 1. HOME (Dashboard do Cliente)
+# 1. HOME
 class ClientHomeView(CommonTemplateView):
     template_name = "includes/apps_home.html"
     title = "Dashboard de Clientes"  # Mudamos o título para soar mais profissional
@@ -33,7 +33,7 @@ class ClientHomeView(CommonTemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        # --- Lógica de KPIs ---
+        # --- KPIs para o Dashboard ---
         total_clients = Client.objects.count()
         active_clients = Client.objects.filter(idle=False).count()
         inactive_clients = Client.objects.filter(idle=True).count()
@@ -59,7 +59,7 @@ class ClientHomeView(CommonTemplateView):
             },
         ]
 
-        # --- Ações Rápidas (Para deixar dinâmico no template) ---
+        # --- Ações Rápidas ---
         context["actions_list"] = [
             {
                 "label": "Novo Cliente",
@@ -74,7 +74,6 @@ class ClientHomeView(CommonTemplateView):
         ]
 
         # --- Itens Recentes (Últimos 5 cadastrados) ---
-        # Assumindo que seu model tem 'created_at' ou 'id' auto-incremento
         last_clients = Client.objects.order_by("-id")[:5]
 
         context["recent_items"] = []
@@ -90,7 +89,7 @@ class ClientHomeView(CommonTemplateView):
         return context
 
 
-# 2. LISTA
+# 2. LISTAGEM
 class ClientListView(CommonListView):
     model = Client
     title = "Listagem de Clientes"
@@ -222,7 +221,7 @@ class ClientDetailView(CommonDetailView):
         return context
 
 
-# 4. CRIAR (Novo Cliente)
+# 4. CRIAÇÃO
 class ClientCreateView(CommonCreateView):
     model = Client
     form_class = ClientForm
