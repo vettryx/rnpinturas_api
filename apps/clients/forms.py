@@ -8,16 +8,11 @@ Validação de dados de entrada e regras de negócio para criação e edição
 de clientes via interface web tradicional (quando não usar DRF).
 """
 
-import logging
-
-from cities.models import City
 from common.forms import AddressBaseForm, ContactBaseForm, NoteBaseForm
 from django import forms
 from django.forms import inlineformset_factory
 
 from .models import Client, ClientAddress, ClientContact
-
-logger = logging.getLogger(__name__)
 
 
 class ClientForm(forms.ModelForm):
