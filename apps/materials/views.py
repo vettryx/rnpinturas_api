@@ -115,6 +115,7 @@ class MaterialListView(CommonListView):
         {"field": "id", "label": "ID"},
         {"field": "name", "label": "Nome"},
         {"field": "default_price", "label": "Preço Sugerido"},
+        {"field": "notes", "label": "Observações"},
         {"field": "idle", "label": "Inativo?"},
     ]
 
@@ -153,7 +154,12 @@ class MaterialDetailView(CommonDetailView):
 
         # ABAS (Tabs)
         context["tabs"] = [
-            {"id": "tab-dados", "label": "Dados do Material", "icon": "fas fa-box", "active": True},
+            {
+                "id": "tab-dados",
+                "label": "Dados do Material",
+                "icon": "fas fa-box",
+                "active": True
+            },
         ]
 
         # SEÇÕES (Conteúdo de cada aba)

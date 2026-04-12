@@ -1,10 +1,10 @@
 """
 ==============================================================================
 Módulo: Configuração do App (App Config)
-Caminho: apps/modules/apps.py
+Caminho: apps/materials/apps.py
 ==============================================================================
 
-Arquivo de configuração central do aplicativo 'modules'.
+Arquivo de configuração central do aplicativo 'materials'.
 Define o nome, o campo de ID padrão e como ele aparece no painel admin.
 """
 
