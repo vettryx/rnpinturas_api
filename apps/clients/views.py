@@ -151,7 +151,12 @@ class ClientDetailView(CommonDetailView):
 
         # ABAS (Tabs)
         context["tabs"] = [
-            {"id": "tab-dados", "label": "Dados Cadastrais", "icon": "fas fa-user", "active": True},
+            {
+                "id": "tab-dados",
+                "label": "Dados Cadastrais",
+                "icon": "fas fa-user",
+                "active": True
+            },
             {
                 "id": "tab-enderecos",
                 "label": f"Endereços ({client.addresses.count()})",
