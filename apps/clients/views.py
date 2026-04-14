@@ -28,7 +28,7 @@ from .models import Client
 # 1. HOME
 class ClientHomeView(CommonTemplateView):
     template_name = "includes/apps_home.html"
-    title = "Dashboard de Clientes"  # Mudamos o título para soar mais profissional
+    title = "Dashboard de Clientes"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
