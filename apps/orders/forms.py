@@ -34,6 +34,7 @@ class OrderForm(forms.ModelForm):
     issue_date = forms.DateField(
         label="Data de Emissão",
         widget=forms.DateInput(
+            format="%Y-%m-%d",
             attrs={
                 "class": "apps-form-input",
                 "type": "date",
@@ -55,6 +56,7 @@ class OrderForm(forms.ModelForm):
     due_date = forms.DateField(
         label="Data de Vencimento",
         widget=forms.DateInput(
+            format="%Y-%m-%d",
             attrs={
                 "class": "apps-form-input",
                 "type": "date",
