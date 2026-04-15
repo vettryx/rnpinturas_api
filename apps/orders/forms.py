@@ -7,6 +7,7 @@ Caminho: apps/orders/forms.py
 Validação de dados de entrada e regras de negócio para criação e edição
 de pedidos (orçamentos/OS) via interface web tradicional.
 """
+from datetime import timedelta
 
 from clients.models import Client
 from common.forms import NoteBaseForm
@@ -43,16 +44,6 @@ class OrderForm(forms.ModelForm):
             }
         ),
     )
-    validity_days = forms.IntegerField(
-        label="Validade (Dias)",
-        initial=7,
-        widget=forms.NumberInput(
-            attrs={
-                "class": "apps-form-input",
-                "placeholder": "Digite a validade do pedido em dias (ex: 7)",
-            }
-        ),
-    )
     due_date = forms.DateField(
         label="Data de Vencimento",
         widget=forms.DateInput(
@@ -83,6 +74,18 @@ class OrderForm(forms.ModelForm):
             }
         ),
     )
+    validity_days = forms.IntegerField(
+        label="Validade (Dias)",
+        initial=7,
+        required=False,
+        widget=forms.NumberInput(
+            attrs={
+                "class": "apps-form-input",
+                "id": "order-validity-days",
+                "placeholder": "Ex: 7",
+            }
+        ),
+    )
 
 
     class Meta:
@@ -91,11 +94,26 @@ class OrderForm(forms.ModelForm):
             "client",
             "status",
             "issue_date",
-            "validity_days",
             "due_date",
             "lead_time",
             "notes",
         ]
+
+    def clean(self):
+        """
+        Intercepta os dados antes de salvar no banco para calcular a Data de Vencimento
+        baseada nos dias de validade informados na tela.
+        """
+        cleaned_data = super().clean()
+        issue_date = cleaned_data.get("issue_date")
+        validity_days = cleaned_data.get("validity_days")
+        due_date = cleaned_data.get("due_date")
+
+        # Se o usuário informou a emissão e a validade, mas a data de vencimento está vazia
+        if issue_date and validity_days and not due_date:
+            cleaned_data["due_date"] = issue_date + timedelta(days=validity_days)
+
+        return cleaned_data
 
 
 class OrderMaterialForm(NoteBaseForm):

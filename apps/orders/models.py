@@ -8,8 +8,6 @@ Define a entidade central de pedidos (Order) da RN Pinturas
 e suas relações com materiais e serviços.
 """
 
-from datetime import timedelta
-
 from clients.models import Client
 from common.models import AuxStatus, AuxUnitMeasure, NoteBase
 from django.db import models
@@ -58,11 +56,7 @@ class Order(NoteBase):
         return f"{self.formatted_code} - {self.client}"
 
     def save(self, *args, **kwargs):
-        # 1. Cálculo do Vencimento
-        if self.issue_date and self.validity_days is not None:
-            self.due_date = self.issue_date + timedelta(days=self.validity_days)
-
-        # 2. Geração do Código Sequencial Anual (Bruto: 20250001)
+        # Geração do Código Sequencial Anual (Bruto: 20250001)
         if not self.order_code:
             current_year = self.issue_date.year
             last_order = Order.objects.filter(issue_date__year=current_year).order_by('id').last()
