@@ -127,7 +127,6 @@ class OrderMaterialForm(NoteBaseForm):
             attrs={
                 "class": "apps-form-input select2",
                 "placeholder": "Selecione o Material",
-                "autofocus": True,
             }
         ),
     )
@@ -199,7 +198,6 @@ class OrderServiceForm(NoteBaseForm):
             attrs={
                 "class": "apps-form-input select2",
                 "placeholder": "Selecione o Serviço",
-                "autofocus": True,
             }
         ),
     )

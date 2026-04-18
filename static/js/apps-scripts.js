@@ -120,15 +120,17 @@ $(document).ready(function() {
         var totalForms = parseInt(totalFormsInput.val());
         
         // 4. Clona a primeira linha para usar de modelo
-        var newRow = container.find('.apps-formset-item:first').clone(true);
+        var newRow = container.find('.apps-formset-item:first').clone();
         
         // Limpeza dos valores
         newRow.find('input, textarea, select').val(''); 
         newRow.find('input[type="checkbox"]').prop('checked', false);
         
-        // Destrói Select2 bugado da clonagem
+        // Destrói o container visual do Select2 clonado
         newRow.find('.select2-container').remove();
-        newRow.find('select')
+        
+        // A MÁGICA: Remove atributos fantasmas de TODOS os elementos da linha (incluindo as tags <option>)
+        newRow.find('*')
             .removeClass('select2-hidden-accessible')
             .removeAttr('data-select2-id')
             .removeAttr('aria-hidden')
