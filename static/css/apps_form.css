@@ -303,6 +303,106 @@ select {
 }
 .tb-form tr:last-child td { border-bottom: none; }
 
+/* ==========================================================================
+   7.1 AJUSTES DA TABELA DE EDIÇÃO (FORMSETS) - CORREÇÃO DEFINITIVA
+   ========================================================================== */
+
+/* 1. Wrapper com Scroll Horizontal (Obrigatório para a tabela não quebrar o layout) */
+.apps-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    border: 1px solid var(--borda-suave);
+    border-radius: 8px;
+    background-color: var(--bg-card);
+    margin-bottom: 1.5rem;
+}
+
+/* 2. Tabela: Largura mínima fixa garante que os inputs não sejam esmagados */
+.tb-form {
+    width: 100%;
+    min-width: 1100px; /* Se a tela for menor que isso, a barra de rolagem horizontal aparece */
+    border-collapse: collapse;
+    border: none;
+    margin-bottom: 0;
+}
+
+/* 3. A RAIZ DO PROBLEMA: Matar o Flexbox do container para restaurar a estrutura da tabela */
+table.tb-form .apps-formset-container {
+    display: table-row-group !important;
+}
+
+/* 4. Restaurar as linhas do formset para se comportarem como <tr> */
+table.tb-form .apps-formset-item {
+    display: table-row !important;
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+}
+
+/* 5. Células: Alinhamento no topo (evita que a linha quebre se houver mensagem de erro) */
+.tb-form td {
+    vertical-align: top;
+    padding: 0.75rem 0.5rem !important;
+    border-bottom: 1px solid var(--borda-suave);
+}
+
+/* 6. Inputs e Select2: Tamanhos mínimos reais para leitura clara */
+.tb-form td input,
+.tb-form td select,
+.tb-form td .select2-container {
+    min-width: 130px;
+    width: 100% !important;
+}
+
+/* 7. Doma o Textarea de observações */
+.tb-form td textarea {
+    min-width: 180px;
+    height: 42px !important;
+    min-height: 42px !important;
+    padding: 0.6rem;
+    resize: vertical;
+}
+
+/* 8. Centraliza a ação de Remover e impede quebra de texto */
+.tb-form td .checkbox-delete-wrapper {
+    margin-top: 0 !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 42px; /* Alinha perfeitamente com os inputs da mesma linha */
+}
+
+.tb-form td .label-delete {
+    font-size: 0.85rem;
+    margin: 0;
+    white-space: nowrap;
+}
+
+/* 9. Deixa os inputs mais compactos (estilo Excel) para caber mais colunas na tela */
+.tb-form td input,
+.tb-form td select,
+.tb-form td .select2-container .select2-selection--single {
+    padding: 0.4rem 0.6rem !important;
+    height: 36px !important;
+    font-size: 0.85rem;
+}
+
+/* Reduz o padding interno das células para ganhar ainda mais espaço */
+.tb-form td {
+    padding: 0.4rem !important;
+}
+
+/* Deixa os cabeçalhos alinhados com o novo tamanho */
+.tb-form th {
+    padding: 0.6rem 0.4rem;
+    text-align: center;
+}
+
+/* Centraliza os valores numéricos */
+.tb-form td input[type="number"] {
+    text-align: right;
+}
+
 .error-list { margin-top: 0.3rem; }
 .error { color: var(--cor-status-danger); font-size: 0.8rem; font-weight: 600; }
 .alert-danger {

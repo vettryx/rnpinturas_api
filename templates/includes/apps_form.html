@@ -117,69 +117,125 @@
                                     </div>
                                 {% endif %}
 
-                                <div class="apps-formset-container">
-                                    {% for form in section.formset %}
-                                        
-                                        <div class="apps-formset-item">
-                                            {% if form.non_field_errors %}
-                                                <div class="error-list mb-2">
-                                                    {{ form.non_field_errors }}
-                                                </div>
-                                            {% endif %}
-
-                                            {% for hidden in form.hidden_fields %}
-                                                {{ hidden }}
-                                            {% endfor %}
-
-                                            <div class="apps-form-grid">
-                                                {% for field in form.visible_fields %}
-                                                    <div class="apps-form-field-wrapper">
-                                                        
-                                                        {% if field.name == 'DELETE' %}
-                                                            <div class="checkbox-delete-wrapper">
-                                                                <label for="{{ field.id_for_label }}" class="label-delete">
-                                                                    {{ field }} {{ field.label }}
-                                                                </label>
-                                                            </div>
-                                                        {% else %}
-                                                            <label for="{{ field.id_for_label }}">
-                                                                {{ field.label }}
-                                                                {% if field.field.required %} <span class="required">*</span>{% endif %}
-                                                            </label>
-
-                                                            {{ field }}
-
-                                                            {% if field.help_text %}
-                                                                <small class="form-text text-muted">{{ field.help_text }}</small>
-                                                            {% endif %}
-
-                                                            {% if field.errors %}
-                                                                <div class="error-list">
-                                                                    {% for error in field.errors %}
-                                                                        <div class="error">{{ error }}</div>
+                                {% if section.layout == 'table' %}
+                                    {# ======================================================== #}
+                                    {# MODO TABELA (Para Pedidos/Orçamentos)                    #}
+                                    {# ======================================================== #}
+                                    <div class="apps-table-wrapper">
+                                        <table class="tb-form">
+                                            <thead>
+                                                <tr>
+                                                    {% for header in section.table_headers %}
+                                                        <th>{{ header }}</th>
+                                                    {% endfor %}
+                                                </tr>
+                                            </thead>
+                                            
+                                            <tbody class="apps-formset-container">
+                                                {% for form in section.formset %}
+                                                    <tr class="apps-formset-item">
+                                                        {% for field in form.visible_fields %}
+                                                            <td>
+                                                                {% if forloop.first %}
+                                                                    {% if form.non_field_errors %}
+                                                                        <div class="error-list mb-2">{{ form.non_field_errors }}</div>
+                                                                    {% endif %}
+                                                                    {% for hidden in form.hidden_fields %}
+                                                                        {{ hidden }}
                                                                     {% endfor %}
-                                                                </div>
-                                                            {% endif %}
-                                                        {% endif %}
-                                                    </div>
+                                                                {% endif %}
+
+                                                                {% if field.name == 'DELETE' %}
+                                                                    <div class="checkbox-delete-wrapper" title="Marcar para remover">
+                                                                        {{ field }}
+                                                                    </div>
+                                                                {% else %}
+                                                                    {{ field }}
+                                                                    
+                                                                    {% if field.errors %}
+                                                                        <div class="error-list">
+                                                                            {% for error in field.errors %}
+                                                                                <div class="error">{{ error }}</div>
+                                                                            {% endfor %}
+                                                                        </div>
+                                                                    {% endif %}
+                                                                {% endif %}
+                                                            </td>
+                                                        {% endfor %}
+                                                    </tr>
                                                 {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    
+                                {% else %}
+                                    {# ======================================================== #}
+                                    {# MODO BLOCOS GRANDES (Original - Mantido para Clientes)   #}
+                                    {# ======================================================== #}
+                                    <div class="apps-formset-container">
+                                        {% for form in section.formset %}
+                                            
+                                            <div class="apps-formset-item">
+                                                {% if form.non_field_errors %}
+                                                    <div class="error-list mb-2">
+                                                        {{ form.non_field_errors }}
+                                                    </div>
+                                                {% endif %}
+
+                                                {% for hidden in form.hidden_fields %}
+                                                    {{ hidden }}
+                                                {% endfor %}
+
+                                                <div class="apps-form-grid">
+                                                    {% for field in form.visible_fields %}
+                                                        <div class="apps-form-field-wrapper">
+                                                            
+                                                            {% if field.name == 'DELETE' %}
+                                                                <div class="checkbox-delete-wrapper">
+                                                                    <label for="{{ field.id_for_label }}" class="label-delete">
+                                                                        {{ field }} {{ field.label }}
+                                                                    </label>
+                                                                </div>
+                                                            {% else %}
+                                                                <label for="{{ field.id_for_label }}">
+                                                                    {{ field.label }}
+                                                                    {% if field.field.required %} <span class="required">*</span>{% endif %}
+                                                                </label>
+
+                                                                {{ field }}
+
+                                                                {% if field.help_text %}
+                                                                    <small class="form-text text-muted">{{ field.help_text }}</small>
+                                                                {% endif %}
+
+                                                                {% if field.errors %}
+                                                                    <div class="error-list">
+                                                                        {% for error in field.errors %}
+                                                                            <div class="error">{{ error }}</div>
+                                                                        {% endfor %}
+                                                                    </div>
+                                                                {% endif %}
+                                                            {% endif %}
+                                                        </div>
+                                                    {% endfor %}
+                                                </div>
                                             </div>
-                                        </div>
-                                        
-                                        {% if not forloop.last %}
-                                            <hr class="formset-separator">
-                                        {% endif %}
-                                        
-                                    {% endfor %}
-                                </div>
+                                            
+                                            {% if not forloop.last %}
+                                                <hr class="formset-separator">
+                                            {% endif %}
+                                            
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
                                 
-                                <div class="apps-formset-actions">
+                                <div class="apps-formset-actions mt-3">
                                     <button type="button" class="btn btn-sm btn-secondary btn-add-row">
                                         <i class="fas fa-plus"></i> Adicionar
                                     </button>
                                 </div>
 
-                            {% endif %} 
+                            {% endif %}
                         </div> 
                     {% endfor %}
                 </div> 
