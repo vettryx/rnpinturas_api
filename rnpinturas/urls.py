@@ -5,7 +5,7 @@ Caminho: rnpinturas/urls.py
 ==============================================================================
 
 Configuração de URLs global do projeto RN Pinturas.
-Gerencia as rotas de administração, autenticação (2FA), contas e a 
+Gerencia as rotas de administração, autenticação (2FA), contas e a
 integração modular dos aplicativos do sistema.
 """
 
