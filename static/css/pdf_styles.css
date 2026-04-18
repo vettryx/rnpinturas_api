@@ -1,0 +1,227 @@
+/* static/css/pdf_styles.css */
+
+@page {
+    size: A4;
+    margin: 1.5cm;
+    
+    @bottom-left {
+        content: "RN Pinturas - A Revolução das Cores em sua Reforma";
+        font-size: 8pt;
+        color: #7f8c8d;
+    }
+    @bottom-center {
+        content: "rnpinturas.com.br";
+        font-size: 8pt;
+        color: #03989E;
+        font-weight: bold;
+    }
+    @bottom-right {
+        content: "Página " counter(page) " de " counter(pages);
+        font-size: 8pt;
+        color: #7f8c8d;
+    }
+}
+
+body {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    color: #333;
+    font-size: 10pt;
+    line-height: 1.4;
+}
+
+/* ===================== CABEÇALHO ===================== */
+.header-table {
+    width: 100%;
+    border-bottom: 3px solid #03989E;
+    padding-bottom: 15px;
+    margin-bottom: 20px;
+}
+.header-logo {
+    vertical-align: top;
+}
+.header-logo h1 {
+    margin: 0;
+    color: #03989E;
+    font-size: 24pt;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+.header-logo p {
+    margin: 2px 0 0 0;
+    font-size: 9pt;
+    color: #7f8c8d;
+}
+.header-info {
+    vertical-align: top;
+    text-align: right;
+}
+.header-info h2 {
+    margin: 0;
+    font-size: 10pt;
+    color: #7f8c8d;
+    text-transform: uppercase;
+}
+.header-info .order-number {
+    font-size: 16pt;
+    color: #2c3e50;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+/* ETIQUETA DE STATUS */
+.order-status {
+    display: inline-block;
+    background-color: #e8f8f5;
+    color: #16a085;
+    border: 1px solid #16a085;
+    padding: 5px 10px;
+    font-size: 10pt;
+    font-weight: bold;
+    border-radius: 4px;
+    text-transform: uppercase;
+}
+
+/* ===================== CAIXAS DE INFORMAÇÃO ===================== */
+.info-boxes {
+    width: 100%;
+    border: 1px solid #bdc3c7;
+    margin-bottom: 20px;
+    text-align: center;
+    border-collapse: collapse;
+}
+.info-boxes td {
+    border: 1px solid #bdc3c7;
+    padding: 10px;
+    width: 33.33%;
+}
+.info-label {
+    display: block;
+    font-size: 8pt;
+    text-transform: uppercase;
+    color: #7f8c8d;
+    font-weight: bold;
+}
+.info-value {
+    display: block;
+    font-size: 12pt;
+    font-weight: bold;
+    color: #2c3e50;
+    margin-top: 5px;
+}
+
+/* ===================== DADOS DO CLIENTE & OBSERVAÇÕES ===================== */
+.section-title {
+    background-color: #ecf0f1;
+    color: #2c3e50;
+    font-weight: bold;
+    text-transform: uppercase;
+    padding: 6px 10px;
+    font-size: 10pt;
+    margin-bottom: 10px;
+    border-left: 4px solid #03989E;
+}
+.client-data {
+    margin-bottom: 20px;
+    font-size: 10pt;
+}
+.client-data p { margin: 4px 0; }
+
+.notes-box {
+    border: 1px solid #bdc3c7;
+    border-radius: 4px;
+    padding: 10px 15px;
+    margin-bottom: 20px;
+    font-size: 9.5pt;
+    color: #2c3e50;
+    min-height: 30px;
+}
+
+/* ===================== TABELAS DE DADOS ===================== */
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    border-bottom: none !important;
+    margin-bottom: 20px;
+    font-size: 9pt;
+}
+.data-table th {
+    background-color: #2c3e50;
+    color: white;
+    padding: 8px;
+    text-align: left;
+    font-weight: normal;
+    text-transform: uppercase;
+}
+.data-table td {
+    padding: 8px;
+    border-bottom: 1px solid #ecf0f1;
+    vertical-align: top;
+}
+.data-table td.no-border-bottom {
+    border-bottom: 0px solid transparent !important;
+}
+.data-table .text-right { text-align: right; }
+.data-table .text-center { text-align: center; }
+
+/* Classe para formatar a linha da observação aninhada */
+.data-table .obs-row td {
+    padding-top: 0 !important;
+    padding-bottom: 12px !important;
+    font-size: 8.5pt !important;
+    color: #7f8c8d !important;
+    font-style: italic !important;
+    border-bottom: 1px solid #ecf0f1 !important;
+}
+.data-table tr.obs-row td {
+    border-top: 0px solid transparent !important;
+    padding-top: 0 !important;
+    padding-bottom: 12px !important;
+    font-size: 8.5pt !important;
+    color: #7f8c8d !important;
+    font-style: italic !important;
+    border-bottom: 1px solid #ecf0f1 !important; /* Mantém apenas a linha do final do bloco */
+}
+
+/* ===================== TOTAL DESTAQUE ===================== */
+.total-box {
+    background-color: #ecf0f1; /* Sombreamento geral da caixa */
+    border: 2px solid #bdc3c7;
+    padding: 15px 20px;
+    text-align: right;
+    margin-bottom: 30px;
+    border-radius: 6px;
+}
+.total-box span.label {
+    font-size: 12pt;
+    color: #2c3e50;
+    font-weight: bold;
+    text-transform: uppercase;
+    margin-right: 15px;
+}
+.total-box span.value {
+    font-size: 16pt;
+    font-weight: bold;
+    color: #2c3e50;
+    background-color: #d5d8dc; /* Sombreamento interno do valor */
+    padding: 8px 15px;
+    border-radius: 4px;
+    border: 1px solid #aeb6bf;
+}
+
+/* ===================== INFORMAÇÕES LEGAIS ===================== */
+.important-notes {
+    border: 1px solid #f39c12;
+    background-color: #fdfefe;
+    padding: 15px;
+    border-radius: 4px;
+    font-size: 9pt;
+}
+.important-notes h4 {
+    color: #f39c12;
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+.important-notes p {
+    margin: 5px 0;
+    color: #34495e;
+}

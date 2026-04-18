@@ -1,0 +1,156 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Pedido {% if order.order_code %}{{ order.order_code }}{% else %}{{ order.id }}{% endif %}</title>
+    <link rel="stylesheet" href="{% static 'css/pdf_styles.css' %}">
+</head>
+<body>
+
+    <table class="header-table">
+        <tr>
+            <td class="header-logo">
+                <h1>RN PINTURAS</h1>
+                <p>A REVOLUÇÃO DAS CORES EM SUA REFORMA</p>
+                <p>+55 (31) 9 99670-6323 | @rnpinturasoficial | Belo Horizonte, MG</p>
+            </td>
+            <td class="header-info">
+                <h2>NÚMERO DO PEDIDO</h2>
+                <div class="order-number">
+                    {% if order.order_code %}
+                        {{ order.order_code|stringformat:"s"|slice:":4" }}-{{ order.order_code|stringformat:"s"|slice:"-4:" }}
+                    {% else %}
+                        {{ order.id|stringformat:"04d" }}
+                    {% endif %}
+                </div>
+                <div class="order-status">
+                    STATUS: {{ order.status.name|upper }}
+                </div>
+            </td>
+        </tr>
+    </table>
+
+    <table class="info-boxes">
+        <tr>
+            <td>
+                <span class="info-label">Emitido em</span>
+                <span class="info-value">{{ order.issue_date|date:"d/m/Y" }}</span>
+            </td>
+            <td>
+                <span class="info-label">Válido até</span>
+                <span class="info-value">{{ order.due_date|date:"d/m/Y"|default:"-" }}</span>
+            </td>
+            <td>
+                <span class="info-label">Prazo Médio de Conclusão</span>
+                <span class="info-value">{{ order.lead_time|default:"-" }} dias</span>
+            </td>
+        </tr>
+    </table>
+
+    <div class="section-title">Dados do Cliente</div>
+    <div class="client-data">
+        <p><strong>Nome / Razão Social:</strong> {{ order.client.name }}</p>
+        <p><strong>CPF/CNPJ:</strong> {{ order.client.cpf_cnpj|default:"Não informado" }}</p>
+        
+        <p><strong>Contatos:</strong> 
+            {% for contact in order.client.contacts.all %}
+                {{ contact.value }}{% if not forloop.last %} | {% endif %}
+            {% empty %}
+                Não informado
+            {% endfor %}
+        </p>
+
+        <p><strong>Endereço:</strong> 
+            {% for addr in order.client.addresses.all %}
+                {% if forloop.first %}
+                    {{ addr.street|default:"" }}, {{ addr.number|default:"S/N" }} - {{ addr.district|default:"" }}, {{ addr.city.name|default:"" }} - {{ addr.city.uf.sigla|default:"" }}
+                {% endif %}
+            {% empty %}
+                Não informado
+            {% endfor %}
+        </p>
+    </div>
+
+    <div class="section-title">Observações deste Pedido</div>
+    <div class="notes-box">
+        {{ order.notes|linebreaksbr|default:"Nenhuma observação adicional." }}
+    </div>
+
+    <div class="section-title">Serviços que serão realizados</div>
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Descrição do Serviço</th>
+                <th>Cômodo / Ambiente</th>
+                <th class="text-center">Quant.</th>
+                <th class="text-right">V. Unitário</th>
+                <th class="text-right">Desconto</th>
+                <th class="text-right">V. Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for s in order.services.all %}
+            <tr>
+                <td class="{% if s.notes %}no-border-bottom{% endif %}">{{ s.service.name }}</td>
+                <td class="{% if s.notes %}no-border-bottom{% endif %}">{{ s.room.name }} {% if s.room_part %}({{ s.room_part.name }}){% endif %}</td>
+                <td class="text-center {% if s.notes %}no-border-bottom{% endif %}">{{ s.quantity|floatformat:2 }}</td>
+                <td class="text-right {% if s.notes %}no-border-bottom{% endif %}">R$ {{ s.price|floatformat:2 }}</td>
+                <td class="text-right {% if s.notes %}no-border-bottom{% endif %}">R$ {{ s.discount|floatformat:2 }}</td>
+                <td class="text-right {% if s.notes %}no-border-bottom{% endif %}">R$ {{ s.total_price|floatformat:2 }}</td>
+            </tr>
+            {% if s.notes %}
+            <tr class="obs-row">
+                <td colspan="6">
+                    <strong>Obs:</strong> {{ s.notes }}
+                </td>
+            </tr>
+            {% endif %}
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% if order.materials.exists %}
+    <div class="section-title">Materiais necessários (Responsabilidade do Cliente)</div>
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Material</th>
+                <th class="text-center">Unidade</th>
+                <th class="text-center">Quant.</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for m in order.materials.all %}
+            <tr>
+                <td class="{% if m.notes %}no-border-bottom{% endif %}">{{ m.material.name }}</td>
+                <td class="text-center {% if m.notes %}no-border-bottom{% endif %}">{{ m.unit_measure.code|default:m.unit_measure.name }}</td>
+                <td class="text-center {% if m.notes %}no-border-bottom{% endif %}">{{ m.quantity|floatformat:2 }}</td>
+            </tr>
+            {% if m.notes %}
+            <tr class="obs-row">
+                <td colspan="3">
+                    <strong>Obs:</strong> {{ m.notes }}
+                </td>
+            </tr>
+            {% endif %}
+            {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+
+    <div class="total-box">
+        <span class="label">Valor Total dos Serviços Prestados:</span>
+        <span class="value">R$ {{ total_amount|floatformat:2 }}</span>
+    </div>
+
+    <div class="important-notes">
+        <h4>PAGAMENTO E INFORMAÇÕES IMPORTANTES</h4>
+        <p><strong>Pagamentos Aceitos:</strong> Transferência Bancária, Dinheiro ou PIX. <strong>Condições:</strong> À Vista.</p>
+        <p><strong>Chave PIX:</strong> Celular - (31) 99670-6323</p>
+        <p>O presente orçamento refere-se EXCLUSIVAMENTE aos serviços descritos acima. Qualquer alteração, inclusão ou solicitação adicional feita pelo cliente durante a execução do serviço poderá implicar em CUSTOS ADICIONAIS, que serão previamente informados e acordados antes da execução.</p>
+        <p>Os materiais mencionados neste orçamento ficarão sob responsabilidade do cliente e deverão ser adquiridos antes do início dos serviços para garantir a execução conforme planejado.</p>
+    </div>
+
+</body>
+</html>
