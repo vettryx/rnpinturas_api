@@ -14,7 +14,7 @@ from django.contrib.auth import views as auth_views
 from django.urls import include, path
 from two_factor.urls import urlpatterns as tf_urls
 
-from .views import home
+from .views import HomeView
 
 urlpatterns = [
     # ==========================================================================
@@ -25,7 +25,7 @@ urlpatterns = [
     path("admin/", admin.site.urls),
 
     # URL para a Página Inicial do Projeto
-    path("", home, name="home"),
+    path("", HomeView.as_view(), name="home"),
 
     # ==========================================================================
     # AUTENTICAÇÃO E CONTAS
