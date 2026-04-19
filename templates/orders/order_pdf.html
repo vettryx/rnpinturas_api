@@ -64,7 +64,12 @@
         <p><strong>Endereço:</strong> 
             {% for addr in order.client.addresses.all %}
                 {% if forloop.first %}
-                    {{ addr.street|default:"" }}, {{ addr.number|default:"S/N" }} - {{ addr.district|default:"" }}, {{ addr.city.name|default:"" }} - {{ addr.city.uf.sigla|default:"" }}
+                    {{ addr.street|default:"" }}, 
+                    {{ addr.number|default:"S/N" }}, 
+                    {{ addr.district|default:"" }}, 
+                    {{ addr.city.name|default:"" }}, 
+                    {{ addr.city.uf.abbreviation|default:"" }}, 
+                    CEP: {{ addr.zip_code|default:"Não informado" }}
                 {% endif %}
             {% empty %}
                 Não informado
@@ -141,7 +146,7 @@
 
     <div class="total-box">
         <span class="label">Valor Total dos Serviços Prestados:</span>
-        <span class="value">R$ {{ total_amount|floatformat:2 }}</span>
+        <span class="value">R$ {{ total_amount|floatformat:"2g" }}</span>
     </div>
 
     <div class="important-notes">

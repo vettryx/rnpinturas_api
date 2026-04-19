@@ -303,12 +303,16 @@ class OrderCreateView(CommonCreateView):
                 "title": "Gerenciar Serviços",
                 "formset": context["service_formset"],
                 "helper_text": "Adicione um ou mais serviços.",
+                "layout": "table",
+                "table_headers": ["Serviço", "Ambiente", "Parte", "Qtd", "Preço (R$)", "Desconto", "Observações", "Ações"],
             },
             {
                 "id": "tab-materiais",
                 "title": "Gerenciar Materiais",
                 "formset": context["material_formset"],
                 "helper_text": "Adicione um ou mais materiais.",
+                "layout": "table",
+                "table_headers": ["Material", "Unidade", "Qtd", "Preço (R$)", "Desconto", "Observações", "Ações"],
             },
         ]
         return context
