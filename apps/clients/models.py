@@ -119,7 +119,7 @@ class ClientAddress(NoteBase, AddressBase):
     @property
     def formatted_address(self):
         """
-        Retorna o endereço formatado de forma inteligente, 
+        Retorna o endereço formatado de forma inteligente,
         ignorando campos em branco e evitando vírgulas soltas.
         """
         parts = [
