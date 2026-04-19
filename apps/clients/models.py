@@ -116,6 +116,26 @@ class ClientAddress(NoteBase, AddressBase):
         verbose_name_plural = "Endereços"
         db_table = "clients_addresses"
 
+    @property
+    def formatted_address(self):
+        """
+        Retorna o endereço formatado de forma inteligente, 
+        ignorando campos em branco e evitando vírgulas soltas.
+        """
+        parts = [
+            self.street,
+            self.number,
+            self.district,
+            self.city.name if self.city else None,
+            self.city.uf.abbreviation if self.city and hasattr(self.city, 'uf') and self.city.uf else None,
+            f"CEP: {self.zip_code}" if self.zip_code else None
+        ]
+
+        # Filtra a lista mantendo apenas os itens que têm algum texto válido
+        valid_parts = [str(p).strip() for p in parts if p and str(p).strip()]
+
+        return ", ".join(valid_parts) if valid_parts else "Endereço não informado"
+
 
 class ClientContact(NoteBase, ContactBase):
     """

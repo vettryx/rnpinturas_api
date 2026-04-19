@@ -64,12 +64,7 @@
         <p><strong>Endereço:</strong> 
             {% for addr in order.client.addresses.all %}
                 {% if forloop.first %}
-                    {{ addr.street|default:"" }}, 
-                    {{ addr.number|default:"S/N" }}, 
-                    {{ addr.district|default:"" }}, 
-                    {{ addr.city.name|default:"" }}, 
-                    {{ addr.city.uf.abbreviation|default:"" }}, 
-                    CEP: {{ addr.zip_code|default:"Não informado" }}
+                    {{ addr.formatted_address }}
                 {% endif %}
             {% empty %}
                 Não informado

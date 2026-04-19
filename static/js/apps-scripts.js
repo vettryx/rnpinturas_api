@@ -167,4 +167,38 @@ $(document).ready(function() {
         initSelect2(this);
     });
 
+    // ======================================================
+    // 5. CÁLCULO AUTOMÁTICO DE DATA DE VENCIMENTO
+    // ======================================================
+    // Mapeia os inputs gerados pelo Django
+    var $issueDate = $('#id_issue_date');
+    var $dueDate = $('#id_due_date');
+    var $validityDays = $('#order-validity-days'); 
+
+    function updateDueDate() {
+        var issueVal = $issueDate.val();
+        var daysVal = $validityDays.val();
+
+        if (issueVal && daysVal) {
+            var baseDate = new Date(issueVal + 'T00:00:00');
+            var daysToAdd = parseInt(daysVal, 10);
+
+            if (!isNaN(daysToAdd)) {
+                var newDate = new Date(baseDate);
+                newDate.setDate(newDate.getDate() + daysToAdd);
+
+                var year = newDate.getFullYear();
+                var month = String(newDate.getMonth() + 1).padStart(2, '0');
+                var day = String(newDate.getDate()).padStart(2, '0');
+
+                $dueDate.val(year + '-' + month + '-' + day);
+            }
+        }
+    }
+
+    if ($issueDate.length > 0 && $validityDays.length > 0 && $dueDate.length > 0) {
+        $issueDate.on('change', updateDueDate);
+        $validityDays.on('input change', updateDueDate); 
+    }
+
 });

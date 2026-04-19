@@ -22,6 +22,17 @@ from .models import Order, OrderMaterial, OrderService
 
 
 class OrderForm(forms.ModelForm):
+    client = forms.ModelChoiceField(
+        label="Cliente",
+        queryset=Client.objects.filter(idle=False).order_by("name"),
+        widget=forms.Select(
+            attrs={
+                "class": "apps-form-input select2",
+                "placeholder": "Selecione o Cliente",
+                "autofocus": True,
+            }
+        ),
+    )
     status = forms.ModelChoiceField(
         label="Status do Pedido",
         queryset=AuxStatus.objects.filter(idle=False).order_by("name"),
@@ -40,7 +51,18 @@ class OrderForm(forms.ModelForm):
                 "class": "apps-form-input",
                 "type": "date",
                 "placeholder": "Digite a Data de Emissão",
-                "autofocus": True,
+            }
+        ),
+    )
+    validity_days = forms.IntegerField(
+        label="Validade (Dias)",
+        initial=7,
+        required=False,
+        widget=forms.NumberInput(
+            attrs={
+                "class": "apps-form-input",
+                "id": "order-validity-days",
+                "placeholder": "Ex: 7",
             }
         ),
     )
@@ -64,28 +86,6 @@ class OrderForm(forms.ModelForm):
             }
         ),
     )
-    client = forms.ModelChoiceField(
-        label="Cliente",
-        queryset=Client.objects.filter(idle=False).order_by("name"),
-        widget=forms.Select(
-            attrs={
-                "class": "apps-form-input select2",
-                "placeholder": "Selecione o Cliente",
-            }
-        ),
-    )
-    validity_days = forms.IntegerField(
-        label="Validade (Dias)",
-        initial=7,
-        required=False,
-        widget=forms.NumberInput(
-            attrs={
-                "class": "apps-form-input",
-                "id": "order-validity-days",
-                "placeholder": "Ex: 7",
-            }
-        ),
-    )
 
 
     class Meta:
@@ -94,6 +94,7 @@ class OrderForm(forms.ModelForm):
             "client",
             "status",
             "issue_date",
+            "validity_days",
             "due_date",
             "lead_time",
             "notes",
