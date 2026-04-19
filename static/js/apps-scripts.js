@@ -158,6 +158,27 @@ $(document).ready(function() {
         newRow.find('select').each(function() {
             initSelect2(this);
         });
+
+        // 8. Scroll Suave e Foco Inteligente na Nova Linha
+        // A. Rola a tabela (wrapper) inteira de volta para a esquerda
+        var tableWrapper = parentSection.find('.apps-table-wrapper');
+        if (tableWrapper.length) {
+            tableWrapper.animate({ scrollLeft: 0 }, 300); // 300ms de animação suave
+        }
+
+        // B. Encontra o primeiro campo visível da linha recém-criada
+        var firstField = newRow.find('input:not([type="hidden"]), select, textarea').first();
+
+        if (firstField.length) {
+            // Se for um campo transformado em Select2, o foco tem que ir pro container dele
+            if (firstField.hasClass('select2-hidden-accessible')) {
+                // Foca na caixa de seleção gerada pelo Select2
+                firstField.next('.select2-container').find('.select2-selection').focus();
+            } else {
+                // Se for um campo HTML normal (input texto, number, etc)
+                firstField.focus();
+            }
+        }
     });
 
     // ======================================================
