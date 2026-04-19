@@ -160,7 +160,8 @@ class OrderDetailView(CommonDetailView):
                 "services__service",
                 "services__room",
                 "services__room_part",
-                "materials__material"
+                "materials__material",
+                "materials__unit_measure"
             )
             .get(pk=self.kwargs.get("pk"))
         )
@@ -168,6 +169,55 @@ class OrderDetailView(CommonDetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         order = self.object
+
+        # 1. CÁLCULO FINANCEIRO (Processado em Python para aceitar @property)
+        sum_services = sum(s.total_price for s in order.services.all()) if order.services.exists() else 0
+        sum_materials = sum(m.total_price for m in order.materials.all()) if order.materials.exists() else 0
+        grand_total = sum_services + sum_materials
+
+        # 2. FORMATAÇÃO DE MOEDA (Padrão: R$ 1.000,00)
+        fmt_services = f"R$ {number_format(sum_services, decimal_pos=2, force_grouping=True)}"
+        fmt_materials = f"R$ {number_format(sum_materials, decimal_pos=2, force_grouping=True)}"
+        fmt_total = f"R$ {number_format(grand_total, decimal_pos=2, force_grouping=True)}"
+
+        # 3. FORMATAÇÃO DO CÓDIGO DO PEDIDO (Ex: 2025-0002)
+        if order.order_code:
+            code_str = str(order.order_code)
+            order_display_code = f"{code_str[:4]}-{code_str[-4:]}"
+        else:
+            order_display_code = f"#{order.id}"
+
+        context["title"] = f"{order_display_code}: {order.client.name}"
+
+        # 4. MONTAGEM DAS LINHAS DAS TABELAS (Dados crus, sem totais internos)
+        services_list = [
+            {
+                "values": [
+                    service.service.name,
+                    f"{service.room.name} ({service.room_part.name})" if service.room_part else service.room.name,
+                    service.quantity,
+                    number_format(service.price, decimal_pos=2, force_grouping=True),
+                    number_format(service.discount, decimal_pos=2, force_grouping=True) if service.discount else "-",
+                    number_format(service.total_price, decimal_pos=2, force_grouping=True),
+                    service.notes or "-",
+                ]
+            }
+            for service in order.services.all()
+        ]
+
+        materials_list = [
+            {
+                "values": [
+                    material.material.name,
+                    f"{material.quantity} {material.unit_measure.name}" if material.unit_measure else material.quantity,
+                    number_format(material.price, decimal_pos=2, force_grouping=True),
+                    number_format(material.discount, decimal_pos=2, force_grouping=True) if material.discount else "-",
+                    number_format(material.total_price, decimal_pos=2, force_grouping=True),
+                    material.notes or "-",
+                ]
+            }
+            for material in order.materials.all()
+        ]
 
         # BOTOES PERSONALIZADOS
         context["buttons"] = [
@@ -202,74 +252,71 @@ class OrderDetailView(CommonDetailView):
 
         # SEÇÕES (Conteúdo de cada aba)
         context["sections"] = [
+            # ==========================================
+            # ABA 1: DADOS GERAIS - INFORMAÇÕES
+            # ==========================================
             {
                 "id": "tab-dados",
                 "active": True,
                 "title": "Informações do Pedido",
                 "fields": [
+                    {"label": "Código do Pedido", "value": order_display_code},
                     {"label": "Cliente", "value": order.client.name},
                     {"label": "Status", "value": order.status.name},
-                    {"label": "Emissão", "value": order.issue_date},
-                    {"label": "Vencimento", "value": order.due_date},
-                    {"label": "Prazo", "value": f"{order.lead_time} dias"},
-                    {"label": "Observações", "value": order.notes},
+                    {"label": "Emissão", "value": order.issue_date.strftime("%d/%m/%Y") if order.issue_date else "-"},
+                    {"label": "Vencimento", "value": order.due_date.strftime("%d/%m/%Y") if order.due_date else "-"},
+                    {"label": "Prazo", "value": f"{order.lead_time} dias" if order.lead_time else "-"},
+                    {"label": "Observações", "value": order.notes or "-"},
+                ],
+            },
+            # ==========================================
+            # ABA 1: DADOS GERAIS - RESUMO FINANCEIRO (SEPARADO)
+            # ==========================================
+            {
+                "id": "tab-dados",
+                "active": True,
+                "title": "Resumo Financeiro",
+                "is_table": False,
+                "fields": [
+                    {"label": "Total de Serviços", "value": fmt_services, "class": "text-primary font-weight-bold"},
+                    {"label": "Total de Materiais", "value": fmt_materials, "class": "text-primary font-weight-bold"},
+                    {"label": "VALOR TOTAL DO PEDIDO", "value": fmt_total, "class": "text-success font-weight-bold h5"},
+                ],
+            },
+            # ==========================================
+            # ABA 2: SERVIÇOS
+            # ==========================================
+            {
+                "id": "tab-servicos",
+                "title": "Serviços do Pedido",
+                "is_table": False,
+                "fields": [
+                    {"label": "VALOR TOTAL DOS SERVIÇOS:", "value": fmt_services, "class": "text-right font-weight-bold h5"}
                 ],
             },
             {
                 "id": "tab-servicos",
-                "title": "Serviços do Pedido",
                 "is_table": True,
-                "table_headers": [
-                    "Serviço",
-                    "Ambiente",
-                    "Quantidade",
-                    "Preço (R$)",
-                    "Desconto",
-                    "Total",
-                    "Observações",
-                ],
+                "table_headers": ["Serviço", "Ambiente", "Quantidade", "Preço (R$)", "Desconto", "Total", "Observações"],
+                "fields": services_list,
+            },
+
+            # ==========================================
+            # ABA 3: MATERIAIS
+            # ==========================================
+            {
+                "id": "tab-materiais",
+                "title": "Materiais que serão utilizados na Prestação dos Serviços",
+                "is_table": False,
                 "fields": [
-                    {
-                        "values": [
-                            service.service.name,
-                            f"{service.room.name} ({service.room_part.name})"
-                            if service.room_part
-                            else service.room.name,
-                            service.quantity,
-                            service.price,
-                            service.discount,
-                            service.total_price,
-                            service.notes,
-                        ]
-                    }
-                    for service in order.services.all()
+                    {"label": "VALOR TOTAL DOS MATERIAIS:", "value": fmt_materials, "class": "text-right font-weight-bold h5"}
                 ],
             },
             {
                 "id": "tab-materiais",
-                "title": "Materiais que serão utilizados na Prestação dos Serviços",
                 "is_table": True,
-                "table_headers": [
-                    "Material",
-                    "Quantidade",
-                    "Preço (R$)",
-                    "Desconto",
-                    "Total",
-                    "Observações",
-                ],
-                "fields": [
-                    {
-                        "values": [
-                            material.material.name,
-                            f"{material.quantity} {material.unit_measure.name}",
-                            material.price,
-                            material.discount,
-                            material.total_price,
-                            material.notes,
-                        ]
-                    }
-                    for material in order.materials.all()
-                ],
+                "table_headers": ["Material", "Quantidade", "Preço (R$)", "Desconto", "Total", "Observações"],
+                "fields": materials_list,
             },
         ]
         return context
