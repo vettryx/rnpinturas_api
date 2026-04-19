@@ -100,9 +100,9 @@
                 <td class="{% if s.notes %}no-border-bottom{% endif %}">{{ s.service.name }}</td>
                 <td class="{% if s.notes %}no-border-bottom{% endif %}">{{ s.room.name }} {% if s.room_part %}({{ s.room_part.name }}){% endif %}</td>
                 <td class="text-center {% if s.notes %}no-border-bottom{% endif %}">{{ s.quantity|floatformat:2 }}</td>
-                <td class="text-right {% if s.notes %}no-border-bottom{% endif %}">R$ {{ s.price|floatformat:2 }}</td>
-                <td class="text-right {% if s.notes %}no-border-bottom{% endif %}">R$ {{ s.discount|floatformat:2 }}</td>
-                <td class="text-right {% if s.notes %}no-border-bottom{% endif %}">R$ {{ s.total_price|floatformat:2 }}</td>
+                <td class="text-right {% if s.notes %}no-border-bottom{% endif %}">R$ {{ s.price|floatformat:"2g" }}</td>
+                <td class="text-right {% if s.notes %}no-border-bottom{% endif %}">R$ {{ s.discount|floatformat:"2g" }}</td>
+                <td class="text-right {% if s.notes %}no-border-bottom{% endif %}">R$ {{ s.total_price|floatformat:"2g" }}</td>
             </tr>
             {% if s.notes %}
             <tr class="obs-row">
