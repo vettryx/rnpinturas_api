@@ -21,6 +21,7 @@ from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy
+from django.utils.formats import number_format
 from django.utils.html import format_html
 from weasyprint import HTML
 
@@ -103,21 +104,46 @@ class OrderListView(CommonListView):
     ]
     table_headers = [
         {"field": "order_code", "label": "Número"},
-        {"field": "client", "label": "Cliente"},
         {"field": "issue_date", "label": "Emissão"},
-        {"field": "due_date", "label": "Vencimento"},
-        {"field": "lead_time", "label": "Prazo (dias)"},
+        {"field": "client", "label": "Cliente"},
         {"field": "status", "label": "Status"},
+        {"field": "total_services", "label": "Valor Total (R$)"},
+        {"field": "notes", "label": "Observações"},
     ]
 
+    def get_queryset(self):
+        """
+        Sobrescreve o queryset para otimizar as consultas.
+        """
+        queryset = super().get_queryset()
+        return queryset.select_related('client', 'status').prefetch_related('services')
+
     def get_row_data(self, item):
+        """
+        Retorna os dados da linha.
+        """
         detail_url = reverse_lazy("orders:detail", args=[item.pk])
 
+        # Formatação do código do pedido (Ex: 20250001 -> 2025-0001)
+        if item.order_code:
+            code_str = str(item.order_code)
+            # Pega os 4 primeiros caracteres, coloca o traço, e pega os 4 últimos
+            formatted_code = f"{code_str[:4]}-{code_str[-4:]}"
+        else:
+            # Fallback de segurança caso seja um pedido antigo sem código salvo
+            formatted_code = f"{item.id:04d}"
+
+        # Cálculo do valor total via Python (sem onerar o banco com propriedades dinâmicas)
+        total_services = sum(s.total_price for s in item.services.all()) if item.services.all() else 0
+        formatted_total = number_format(total_services, decimal_pos=2, force_grouping=True)
+
         return [
-            item.order_code,
-            format_html('<a href="{}">{}</a>', detail_url, item.client.name),
+            formatted_code,
             item.issue_date.strftime("%d/%m/%Y") if item.issue_date else "-",
+            format_html('<a href="{}">{}</a>', detail_url, item.client.name),
             item.status.name,
+            f"R$ {formatted_total}",
+            item.notes,
         ]
 
 
