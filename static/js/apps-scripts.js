@@ -95,51 +95,62 @@ $(document).ready(function() {
     });
 
     // ======================================================
-    // 3. GERENCIAMENTO DE FORMSETS (ADICIONAR LINHA) - CORRIGIDO
+    // 3. GERENCIAMENTO DE FORMSETS (ADICIONAR LINHA)
     // ======================================================
-    // Agora usamos delegação no document ou no wrapper principal, 
-    // e buscamos a classe .apps-form-group (a nova classe do container)
     $(document).on('click', '.btn-add-row', function(e) {
         e.preventDefault();
         
-        // 1. Encontra o container pai da seção (Card Principal)
         var parentSection = $(this).closest('.apps-form-group');
-        
-        // 2. Encontra o container onde ficam as linhas do formset
         var container = parentSection.find('.apps-formset-container');
-        
-        // 3. Encontra o input hidden de gerenciamento (TOTAL_FORMS)
-        // Ele geralmente está logo antes do container, dentro do parentSection
         var totalFormsInput = parentSection.find('input[name$="-TOTAL_FORMS"]');
         
         if (totalFormsInput.length === 0) {
-            console.error("Erro: Não foi possível encontrar o input TOTAL_FORMS. Verifique se {{ section.formset.management_form }} está no template.");
+            console.error("Erro: Não foi possível encontrar o input TOTAL_FORMS.");
             return;
         }
 
         var totalForms = parseInt(totalFormsInput.val());
-        
-        // 4. Clona a primeira linha para usar de modelo
         var newRow = container.find('.apps-formset-item:first').clone();
         
-        // Limpeza dos valores
-        newRow.find('input, textarea, select').val(''); 
-        newRow.find('input[type="checkbox"]').prop('checked', false);
+        // LIMPEZA INTELIGENTE: Preserva zeros em campos financeiros
+        newRow.find('input, textarea, select').each(function() {
+            var $el = $(this);
+            var name = $el.attr('name') || '';
+            var type = $el.attr('type') || '';
+
+            if (type === 'checkbox' || type === 'radio') {
+                $el.prop('checked', false);
+            } 
+            else if (name.includes('discount') || name.includes('price')) {
+                $el.val('0');
+            }
+            else if (name.includes('quantity')) {
+                $el.val('1'); 
+            }
+            else if (type === 'hidden' && name.includes('-id')) {
+                $el.val('');
+            }
+            else if (type !== 'hidden') {
+                // Limpa todos os outros campos visíveis (Selects, Textos, Ambientes)
+                $el.val('');
+            }
+        });
+        // ==========================================================
         
         // Destrói o container visual do Select2 clonado
         newRow.find('.select2-container').remove();
         
-        // A MÁGICA: Remove atributos fantasmas de TODOS os elementos da linha (incluindo as tags <option>)
+        // Remove atributos fantasmas do Select2
         newRow.find('*')
             .removeClass('select2-hidden-accessible')
             .removeAttr('data-select2-id')
             .removeAttr('aria-hidden')
             .removeAttr('tabindex');
         
-        // Limpa options do select AJAX para não copiar a cidade da linha anterior
+        // Limpa options do select AJAX
         newRow.find('.select2-ajax').empty(); 
 
-        // 5. Atualiza IDs e Names (Regex busca por -0- ou -1- e troca pelo novo índice)
+        // Atualiza IDs e Names
         newRow.find('input, select, textarea, label').each(function() {
             var name = $(this).attr('name');
             var id = $(this).attr('id');
@@ -150,32 +161,26 @@ $(document).ready(function() {
             if (forAttr) $(this).attr('for', forAttr.replace(/-\d+-/, '-' + totalForms + '-'));
         });
 
-        // 6. Adiciona ao DOM e atualiza contador
+        // Adiciona ao DOM e atualiza contador
         container.append(newRow);
         totalFormsInput.val(totalForms + 1);
 
-        // 7. Reinicia Select2 na nova linha
+        // Reinicia Select2 na nova linha
         newRow.find('select').each(function() {
             initSelect2(this);
         });
 
-        // 8. Scroll Suave e Foco Inteligente na Nova Linha
-        // A. Rola a tabela (wrapper) inteira de volta para a esquerda
+        // Scroll Suave e Foco Inteligente
         var tableWrapper = parentSection.find('.apps-table-wrapper');
         if (tableWrapper.length) {
-            tableWrapper.animate({ scrollLeft: 0 }, 300); // 300ms de animação suave
+            tableWrapper.animate({ scrollLeft: 0 }, 300);
         }
 
-        // B. Encontra o primeiro campo visível da linha recém-criada
         var firstField = newRow.find('input:not([type="hidden"]), select, textarea').first();
-
         if (firstField.length) {
-            // Se for um campo transformado em Select2, o foco tem que ir pro container dele
             if (firstField.hasClass('select2-hidden-accessible')) {
-                // Foca na caixa de seleção gerada pelo Select2
                 firstField.next('.select2-container').find('.select2-selection').focus();
             } else {
-                // Se for um campo HTML normal (input texto, number, etc)
                 firstField.focus();
             }
         }

@@ -156,6 +156,8 @@ class OrderMaterialForm(NoteBaseForm):
         label="Preço Unitário",
         max_digits=10,
         decimal_places=2,
+        initial=0.00,
+        required=False,
         widget=forms.NumberInput(
             attrs={
                 "class": "apps-form-input",
@@ -168,6 +170,7 @@ class OrderMaterialForm(NoteBaseForm):
         max_digits=10,
         decimal_places=2,
         initial=0.00,
+        required=False,
         widget=forms.NumberInput(
             attrs={
                 "class": "apps-form-input",
@@ -237,6 +240,8 @@ class OrderServiceForm(NoteBaseForm):
         label="Preço Unitário",
         max_digits=10,
         decimal_places=2,
+        initial=0.00,
+        required=False,
         widget=forms.NumberInput(
             attrs={
                 "class": "apps-form-input",
@@ -249,6 +254,7 @@ class OrderServiceForm(NoteBaseForm):
         max_digits=10,
         decimal_places=2,
         initial=0.00,
+        required=False,
         widget=forms.NumberInput(
             attrs={
                 "class": "apps-form-input",

@@ -84,7 +84,7 @@ class Client(IdleBase):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"[{self.id_formatted}] {self.name}"
+        return f"{self.id_formatted}: {self.name} {f'({self.cpf_cnpj})' if self.cpf_cnpj else ''}"
 
     @property
     @admin.display(description="ID", ordering="id")
