@@ -26,7 +26,7 @@ class MaterialForm(IdleBaseForm):
         ),
     )
     default_price = forms.DecimalField(
-        label="Preço Padrão",
+        label="Preço Sugerido",
         max_digits=10,
         decimal_places=2,
         initial=0.00,

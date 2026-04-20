@@ -70,7 +70,7 @@ class OrderHomeView(CommonTemplateView):
         for order in last_orders:
             context["recent_items"].append(
                 {
-                    "label": f"Pedido {order.id} - {order.client.name}",
+                    "label": f"{order.order_code} - {order.client.name}",
                     "url": reverse_lazy("orders:detail", args=[order.pk]),
                     "meta": f"Status: {order.status}",
                 }

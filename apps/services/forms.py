@@ -30,7 +30,8 @@ class ServiceForm(IdleBaseForm):
         label="Preço Sugerido",
         max_digits=10,
         decimal_places=2,
-        min_value=0.00,
+        initial=0.00,
+        required=False,
         widget=forms.NumberInput(
             attrs={
                 "class": "apps-form-input",
