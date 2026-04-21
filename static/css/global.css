@@ -18,9 +18,9 @@ para todas as interfaces do sistema.
     --base-red: #F44336;
     --base-green: #4CAF50;
     --base-white: #ffffff;
-    --base-gray-100: #f5f7fa;
-    --base-gray-200: #e4e7eb;
-    --base-gray-800: #323f4b;
+    --base-gray-100: #F5F7FA;
+    --base-gray-200: #E4E7EB;
+    --base-gray-800: #323F4B;
     --base-black: #121212;
 
     /* --- VARIÁVEIS FUNCIONAIS --- */
@@ -29,7 +29,7 @@ para todas as interfaces do sistema.
     
     /* Cores de Estado */
     --cor-status-info: var(--base-teal);
-    --cor-status-warning: #fbc02d;
+    --cor-status-warning: #FBC02D;
     --cor-status-danger: var(--base-red);
     --cor-status-success: var(--base-green);
 
@@ -48,14 +48,14 @@ para todas as interfaces do sistema.
 
 /* --- TEMA ESCURO --- */
 [data-theme="dark"] {
-    --bg-body: #0a1014;
-    --bg-card: #15202b;
-    --bg-header: #15202b; 
-    --text-primary: #e4e7eb;
-    --text-secondary: #a0aec0;
-    --borda-suave: #2c3e50;
+    --bg-body: #0A1014;
+    --bg-card: #15202B;
+    --bg-header: #15202B; 
+    --text-primary: #E4E7EB;
+    --text-secondary: #A0AEC0;
+    --borda-suave: #2C3E50;
     --sombra-card: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
-    --cor-brand-primary: #04dbe4; 
+    --cor-brand-primary: #04DBE4; 
     --logo-filter: brightness(0) invert(1); 
 }
 
