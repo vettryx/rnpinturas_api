@@ -124,21 +124,10 @@ class OrderListView(CommonListView):
         """
         detail_url = reverse_lazy("orders:detail", args=[item.pk])
 
-        # Formatação do código do pedido (Ex: 20250001 -> 2025-0001)
-        if item.order_code:
-            code_str = str(item.order_code)
-            # Pega os 4 primeiros caracteres, coloca o traço, e pega os 4 últimos
-            formatted_code = f"{code_str[:4]}-{code_str[-4:]}"
-        else:
-            # Fallback de segurança caso seja um pedido antigo sem código salvo
-            formatted_code = f"{item.id:04d}"
-
-        # Cálculo do valor total via Python (sem onerar o banco com propriedades dinâmicas)
-        total_services = sum(s.total_price for s in item.services.all()) if item.services.all() else 0
-        formatted_total = number_format(total_services, decimal_pos=2, force_grouping=True)
+        formatted_total = number_format(item.grand_total, decimal_pos=2, force_grouping=True)
 
         return [
-            formatted_code,
+            item.formatted_code,
             item.issue_date.strftime("%d/%m/%Y") if item.issue_date else "-",
             format_html('<a href="{}">{}</a>', detail_url, item.client.name),
             item.status.name,
@@ -170,34 +159,22 @@ class OrderDetailView(CommonDetailView):
         context = super().get_context_data(**kwargs)
         order = self.object
 
-        # 1. CÁLCULO FINANCEIRO (Valor Bruto vs Valor Líquido)
-        # Valor Líquido = Valor Bruto - Desconto
-        net_services = sum((s.total_price or 0) for s in order.services.all())
-        discount_services = sum((s.discount or 0) for s in order.services.all())
+        # Formatação dos valores financeiros (Serviços, Materiais, Descontos e Total)
 
-        net_materials = sum((m.total_price or 0) for m in order.materials.all())
-        discount_materials = sum((m.discount or 0) for m in order.materials.all())
+        fmt_services = f"R$ {number_format(order.gross_services, decimal_pos=2, force_grouping=True)}"
+        fmt_materials = f"R$ {number_format(order.gross_materials, decimal_pos=2, force_grouping=True)}"
 
-        # Valor Bruto = Valor Líquido + Desconto
-        gross_services = net_services + discount_services
-        gross_materials = net_materials + discount_materials
-
-        # Total Geral do Pedido (Valor Líquido)
-        grand_total = net_services + net_materials
-        total_discounts = discount_services + discount_materials
-
-        # 2. FORMATAÇÃO DE MOEDA
-        fmt_services = f"R$ {number_format(gross_services, decimal_pos=2, force_grouping=True)}"
-        fmt_materials = f"R$ {number_format(gross_materials, decimal_pos=2, force_grouping=True)}"
-
-        if total_discounts > 0:
-            fmt_discounts = f"- R$ {number_format(total_discounts, decimal_pos=2, force_grouping=True)}"
+        if order.total_discounts > 0:
+            fmt_discounts = f"- R$ {number_format(order.total_discounts, decimal_pos=2, force_grouping=True)}"
         else:
             fmt_discounts = "R$ 0,00"
 
-        fmt_total = f"R$ {number_format(grand_total, decimal_pos=2, force_grouping=True)}"
+        fmt_total = f"R$ {number_format(order.grand_total, decimal_pos=2, force_grouping=True)}"
 
-        # 3. FORMATAÇÃO DO CÓDIGO DO PEDIDO (Ex: 2025-0002)
+        # Formatação do título da página (Ex: "2025-0001: Cliente XYZ")
+        context["title"] = f"{order.formatted_code}: {order.client.name}"
+
+        # Formatação do código do pedido para exibição (Ex: 20250001 -> 2025-0001)
         if order.order_code:
             code_str = str(order.order_code)
             order_display_code = f"{code_str[:4]}-{code_str[-4:]}"
@@ -206,7 +183,7 @@ class OrderDetailView(CommonDetailView):
 
         context["title"] = f"{order_display_code}: {order.client.name}"
 
-        # 4. MONTAGEM DAS LINHAS DAS TABELAS (Dados crus, sem totais internos)
+        # Montagem das listas de serviços e materiais para exibição nas abas (com formatação adequada)
         services_list = [
             {
                 "values": [
@@ -319,7 +296,7 @@ class OrderDetailView(CommonDetailView):
             {
                 "label": "Descontos",
                 "value": fmt_discounts,
-                "text_class": "danger" if total_discounts > 0 else "",
+                "text_class": "danger" if fmt_discounts.startswith("-") else "",
             },
             {
                 "label": "Total Líquido",

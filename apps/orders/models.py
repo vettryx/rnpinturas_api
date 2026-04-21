@@ -43,15 +43,6 @@ class Order(NoteBase):
         db_table = "orders"
         ordering = ["-issue_date", "-id"]
 
-    @property
-    def formatted_code(self):
-        """Retorna o código formatado para o usuário: 2025-0001"""
-        if self.order_code and len(self.order_code) >= self.MIN_CODE_LENGTH:
-            ano = self.order_code[:4]
-            sequencial = self.order_code[4:]
-            return f"{ano}-{sequencial}"
-        return self.order_code
-
     def __str__(self):
         return f"{self.formatted_code} - {self.client}"
 
@@ -72,6 +63,64 @@ class Order(NoteBase):
             self.order_code = f"{current_year}{new_sequence:04d}"
 
         super().save(*args, **kwargs)
+
+    # Propriedade para o Código do Pedido formatado (Ex: 2025-0001)
+    @property
+    def formatted_code(self):
+        """Retorna o código formatado para o usuário: 2025-0001"""
+        if self.order_code and len(self.order_code) >= self.MIN_CODE_LENGTH:
+            ano = self.order_code[:4]
+            sequencial = self.order_code[4:]
+            return f"{ano}-{sequencial}"
+        return self.order_code
+
+    # Propriedades para os Serviços (Líquido, Bruto, Descontos)
+    @property
+    def net_services(self):
+        """Total Líquido dos Serviços"""
+        return sum((s.total_price or 0) for s in self.services.all())
+
+    # Propriedade para o Total de Descontos nos Serviços
+    @property
+    def discount_services(self):
+        """Total de Descontos nos Serviços"""
+        return sum((s.discount or 0) for s in self.services.all())
+
+    # Propriedade para o Total Bruto dos Serviços (Líquido + Descontos)
+    @property
+    def gross_services(self):
+        """Total Bruto dos Serviços (Líquido + Descontos)"""
+        return self.net_services + self.discount_services
+
+    # Propriedades para os Materiais (Líquido, Bruto, Descontos)
+    @property
+    def net_materials(self):
+        """Total Líquido dos Materiais"""
+        return sum((m.total_price or 0) for m in self.materials.all())
+
+    # Propriedade para o Total de Descontos nos Materiais
+    @property
+    def discount_materials(self):
+        """Total de Descontos nos Materiais"""
+        return sum((m.discount or 0) for m in self.materials.all())
+
+    # Propriedade para o Total Bruto dos Materiais (Líquido + Descontos)
+    @property
+    def gross_materials(self):
+        """Total Bruto dos Materiais (Líquido + Descontos)"""
+        return self.net_materials + self.discount_materials
+
+    # Propriedade para a Soma Total de Descontos (Serviços + Materiais)
+    @property
+    def total_discounts(self):
+        """Soma de todos os descontos (Serviços + Materiais)"""
+        return self.discount_services + self.discount_materials
+
+    # Propriedade para o Total Geral Líquido do Pedido (a ser pago pelo cliente)
+    @property
+    def grand_total(self):
+        """Total Geral Líquido do Pedido a ser pago pelo cliente"""
+        return self.net_services + self.net_materials
 
 
 class OrderMaterial(NoteBase):
