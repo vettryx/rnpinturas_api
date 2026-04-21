@@ -1,5 +1,18 @@
-{# templates/includes/apps_home.html #}
 {% extends "base.html" %}
+
+
+{% comment %}
+==============================================================================
+Módulo: Dashboard (Home do App)
+Caminho: templates/includes/apps_home.html
+==============================================================================
+
+Template base para o painel inicial (Dashboard) dos módulos do sistema.
+Renderiza indicadores de performance (KPIs) dinâmicos, painel de ações 
+rápidas e listagem de atividades recentes.
+==============================================================================
+{% endcomment %}
+
 {% load static %}
 
 {% block title %}{{ title }}{% endblock title %}

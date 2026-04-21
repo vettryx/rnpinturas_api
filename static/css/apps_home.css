@@ -1,4 +1,14 @@
-/* static/css/apps_home.css */
+/*
+==============================================================================
+Módulo: Dashboard (Home do App)
+Caminho: static/css/apps_home.css
+==============================================================================
+
+Estilos para a tela inicial dos aplicativos. Controla a malha (grid) dos 
+indicadores (KPIs), formatação dos cartões de atalho e feed de recentes, 
+garantindo contraste e sombreamento no Dark Mode.
+==============================================================================
+*/
 
 /* ==========================================================================
    CONFIGURAÇÕES DE SCROLLBAR
@@ -7,13 +17,16 @@
     width: 6px;
     height: 6px;
 }
+
 ::-webkit-scrollbar-track {
     background: transparent;
 }
+
 ::-webkit-scrollbar-thumb {
     background: var(--borda-suave); 
     border-radius: 3px;
 }
+
 ::-webkit-scrollbar-thumb:hover {
     background: var(--cor-brand-primary);
 }
@@ -46,41 +59,69 @@
     background-color: var(--bg-card);
     border-radius: 12px;
     padding: 1.5rem;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    box-shadow: var(--sombra-card);
     border: 1px solid var(--borda-suave);
+    border-left: 5px solid var(--cor-brand-primary);
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    text-align: center; 
+    align-items: center;
     position: relative;
     overflow: hidden;
+    min-height: 180px;
     height: 100%;
 }
 
 .kpi-card::before {
-    content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px;
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 6px;
     background-color: var(--cor-brand-primary);
+    z-index: 1;
 }
-.kpi-card.success::before { background-color: var(--cor-status-success); }
-.kpi-card.alert::before { background-color: var(--cor-status-warning); }
+
+.kpi-card.success::before {
+    background-color: var(--cor-status-success);
+}
+
+.kpi-card.alert::before {
+    background-color: var(--cor-status-warning);
+}
 
 .kpi-header {
-    display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.8rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.8rem;
 }
 
 /* HARMONIA: Padronizando Label do KPI com Título do Card */
 .kpi-label {
-    font-size: 0.8rem; /* Tamanho legível */
-    font-weight: 800; /* Peso forte para hierarquia */
+    font-size: 0.8rem;
+    font-weight: 800;
     color: var(--text-secondary);
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
 
 .kpi-value {
-    font-size: 2.2rem; font-weight: 800; color: var(--text-primary); font-family: 'Fredoka', sans-serif; margin: 0;
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    font-family: 'Fredoka', sans-serif;
+    margin: 0;
 }
+
 .kpi-footer {
-    font-size: 0.75rem; color: var(--text-secondary); border-top: 1px solid var(--borda-suave); padding-top: 0.8rem; margin-top: 0.8rem;
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    border-top: 1px solid var(--borda-suave);
+    padding-top: 0.8rem;
+    margin-top: 0.8rem;
 }
 
 /* ==========================================================================
@@ -96,7 +137,7 @@
 .apps-home-card {
     background-color: var(--bg-card);
     border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    box-shadow: var(--sombra-card);
     border: 1px solid var(--borda-suave);
     overflow: hidden;
     display: flex;
@@ -104,25 +145,25 @@
     height: 100%;
 }
 
-/* --- HEADER CORRIGIDO (HARMONIA) --- */
+/* --- HEADER --- */
 .card-header {
-    /* Altura Fixa: Garante que o texto fique matematicamente no meio vertical */
-    height: 60px; 
-    padding: 0 1.5rem; /* Padding lateral apenas */
+    height: 60px;
+    min-height: 60px; 
+    padding: 0 1.5rem;
     border-bottom: 1px solid var(--borda-suave);
     background-color: var(--bg-card);
-    display: flex;
-    align-items: center; /* Centraliza verticalmente o H3 */
 }
 
 .card-header h3 {
-    margin: 0; /* Remove margem padrão para não estragar o alinhamento flex */
-    font-size: 0.8rem; /* Mesmo tamanho visual do KPI Label */
+    padding: 20px;
+    margin: 0;
+    font-size: 0.8rem;
     font-weight: 800; 
     color: var(--text-primary); 
     text-transform: uppercase;
     letter-spacing: 0.5px;
     line-height: 1;
+    background-color: var(--borda-suave);
 }
 
 /* --- CORPO E ESPAÇAMENTO --- */
@@ -163,60 +204,129 @@
     line-height: 1;
 }
 
-.dashboard-btn.btn-new {
-    background-color: var(--cor-brand-primary);
-    color: var(--base-white);
-    border: 1px solid var(--cor-brand-primary);
-}
-.dashboard-btn.btn-new:hover {
-    filter: brightness(1.1);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+/* --- LISTA RECENTE --- */
+.recent-list {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
 }
 
-.dashboard-btn.btn-list {
-    background-color: transparent;
-    color: var(--cor-brand-primary);
-    border: 2px solid var(--borda-suave);
+.recent-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid var(--borda-suave);
+    min-height: 60px; 
 }
-.dashboard-btn.btn-list:hover {
-    border-color: var(--cor-brand-primary);
+
+.recent-item:last-child {
+    border-bottom: none;
+}
+
+.recent-item:hover {
     background-color: var(--bg-body);
 }
 
-.dashboard-btn i { width: 18px; text-align: center; }
-
-/* --- LISTA RECENTE --- */
-.recent-list { display: flex; flex-direction: column; width: 100%; }
-
-.recent-item {
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 1rem 1.5rem;
-    border-bottom: 1px solid var(--borda-suave);
-    /* Altura mínima para cada linha ficar elegante */
-    min-height: 60px; 
+.recent-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1; 
+    min-width: 0;
 }
-.recent-item:last-child { border-bottom: none; }
-.recent-item:hover { background-color: var(--bg-body); }
 
-.recent-info { display: flex; flex-direction: column; gap: 4px; }
-.recent-link { font-weight: 700; color: var(--text-primary); font-size: 0.9rem; }
-.recent-link:hover { color: var(--cor-brand-primary); text-decoration: underline; }
-.recent-meta { font-size: 0.75rem; color: var(--text-secondary); }
-.recent-action i { color: var(--borda-suave); font-size: 0.9rem; }
-.recent-item:hover .recent-action i { color: var(--cor-brand-primary); }
+.recent-link {
+    font-weight: 700;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+}
+
+.recent-link:hover {
+    color: var(--cor-brand-primary);
+    text-decoration: underline; }
+
+.recent-meta {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+.recent-action i {
+    color: var(--borda-suave);
+    font-size: 0.9rem;
+}
+
+.recent-item:hover .recent-action i {
+    color: var(--cor-brand-primary);
+}
 
 .empty-state {
-    color: var(--text-secondary); text-align: center; font-style: italic; padding: 2rem; font-size: 0.9rem;
+    color: var(--text-secondary); 
+    text-align: center; 
+    font-style: italic; 
+    padding: 2rem; 
+    font-size: 0.9rem;
 }
 
 /* ==========================================================================
-   MOBILE
+   RESPONSIVIDADE
    ========================================================================== */
+
+/* BREAKPOINT TABLETS (Geral) */
 @media (max-width: 992px) {
-    .container-apps-home { min-height: auto; padding: 1rem; }
-    .dashboard-main-grid { grid-template-columns: 1fr; align-items: start; }
-    .kpi-card, .apps-home-card { height: auto; }
-    .dashboard-actions-group { flex-direction: row; flex-wrap: wrap; }
-    .dashboard-btn { flex: 1; justify-content: center; }
+    .container-apps-home { 
+        min-height: auto; 
+        padding: 1rem; 
+        gap: 1.5rem; 
+    }
+    
+    /* Grid Principal: Empilha as Ações e Recentes */
+    .dashboard-main-grid { 
+        grid-template-columns: 1fr; 
+        gap: 1.5rem; 
+    }
+    
+    .kpi-card,
+    .apps-home-card {
+        height: auto;
+    }
+}
+
+/* BREAKPOINT CELULARES */
+@media (max-width: 768px) {
+    
+    .dashboard-kpi-grid { 
+        grid-template-columns: 1fr;
+        gap: 1rem; 
+    }
+    
+    .kpi-card { 
+        padding: 1rem;
+        min-height: auto;
+    }
+    
+    .kpi-header {
+        margin-bottom: 0.4rem;
+    }
+
+    .kpi-footer {
+        padding-top: 0.6rem;
+        margin-top: 0.6rem;
+    }
+
+    .dashboard-actions-group { 
+        flex-direction: column !important;
+        width: 100%; 
+        gap: 0.8rem; 
+    }
+    
+    .dashboard-btn { 
+        width: 100% !important;
+        flex: none;
+        justify-content: flex-start;
+    }
+
+    .recent-item { 
+        padding: 0.8rem 1rem;
+    }
 }
