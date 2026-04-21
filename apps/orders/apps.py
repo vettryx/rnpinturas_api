@@ -13,3 +13,5 @@ from django.apps import AppConfig
 class OrdersConfig(AppConfig):
     name = "orders"
     verbose_name = "Gestão de Pedidos"
+    hub_name = "Pedidos"
+    icon = "fa-file-invoice-dollar"

@@ -13,4 +13,6 @@ from django.apps import AppConfig
 
 class ClientsConfig(AppConfig):
     name = "clients"
+    hub_name = "Clientes"
     verbose_name = "Gestão de Clientes"
+    icon = "fa-users"
