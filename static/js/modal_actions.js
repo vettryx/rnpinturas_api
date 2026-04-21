@@ -1,3 +1,5 @@
+// static/js/modal_actions.js
+
 document.addEventListener('DOMContentLoaded', function() {
     
     // 1. Cria o container do modal no corpo da página se não existir
