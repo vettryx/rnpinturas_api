@@ -43,7 +43,6 @@ para todas as interfaces do sistema.
     --text-inverse: var(--base-white);
     --borda-suave: var(--base-gray-200);
     --sombra-card: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    --logo-filter: none;
 }
 
 /* --- TEMA ESCURO --- */
@@ -56,7 +55,6 @@ para todas as interfaces do sistema.
     --borda-suave: #2C3E50;
     --sombra-card: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
     --cor-brand-primary: #04DBE4; 
-    --logo-filter: brightness(0) invert(1); 
 }
 
 /* --- RESET E ESTRUTURA GLOBAL --- */
@@ -90,4 +88,13 @@ a {
     text-decoration: none;
     color: var(--cor-brand-primary);
     transition: 0.2s;
+}
+
+/* Controle de Tema da Logo */
+[data-theme="dark"] .logo-light { 
+    display: none; 
+}
+
+[data-theme="dark"] .logo-dark { 
+    display: block; 
 }

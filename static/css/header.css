@@ -40,11 +40,15 @@ perfil do usuário, com layout responsivo e transição de tema.
     flex: 0 0 200px;
 }
 
-.logo {
-    max-height: 45px;
+.logo-light, .logo-dark {
+    max-height: 80px;
     width: auto;
     filter: var(--logo-filter); 
     transition: filter 0.3s;
+}
+
+.logo-dark {
+    display: none;
 }
 
 /* ==========================================================================
