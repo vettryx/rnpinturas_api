@@ -1,8 +1,14 @@
-/* static/css/header.css */
+/*
+==============================================================================
+Módulo: Componentes (Header)
+Caminho: static/css/header.css
+==============================================================================
 
-/* ==========================================================================
-   HEADER GLOBAL
-   ========================================================================== */
+Estrutura visual e comportamento do cabeçalho principal (navbar) do sistema.
+Controla o posicionamento do logo, título dinâmico da página e menu de 
+perfil do usuário, com layout responsivo e transição de tema.
+==============================================================================
+*/
 
 .main-header {
     background-color: var(--bg-header);
@@ -25,7 +31,9 @@
     width: 100%;
 }
 
-/* --- ÁREA DO LOGO --- */
+/* ==========================================================================
+   ÁREA DO LOGO
+   ========================================================================== */
 .logo-area {
     display: flex;
     align-items: center;
@@ -39,7 +47,9 @@
     transition: filter 0.3s;
 }
 
-/* --- ÁREA DO TÍTULO --- */
+/* ==========================================================================
+   ÁREA DO TÍTULO DINÂMICO DA PÁGINA
+   ========================================================================== */
 .title-area {
     flex: 1;
     display: flex;
@@ -56,7 +66,9 @@
     white-space: nowrap;
 }
 
-/* --- ÁREA DE AÇÕES --- */
+/* ==========================================================================
+   ÁREA DE AÇÕES E PERFIL DO USUÁRIO
+   ========================================================================== */
 .actions-area {
     display: flex;
     align-items: center;
@@ -76,19 +88,26 @@
     text-decoration: none;
 }
 
-/* --- RESPONSIVIDADE --- */
+/* ==========================================================================
+   RESPONSIVIDADE
+   ========================================================================== */
 @media (max-width: 768px) {
     .header-content {
         flex-direction: column;
+        gap: 0.8rem;
     }
     
-    .logo-area, .actions-area {
+    .logo-area, .title-area, .actions-area {
         flex: auto;
         width: 100%;
         justify-content: center;
     }
     
     .title-area {
-        display: none;
+        display: flex; 
+    }
+
+    .page-title {
+        font-size: 1.1rem; 
     }
 }
