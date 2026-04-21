@@ -66,6 +66,21 @@ class AuxStatus(IdleBase):
     def __str__(self):
         return self.name
 
+    @property
+    def css_class(self):
+        """Mapeia o nome do status para uma classe CSS de cor"""
+        mapping = {
+            'Aguardando Aprovação': 'warning',
+            'Aprovado': 'success',
+            'Reprovado': 'danger',
+            'Em andamento': 'info',
+            'Aguardando Pagamento': 'danger',
+            'Concluído': 'success',
+            'Cancelado': 'dark',
+        }
+        # Se não achar na lista acima, devolve 'secondary' (cinza neutro)
+        return mapping.get(self.name, 'secondary')
+
 
 class AuxUnitMeasure(IdleBase):
     """
