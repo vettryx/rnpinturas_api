@@ -1,4 +1,14 @@
-/* static/js/theme-switcher.js */
+/*
+==============================================================================
+Módulo: Scripts Globais (Tema)
+Caminho: static/js/theme-switcher.js
+==============================================================================
+
+Gerencia a alternância entre os temas claro e escuro (Dark Mode).
+Lê a preferência salva no localStorage ou do sistema operacional, 
+aplica o atributo data-theme no HTML global e alterna o ícone do botão.
+==============================================================================
+*/
 
 document.addEventListener('DOMContentLoaded', () => {
     const themeToggleBtn = document.getElementById('theme-toggle-btn');
