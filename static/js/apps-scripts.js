@@ -45,10 +45,9 @@ $(document).ready(function() {
     // ======================================================
     $(document).on('blur', '.cep-input', function() {
         var inputCep = $(this);
-        var cepValue = inputCep.val().replace(/\D/g, ''); // Remove traços e pontos
+        var cepValue = inputCep.val().replace(/\D/g, '');
         
         // Acha o container pai (a linha do endereço ou o grupo principal)
-        // ATENÇÃO: Ajustado para pegar .apps-formset-item ou o novo .apps-form-group
         var container = inputCep.closest('.apps-formset-item, .apps-form-group');
 
         if (cepValue.length === 8) {
@@ -184,6 +183,11 @@ $(document).ready(function() {
                 firstField.focus();
             }
         }
+
+        // CHAMA O CÁLCULO PARA ATUALIZAR OS TOTAIS COM A NOVA LINHA VAZIA
+        if (typeof calculateLiveTotals === "function") {
+            calculateLiveTotals();
+        }
     });
 
     // ======================================================
@@ -227,4 +231,113 @@ $(document).ready(function() {
         $validityDays.on('input change', updateDueDate); 
     }
 
+    // ======================================================
+    // 6. MOTOR DE TOTAIS EM TEMPO REAL (SERVIÇOS E MATERIAIS)
+    // ======================================================
+    
+    // Função para converter o texto do input (ex: "1.500,00" ou "1500") para Float matemático
+    function parseBRLValue(val) {
+        if (!val) return 0;
+        var strVal = val.toString().trim();
+        
+        if (strVal.indexOf(',') === -1) {
+            return parseFloat(strVal) || 0;
+        }
+        strVal = strVal.replace(/\./g, '').replace(',', '.');
+        return parseFloat(strVal) || 0;
+    }
+
+    // Função para devolver o Float no formato visual bonito (R$ 1.500,00)
+    function formatBRL(value) {
+        return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    }
+
+    function calculateLiveTotals() {
+        var totalServices = 0;
+        var totalMaterials = 0;
+        var totalDiscounts = 0;
+
+        // 1. Soma todos os Serviços
+        $('input[name^="services-"][name$="-price"]').each(function() {
+            var name = $(this).attr('name');
+            if (name.includes('__prefix__')) return; // Ignora a linha fantasma do formset
+            
+            var index = name.match(/services-(\d+)-price/)[1];
+            
+            // Se o usuário marcou a linha para apagar, a gente ignora ela na soma
+            if ($('input[name="services-' + index + '-DELETE"]').is(':checked')) return;
+
+            var qty = parseBRLValue($('input[name="services-' + index + '-quantity"]').val()) || 1;
+            var price = parseBRLValue($(this).val());
+            var discount = parseBRLValue($('input[name="services-' + index + '-discount"]').val());
+
+            totalServices += (qty * price);
+            totalDiscounts += discount;
+        });
+
+        // 2. Soma todos os Materiais (se existirem na tela)
+        $('input[name^="materials-"][name$="-price"]').each(function() {
+            var name = $(this).attr('name');
+            if (name.includes('__prefix__')) return;
+            
+            var index = name.match(/materials-(\d+)-price/)[1];
+            
+            if ($('input[name="materials-' + index + '-DELETE"]').is(':checked')) return;
+
+            var qty = parseBRLValue($('input[name="materials-' + index + '-quantity"]').val()) || 1;
+            var price = parseBRLValue($(this).val());
+            var discount = parseBRLValue($('input[name="materials-' + index + '-discount"]').val());
+
+            totalMaterials += (qty * price);
+            totalDiscounts += discount;
+        });
+
+        // 3. Aplica no HTML
+        var grandTotal = (totalServices + totalMaterials) - totalDiscounts;
+
+        $('#live-val-services').text(formatBRL(totalServices));
+        $('#live-val-materials').text(formatBRL(totalMaterials));
+        $('#live-val-discounts').text('- ' + formatBRL(totalDiscounts));
+        $('#live-val-grandtotal').text(formatBRL(grandTotal));
+    }
+
+    // Só inicializa o painel se a tela tiver campos de preço (Tela de Pedidos/Orçamentos)
+    if ($('input[name$="-price"]').length > 0) {
+        
+        // Constrói o painel e injeta logo antes dos botões de salvar
+        var panelHTML = `
+            <div class="live-totals-wrapper">
+                <div class="live-total-item">
+                    <span class="label">Serviços</span>
+                    <span class="value" id="live-val-services">R$ 0,00</span>
+                </div>
+                <div class="live-total-item">
+                    <span class="label">Materiais</span>
+                    <span class="value" id="live-val-materials">R$ 0,00</span>
+                </div>
+                <div class="live-total-item discount">
+                    <span class="label">Descontos</span>
+                    <span class="value" id="live-val-discounts">- R$ 0,00</span>
+                </div>
+                <div class="live-total-item grand-total">
+                    <span class="label">Total Líquido</span>
+                    <span class="value" id="live-val-grandtotal">R$ 0,00</span>
+                </div>
+            </div>
+        `;
+        $('.apps-form-btn-group').before(panelHTML);
+
+        // Calcula ao carregar a página (para edições)
+        calculateLiveTotals();
+
+        // Recalcula sempre que alguém digitar nos campos de valor, qtd ou desconto
+        $(document).on('input', 'input[name$="-price"], input[name$="-quantity"], input[name$="-discount"]', function() {
+            calculateLiveTotals();
+        });
+
+        // Recalcula se o usuário marcar a checkbox de deletar uma linha
+        $(document).on('change', 'input[name$="-DELETE"]', function() {
+            calculateLiveTotals();
+        });
+    }
 });
