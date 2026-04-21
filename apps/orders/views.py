@@ -170,14 +170,31 @@ class OrderDetailView(CommonDetailView):
         context = super().get_context_data(**kwargs)
         order = self.object
 
-        # 1. CÁLCULO FINANCEIRO (Processado em Python para aceitar @property)
-        sum_services = sum(s.total_price for s in order.services.all()) if order.services.exists() else 0
-        sum_materials = sum(m.total_price for m in order.materials.all()) if order.materials.exists() else 0
-        grand_total = sum_services + sum_materials
+        # 1. CÁLCULO FINANCEIRO (Valor Bruto vs Valor Líquido)
+        # Valor Líquido = Valor Bruto - Desconto
+        net_services = sum((s.total_price or 0) for s in order.services.all())
+        discount_services = sum((s.discount or 0) for s in order.services.all())
 
-        # 2. FORMATAÇÃO DE MOEDA (Padrão: R$ 1.000,00)
-        fmt_services = f"R$ {number_format(sum_services, decimal_pos=2, force_grouping=True)}"
-        fmt_materials = f"R$ {number_format(sum_materials, decimal_pos=2, force_grouping=True)}"
+        net_materials = sum((m.total_price or 0) for m in order.materials.all())
+        discount_materials = sum((m.discount or 0) for m in order.materials.all())
+
+        # Valor Bruto = Valor Líquido + Desconto
+        gross_services = net_services + discount_services
+        gross_materials = net_materials + discount_materials
+
+        # Total Geral do Pedido (Valor Líquido)
+        grand_total = net_services + net_materials
+        total_discounts = discount_services + discount_materials
+
+        # 2. FORMATAÇÃO DE MOEDA
+        fmt_services = f"R$ {number_format(gross_services, decimal_pos=2, force_grouping=True)}"
+        fmt_materials = f"R$ {number_format(gross_materials, decimal_pos=2, force_grouping=True)}"
+
+        if total_discounts > 0:
+            fmt_discounts = f"- R$ {number_format(total_discounts, decimal_pos=2, force_grouping=True)}"
+        else:
+            fmt_discounts = "R$ 0,00"
+
         fmt_total = f"R$ {number_format(grand_total, decimal_pos=2, force_grouping=True)}"
 
         # 3. FORMATAÇÃO DO CÓDIGO DO PEDIDO (Ex: 2025-0002)
@@ -270,30 +287,8 @@ class OrderDetailView(CommonDetailView):
                 ],
             },
             # ==========================================
-            # ABA 1: DADOS GERAIS - RESUMO FINANCEIRO (SEPARADO)
-            # ==========================================
-            {
-                "id": "tab-dados",
-                "active": True,
-                "title": "Resumo Financeiro",
-                "is_table": False,
-                "fields": [
-                    {"label": "Total de Serviços", "value": fmt_services, "class": "text-primary font-weight-bold"},
-                    {"label": "Total de Materiais", "value": fmt_materials, "class": "text-primary font-weight-bold"},
-                    {"label": "VALOR TOTAL DO PEDIDO", "value": fmt_total, "class": "text-success font-weight-bold h5"},
-                ],
-            },
-            # ==========================================
             # ABA 2: SERVIÇOS
             # ==========================================
-            {
-                "id": "tab-servicos",
-                "title": "Serviços do Pedido",
-                "is_table": False,
-                "fields": [
-                    {"label": "VALOR TOTAL DOS SERVIÇOS:", "value": fmt_services, "class": "text-right font-weight-bold h5"}
-                ],
-            },
             {
                 "id": "tab-servicos",
                 "is_table": True,
@@ -306,17 +301,30 @@ class OrderDetailView(CommonDetailView):
             # ==========================================
             {
                 "id": "tab-materiais",
-                "title": "Materiais que serão utilizados na Prestação dos Serviços",
-                "is_table": False,
-                "fields": [
-                    {"label": "VALOR TOTAL DOS MATERIAIS:", "value": fmt_materials, "class": "text-right font-weight-bold h5"}
-                ],
-            },
-            {
-                "id": "tab-materiais",
                 "is_table": True,
                 "table_headers": ["Material", "Quantidade", "Preço (R$)", "Desconto", "Total", "Observações"],
                 "fields": materials_list,
+            },
+        ]
+        # RESUMO FINANCEIRO
+        context['summary_totals'] = [
+            {
+                "label": "Serviços",
+                "value": fmt_services,
+            },
+            {
+                "label": "Materiais",
+                "value": fmt_materials,
+            },
+            {
+                "label": "Descontos",
+                "value": fmt_discounts,
+                "text_class": "danger" if total_discounts > 0 else "",
+            },
+            {
+                "label": "Total Líquido",
+                "value": fmt_total,
+                "text_class": "primary",
             },
         ]
         return context

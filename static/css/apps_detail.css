@@ -1,15 +1,25 @@
-/* static/css/apps_detail.css */
+/*
+==============================================================================
+Módulo: Detalhes do Registro (Visualização)
+Caminho: static/css/apps_detail.css
+==============================================================================
+
+Estilização da interface de visualização detalhada. Controla o layout da
+sidebar de navegação vertical, a estrutura de tabelas de exibição, grids
+de campos e o componente de resumo financeiro alinhado à direita.
+==============================================================================
+*/
 
 /* ==========================================================================
    LAYOUT GERAL (Desktop First)
    ========================================================================== */
 .container-apps-detail {
     display: grid;
-    grid-template-columns: 280px 1fr; /* Sidebar fixa, Conteúdo fluido */
+    grid-template-columns: 280px 1fr;
     grid-template-rows: 100%;
     gap: 1.5rem;
-    height: calc(100vh - 140px);
     width: 100%;
+    height: calc(100vh - 170px);
     padding: 1rem 1.5rem 1.5rem 1.5rem;
     overflow: hidden;
     font-family: 'Montserrat', sans-serif;
@@ -66,10 +76,9 @@
 }
 
 /* ==========================================================================
-   WRAPPER E CONTEÚDO (Correção da Caixa Branca)
+   WRAPPER E CONTEÚDO
    ========================================================================== */
 .verticalTab-content-wrapper {
-    /* O Wrapper agora é transparente, apenas organiza o layout */
     background-color: transparent !important;
     box-shadow: none !important;
     border: none !important;
@@ -80,14 +89,12 @@
 }
 
 .verticalTab-content {
-    /* O estilo de CARD (Fundo Branco) vai APENAS no conteúdo */
     background-color: var(--bg-card);
     border-radius: 12px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
     border: 1px solid var(--borda-suave);
-    
-    flex-grow: 1; /* Ocupa todo espaço disponível menos os botões */
-    overflow-y: auto; /* Scroll apenas dentro do card branco */
+    flex-grow: 1;
+    overflow-y: auto;
     padding: 2rem;
 }
 
@@ -134,7 +141,10 @@
     gap: 6px;
     margin: 0;
 }
-.p-detail.full-width { grid-column: 1 / -1; }
+
+.p-detail.full-width {
+    grid-column: 1 / -1;
+}
 
 .apps-detail-label {
     font-size: 0.75rem;
@@ -152,7 +162,9 @@
     border-bottom: 1px solid transparent;
     word-break: break-word;
 }
-.p-detail:hover .apps-detail-value { color: var(--cor-brand-primary); }
+.p-detail:hover .apps-detail-value {
+    color: var(--cor-brand-primary);
+}
 
 /* ==========================================================================
    TABELAS
@@ -184,7 +196,9 @@
     z-index: 5;
 }
 
-[data-theme="dark"] .tb-detail thead th { color: var(--base-dark-blue) !important; }
+[data-theme="dark"] .tb-detail thead th {
+    color: var(--base-dark-blue) !important;
+}
 
 .tb-detail tbody td {
     padding: 0.8rem 1.5rem;
@@ -194,6 +208,7 @@
     vertical-align: middle;
     background-color: var(--bg-card);
 }
+
 .tb-detail tbody tr:hover td {
     background-color: var(--bg-body);
     color: var(--cor-brand-primary);
@@ -204,26 +219,82 @@
    ========================================================================== */
 .apps-detail-btn-group {
     display: flex;
-    justify-content: flex-end; /* Alinha à direita no desktop */
+    justify-content: flex-end;
     gap: 1rem;
     width: 100%;
-    margin-top: 1.5rem; /* Separa do card branco */
-    
-    /* Removemos qualquer estilo de caixa */
+    margin-top: 1.5rem;
     background: transparent !important;
     border: none !important;
     padding: 0 !important;
     box-shadow: none !important;
-    
-    /* Garante que o container não mexa ao passar o mouse */
     transform: none !important;
     transition: none !important;
 }
 
-/* O hover só deve afetar os botões individuais (a tag 'a'), não a div */
 .apps-detail-btn-group:hover {
     transform: none !important;
     background: transparent !important;
+}
+
+/* ==========================================================================
+   TOTALIZADOR FLUTUANTE (DASHBOARD DETAIL)
+   ========================================================================== */
+.apps-detail-totals-wrapper {
+    background-color: var(--bg-card);
+    border: 1px solid var(--borda-suave);
+    border-radius: 12px;
+    padding: 1rem 1.5rem;
+    margin-top: 1.5rem;
+    width: max-content;
+    max-width: 100%;
+    margin-left: auto; 
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 20px;
+    box-shadow: var(--sombra-card);
+}
+
+.total-block {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.total-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.total-value {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: var(--text-primary);
+}
+
+.total-value.danger {
+    color: var(--cor-status-danger);
+}
+
+.total-value.success {
+    color: var(--cor-status-success);
+}
+
+.total-value.primary {
+    color: var(--cor-brand-primary);
+    font-size: 1.3rem;
+}
+
+/* Barrinha vertical entre os valores */
+.total-separator {
+    width: 1px;
+    height: 35px;
+    background-color: var(--borda-suave);
 }
 
 /* ==========================================================================
@@ -317,4 +388,14 @@
         justify-content: center;
         box-shadow: 0 4px 6px rgba(0,0,0,0.06); 
     }
+
+    .apps-detail-totals-wrapper {
+        width: 100%; 
+        margin-left: 0;
+        flex-wrap: wrap;
+        justify-content: center;
+        margin-bottom: 0.5rem;
+    }
+
 }
+

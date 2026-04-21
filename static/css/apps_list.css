@@ -8,7 +8,7 @@
     grid-template-columns: 280px 1fr;
     grid-template-rows: 100%;
     gap: 1.5rem;
-    height: calc(100vh - 140px);
+    height: calc(100vh - 170px);
     width: 100%;
     padding: 1rem 1.5rem 1.5rem 1.5rem;
     overflow: hidden;

@@ -40,9 +40,9 @@ garantindo contraste e sombreamento no Dark Mode.
     margin: 0 auto;
     padding: 1.5rem;
     display: flex;
+    flex: 1;
     flex-direction: column;
     gap: 2rem;
-    min-height: calc(100vh - 140px);
 }
 
 /* ==========================================================================

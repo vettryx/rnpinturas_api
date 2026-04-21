@@ -1,6 +1,17 @@
-{# templates/includes/apps_detail.html #}
-
 {% extends "base.html" %}
+
+{% comment %}
+==============================================================================
+Módulo: Visualização de Detalhes (Read-Only)
+Caminho: templates/includes/apps_detail.html
+==============================================================================
+
+Template genérico para exibição detalhada de registros do sistema.
+Organizado em abas verticais, suporta grids de dados, tabelas dinâmicas
+e um painel de resumo financeiro (summary_totals) flutuante no rodapé.
+==============================================================================
+{% endcomment %}
+
 {% load static %}
 
 {% block title %}{{ title }}{% endblock title %}
@@ -79,6 +90,25 @@
                 </div>
             {% endfor %}
         </div>
+
+        {# ================================================================== #}
+        {# TOTALIZADOR DINÂMICO (Padrão semelhante ao apps_form)              #}
+        {# ================================================================== #}
+        {% if summary_totals %}
+            <div class="apps-detail-totals-wrapper">
+                {% for total in summary_totals %}
+                    <div class="total-block">
+                        <span class="total-label">{{ total.label }}</span>
+                        <span class="total-value {{ total.text_class }}">{{ total.value }}</span>
+                    </div>
+                    
+                    {# Adiciona a barrinha divisória entre os itens, exceto no último #}
+                    {% if not forloop.last %}
+                        <div class="total-separator"></div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        {% endif %}
 
         <div class="apps-detail-btn-group">
             {% for button in buttons %}
