@@ -1,8 +1,14 @@
-/* static/css/global.css */
+/*
+==============================================================================
+Módulo: Estilos Globais e Variáveis
+Caminho: static/css/global.css
+==============================================================================
 
-/* ==========================================================================
-   ESTILOS GLOBAIS E VARIÁVEIS
-   ========================================================================== */
+Definição da paleta de cores base, variáveis de tema (claro e escuro), 
+tipografia padrão (Montserrat e Fredoka) e reset estrutural de layout 
+para todas as interfaces do sistema.
+==============================================================================
+*/
 
 :root {
     /* --- PALETA BASE --- */
@@ -65,7 +71,7 @@ html, body {
     width: 100%;
 }
 
-body {
+html body {
     background-color: var(--bg-body);
     color: var(--text-primary);
     font-family: 'Montserrat', sans-serif;
