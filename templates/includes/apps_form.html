@@ -1,6 +1,18 @@
-{# templates/includes/apps_form.html #}
-
 {% extends "base.html" %}
+
+
+{% comment %}
+==============================================================================
+Módulo: Templates Genéricos
+Caminho: templates/includes/apps_form.html
+==============================================================================
+
+Template base para renderização dinâmica de formulários de criação e edição.
+Suporta layout com abas (tabs), formulários simples e formsets renderizados
+em formato de tabela responsiva ou blocos tradicionais.
+==============================================================================
+{% endcomment %}
+
 {% load static %}
 
 {% block title %}{{ title }}{% endblock title %}
@@ -135,7 +147,9 @@
                                                 {% for form in section.formset %}
                                                     <tr class="apps-formset-item">
                                                         {% for field in form.visible_fields %}
-                                                            <td>
+                                                            
+                                                            <td data-label="{{ field.label }}">
+                                                                
                                                                 {% if forloop.first %}
                                                                     {% if form.non_field_errors %}
                                                                         <div class="error-list mb-2">{{ form.non_field_errors }}</div>
