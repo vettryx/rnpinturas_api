@@ -14,7 +14,7 @@ from django.contrib.auth import views as auth_views
 from django.urls import include, path
 from two_factor.urls import urlpatterns as tf_urls
 
-from .views import HomeView
+from .views import AppsHubView, HomeView
 
 urlpatterns = [
     # ==========================================================================
@@ -26,6 +26,9 @@ urlpatterns = [
 
     # URL para a Página Inicial do Projeto
     path("", HomeView.as_view(), name="home"),
+
+    # URL para o Hub de Aplicativos (Dashboard Principal)
+    path('apps/', AppsHubView.as_view(), name='apps_hub'),
 
     # ==========================================================================
     # AUTENTICAÇÃO E CONTAS

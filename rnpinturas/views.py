@@ -11,7 +11,9 @@ Inclui a renderização do Dashboard principal com métricas consolidadas.
 from datetime import timedelta
 
 from clients.models import Client
+from django.apps import apps
 from django.db.models import F, Sum
+from django.urls import URLPattern, URLResolver, get_resolver
 from django.utils import timezone
 from django.utils.formats import number_format
 from django.views.generic import TemplateView
@@ -95,3 +97,109 @@ class HomeView(TemplateView):
         context['period_atual'] = period
 
         return context
+
+
+class AppsHubView(TemplateView):
+    """
+    View autônoma refatorada para baixa complexidade ciclomática.
+    """
+    template_name = "apps_hub.html"
+
+    # Dicionários de configuração agora são atributos da classe para limpeza
+    ACTION_TRANSLATIONS = {'home': 'Dashboard', 'list': 'Lista', 'new': 'Novo Registro'}
+    ENTITY_TRANSLATIONS = {
+        'room': 'Cômodos', 'roompart': 'Partes de Cômodos', 'order': 'Pedidos',
+        'client': 'Clientes', 'material': 'Materiais', 'service': 'Serviços'
+    }
+    IGNORE_NAMESPACES = ['admin', 'auth', 'contenttypes', 'sessions', 'messages', 'staticfiles', 'two_factor', 'cities']
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = "Módulos do Sistema"
+
+        # Chama a função extraída para processar os módulos (Baixa Complexidade)
+        discovered_modules = self._discover_app_modules()
+
+        # Ordena as caixas e envia pro template
+        discovered_modules.sort(key=lambda x: x['app_name'])
+        context['modules'] = discovered_modules
+        return context
+
+    def _discover_app_modules(self):
+        """Método isolado que varre as rotas do projeto."""
+        modules = []
+        resolver = get_resolver()
+
+        for url_pattern in resolver.url_patterns:
+            if not isinstance(url_pattern, URLResolver):
+                continue
+
+            app_namespace = url_pattern.app_name
+            if not app_namespace or app_namespace in self.IGNORE_NAMESPACES:
+                continue
+
+            try:
+                app_config = apps.get_app_config(app_namespace)
+            except LookupError:
+                continue
+
+            app_data = self._process_app_patterns(app_namespace, app_config, url_pattern.url_patterns)
+            if app_data:
+                modules.append(app_data)
+
+        return modules
+
+    def _process_app_patterns(self, namespace, app_config, patterns):
+        """Método isolado para processar as rotas de um único app."""
+        raw_name = getattr(app_config, 'hub_name', app_config.verbose_name)
+        app_name = raw_name.replace("Gestão de ", "").strip()
+
+        module_links = []
+
+        for sub_pattern in patterns:
+            if not isinstance(sub_pattern, URLPattern):
+                continue
+
+            route_str = str(sub_pattern.pattern)
+            url_name = sub_pattern.name
+
+            if url_name and '<' not in route_str:
+                link_data = self._build_link_data(namespace, url_name, app_name)
+                module_links.append(link_data)
+
+        if not module_links:
+            return None
+
+        module_links.sort(key=lambda x: ('Dashboard' not in x['label'], x['label']))
+
+        return {
+            'app_name': app_name,
+            'icon': getattr(app_config, 'icon', 'fa-cube'),
+            'links': module_links
+        }
+
+    def _build_link_data(self, namespace, url_name, app_name):
+        """Método isolado para montar a URL, o Nome e a Classe CSS do botão."""
+        if url_name == 'home':
+            return {
+                'label': "Dashboard",
+                'url': f"{namespace}:{url_name}",
+                'css_class': 'btn-home' # Puxa o estilo do seu buttons.css
+            }
+
+        if '_' in url_name:
+            entidade_raw, acao_raw = url_name.split('_')[0], url_name.split('_')[-1]
+        else:
+            entidade_raw, acao_raw = namespace, url_name
+
+        acao_pt = self.ACTION_TRANSLATIONS.get(acao_raw, acao_raw.title())
+        entidade_pt = self.ENTITY_TRANSLATIONS.get(entidade_raw, app_name)
+
+        # Mapeamento Inteligente das Classes de CSS do seu projeto
+        css_class = 'btn-list' if acao_raw == 'list' else 'btn-new' if acao_raw == 'new' else 'btn-transparent'
+
+        return {
+            'label': f"{acao_pt} de {entidade_pt}",
+            'url': f"{namespace}:{url_name}",
+            'css_class': css_class # Envia a classe exata pro HTML
+        }
