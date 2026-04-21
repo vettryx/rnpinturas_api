@@ -230,24 +230,6 @@ body.body-home {
     text-decoration: none;
 }
 
-.btn-all-apps {
-    margin: 0 1.2rem 1.2rem;
-    display: block;
-    text-align: center;
-    background-color: var(--cor-brand-primary);
-    color: white;
-    padding: 10px;
-    border-radius: 8px;
-    font-weight: 700;
-    font-size: 0.85rem;
-    text-decoration: none;
-}
-
-.btn-all-apps:hover {
-    filter: brightness(1.1);
-    text-decoration: none;
-}
-
 /* Bloco Central: Tabela */
 .panel-table .section-header {
     display: flex;

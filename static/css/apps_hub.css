@@ -1,0 +1,88 @@
+/*
+==============================================================================
+Módulo: Hub de Aplicações
+Caminho: static/css/apps_hub.css
+==============================================================================
+
+Estilização da interface de navegação central do sistema. Controla o layout
+do grid expansivo para os módulos disponíveis, a formatação dos cards
+interativos com ícones e o alinhamento perfeito dos botões de ação nativos.
+==============================================================================
+*/
+
+.hub-wrapper {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 1rem;
+}
+
+.hub-header {
+    margin-bottom: 2rem;
+    border-bottom: 2px solid var(--borda-suave);
+    padding-bottom: 0.75rem;
+}
+
+.hub-title { 
+    font-size: 1.6rem; 
+    color: var(--cor-brand-primary); 
+    margin-bottom: 0.3rem;
+}
+
+.hub-subtitle { 
+    color: var(--text-secondary); 
+    font-size: 0.95rem; 
+}
+
+.hub-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1rem;
+}
+
+.hub-card {
+    background-color: var(--bg-card);
+    border: 1px solid var(--borda-suave);
+    border-radius: 12px;
+    padding: 1rem;
+    box-shadow: var(--sombra-card);
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.hub-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    border-color: var(--cor-brand-primary);
+}
+
+.hub-card-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 1.2rem;
+    border-bottom: 1px dashed var(--borda-suave);
+    padding-bottom: 1rem;
+}
+
+.hub-icon { 
+    font-size: 1rem; 
+    color: var(--cor-brand-primary); 
+    width: 45px; 
+    text-align: center; 
+}
+
+.hub-app-name { 
+    font-family: 'Fredoka', sans-serif; 
+    font-size: 1rem; 
+    font-weight: 800; 
+    color: var(--text-primary); 
+    text-transform: uppercase; 
+    margin: 0;
+}
+
+.hub-links-list { 
+    display: flex; 
+    flex-direction: column; 
+    gap: 10px; 
+}

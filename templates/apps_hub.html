@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% comment %}
+==============================================================================
+Módulo: Hub de Aplicações
+Caminho: templates/apps_hub.html
+==============================================================================
+Página central de navegação entre os módulos do ERP.
+==============================================================================
+{% endcomment %}
+
+{% load static %}
+
+{% block title %}Módulos do Sistema - RN Pinturas{% endblock %}
+{% block header_title %}Navegação de Módulos{% endblock %}
+
+{% block content %}
+<div class="hub-wrapper">
+    <div class="hub-header">
+        <h2 class="hub-title">
+            <i class="fas fa-th"></i>
+            Navegação de Módulos
+        </h2>
+        <p class="hub-subtitle">Selecione uma área do sistema para acessar suas funções principais.</p>
+    </div>
+
+    <div class="hub-grid">
+        {% for modulo in modules %}
+            <div class="hub-card">
+                <div class="hub-card-header">
+                    <div class="hub-icon"><i class="fas {{ modulo.icon }}"></i></div>
+                    <h3 class="hub-app-name">{{ modulo.app_name }}</h3>
+                </div>
+                
+                <div class="hub-links-list">
+                    {% for link in modulo.links %}
+                        <a href="{% url link.url %}" class="{{ link.css_class }}" style="justify-content: flex-start; text-transform: none; font-size: 14px;">
+                            {{ link.label }}
+                        </a>
+                    {% endfor %}
+                </div>
+            </div>
+        {% empty %}
+            <div class="alert-box">
+                <p>Nenhum módulo configurado na View.</p>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

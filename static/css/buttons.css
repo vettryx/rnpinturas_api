@@ -188,7 +188,8 @@
 /* --- BOTÕES DOS APLICATIVOS (Links Rápidos) --- */
 /* Estes botões aparecem em listas ou grids, geralmente sem fundo */
 
-.btn-address, 
+.btn-address,
+.btn-apps,
 .btn-budget, 
 .btn-calendar, 
 .btn-certification, 
@@ -219,7 +220,8 @@
     width: auto;
 }
 
-.btn-address:hover, 
+.btn-address:hover,
+.btn-apps:hover, 
 .btn-budget:hover, 
 .btn-calendar:hover, 
 .btn-certification:hover, 
@@ -248,6 +250,7 @@
 
 /* Ícones Específicos dos Apps */
 .btn-address::before {content: "\f5a0";}
+.btn-apps::before {content: "\f568";}
 .btn-budget::before {content: "\f15c";}
 .btn-calendar::before {content: "\f073";}
 .btn-certification::before {content: "\f0a3";}
