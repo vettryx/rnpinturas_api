@@ -36,4 +36,4 @@ RUN python manage.py collectstatic --noinput
 
 # Inicia o servidor com o Gunicorn que você já colocou no seu pyproject.toml
 # O Render injeta a porta na variável $PORT automaticamente
-CMD gunicorn rnpinturas.wsgi:application --bind 0.0.0.0:${PORT:-10000}
+CMD ["gunicorn", "rnpinturas.wsgi:application", "--workers", "3", "--threads", "2", "--bind", "0.0.0.0:10000", "--timeout", "120"]
