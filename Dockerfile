@@ -1,12 +1,12 @@
 # Usa a versão exata do Python que você definiu no Poetry
-FROM python:3.14-slim
+FROM python:3.14
 
 # Instala as dependências do sistema operacional para o WeasyPrint funcionar (Cairo, Pango, etc)
 RUN apt-get update && apt-get install -y \
     libcairo2 \
     libpango-1.0-0 \
     libpangocairo-1.0-0 \
-    libgdk-pixbuf2.0-0 \
+    libgdk-pixbuf-2.0-0 \
     libffi-dev \
     shared-mime-info \
     && rm -rf /var/lib/apt/lists/*
