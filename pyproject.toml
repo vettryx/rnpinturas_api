@@ -2,7 +2,7 @@
 # 1. METADADOS DO PROJETO & DEPENDÊNCIAS DE PRODUÇÃO
 # ==============================================================================
 [project]
-name = "rnpinturas_api"
+name = "rnpinturas"
 version = "1.0.0"
 description = "API para o sistema de gestão da RN Pinturas"
 readme = "README.md"
@@ -10,7 +10,6 @@ requires-python = ">=3.14,<4.0"
 authors = [
     { name = "André Ventura", email = "ti@asventura.com.br" }
 ]
-package-mode = false
 dependencies = [
     "django (>=6.0,<7.0)",
     "python-dotenv (>=1.2.1,<2.0.0)",
