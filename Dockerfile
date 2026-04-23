@@ -22,11 +22,11 @@ WORKDIR /app
 RUN pip install poetry
 
 # Copia os arquivos de configuração do Poetry
-COPY pyproject.toml ./
+COPY pyproject.toml poetry.lock* ./
 
-# Configura o Poetry para não criar virtualenv (no Docker não precisa) e instala as dependências
+# Configura o Poetry para não criar virtualenv e instala SÓ as dependências (--no-root)
 RUN poetry config virtualenvs.create false \
-    && poetry install --without dev --no-interaction --no-ansi
+    && poetry install --without dev --no-interaction --no-ansi --no-root
 
 # Copia o resto do código do projeto
 COPY . .
