@@ -12,8 +12,7 @@ Define a formatação da marca, responsividade e links institucionais.
 
 footer {
     margin-top: auto;
-    position: sticky;
-    bottom: 0;
+    position: relative;
     z-index: 999;
     background-color: var(--bg-header);
     color: var(--text-secondary);
@@ -77,7 +76,20 @@ footer a:hover {
 }
 
 /* --- RESPONSIVIDADE --- */
+/* TELAS GRANDES (DESKTOP) */
+@media (min-width: 769px) {
+    footer {
+        position: sticky;
+        top: 0;
+    }
+}
+
 @media (max-width: 480px) {
+    footer {
+        position: relative;
+        padding: 0.8rem 1rem;
+    }
+
     footer p {
         flex-direction: column;
         gap: 0.2rem;
