@@ -8,6 +8,8 @@ Contém a lógica de apresentação e endpoints da API para o módulo de orders.
 Herdará as views genéricas do app 'common' para padronização.
 """
 
+from clients.models import Client
+from common.models import AuxStatus
 from common.views import (
     CommonCreateView,
     CommonDeleteView,
@@ -39,6 +41,9 @@ class OrderHomeView(CommonTemplateView):
 
         # --- KPIs para o Dashboard ---
         total_orders = Order.objects.count()
+        orders_waiting_payment = Order.objects.filter(status__name="Aguardando Pagamento").count()
+        orders_approved = Order.objects.filter(status__name="Aprovado").count()
+        orders_cancelled = Order.objects.filter(status__name="Cancelado").count()
 
         context["kpis"] = [
             {
@@ -47,6 +52,24 @@ class OrderHomeView(CommonTemplateView):
                 "style": "",
                 "footer": "Base completa",
             },
+            {
+                "label": "Pedidos em Aberto",
+                "value": orders_waiting_payment,
+                "style": "bg-warning",
+                "footer": "Aguardando pagamento",
+            },
+            {
+                "label": "Pedidos Aprovados",
+                "value": orders_approved,
+                "style": "success",
+                "footer": "Aprovados",
+            },
+            {
+                "label": "Pedidos Cancelados",
+                "value": orders_cancelled,
+                "style": "bg-danger",
+                "footer": "Cancelados",
+            }
         ]
 
         # --- Ações Rápidas ---
@@ -94,12 +117,17 @@ class OrderListView(CommonListView):
 
     search_config = [
         {"name": "order_code", "label": "Código", "type": "text"},
-        {"name": "client__name", "label": "Cliente", "type": "text"},
+        {
+            "name": "client",
+            "label": "Cliente",
+            "type": "select",
+            "queryset": Client.objects.all(),
+        },
         {
             "name": "status",
             "label": "Status",
             "type": "select",
-            "options": "status_options"
+            "queryset": AuxStatus.objects.all(),
         },
     ]
     table_headers = [

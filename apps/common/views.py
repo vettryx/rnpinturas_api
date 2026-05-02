@@ -82,7 +82,8 @@ class CommonListView(LoginRequiredMixin, ListView):
             c["value"] = self.request.GET.get(config["name"], "")
             c["id"] = f"search-{config['name']}"
             if "queryset" in config:
-                c["options"] = [(o.pk, str(o)) for o in config["queryset"]]
+                formatter = config.get("format_func", str)
+                c["options"] = [(o.pk, formatter(o)) for o in config["queryset"]]
             prepared_search.append(c)
 
         # 2. PROCESSAMENTO DOS BOTÕES DO CABEÇALHO (header_buttons)
