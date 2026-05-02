@@ -10,7 +10,6 @@ Inclui a renderização do Dashboard principal com métricas consolidadas.
 
 from datetime import timedelta
 
-from clients.models import Client
 from django.apps import apps
 from django.db.models import F, Sum
 from django.urls import URLPattern, URLResolver, get_resolver
