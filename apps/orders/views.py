@@ -67,7 +67,7 @@ class OrderHomeView(CommonTemplateView):
             {
                 "label": "Pedidos Cancelados",
                 "value": orders_cancelled,
-                "style": "bg-danger",
+                "style": "alert",
                 "footer": "Cancelados",
             }
         ]
