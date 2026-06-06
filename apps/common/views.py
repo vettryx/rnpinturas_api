@@ -280,6 +280,13 @@ class CommonDetailView(LoginRequiredMixin, DetailView):
         if "buttons" not in context:
             app = obj._meta.app_label
             buttons = []
+
+            # Verifica se existe a rota de Clonar
+            try:
+                clone_url = reverse(f"{app}:clone", args=[obj.pk])
+                buttons.append({"class": "btn-clone", "url": clone_url, "title": "Clonar", "text": "Clonar"})
+            except NoReverseMatch:
+                pass
             # Verifica se existe a rota de Editar
             try:
                 edit_url = reverse(f"{app}:edit", args=[obj.pk])
@@ -291,13 +298,6 @@ class CommonDetailView(LoginRequiredMixin, DetailView):
             try:
                 delete_url = reverse(f"{app}:delete", args=[obj.pk])
                 buttons.append({"class": "btn-delete", "url": delete_url, "title": "Excluir", "text": "Excluir"})
-            except NoReverseMatch:
-                pass
-
-            # Verifica se existe a rota de Clonar
-            try:
-                clone_url = reverse(f"{app}:clone", args=[obj.pk])
-                buttons.append({"class": "btn-clone", "url": clone_url, "title": "Clonar", "text": "Clonar"})
             except NoReverseMatch:
                 pass
 
