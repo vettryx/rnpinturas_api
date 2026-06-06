@@ -18,7 +18,7 @@ Página central de navegação entre os módulos do ERP.
 <div class="hub-wrapper">
     <div class="hub-header">
         <h2 class="hub-title">
-            <i class="fas fa-th"></i>
+            <span class="material-symbols-outlined">apps</span>
             Navegação de Módulos
         </h2>
         <p class="hub-subtitle">Selecione uma área do sistema para acessar suas funções principais.</p>
@@ -28,13 +28,13 @@ Página central de navegação entre os módulos do ERP.
         {% for modulo in modules %}
             <div class="hub-card">
                 <div class="hub-card-header">
-                    <div class="hub-icon"><i class="fas {{ modulo.icon }}"></i></div>
+                    <div class="hub-icon"><span class="material-symbols-outlined">{{ modulo.icon }}</span></div>
                     <h3 class="hub-app-name">{{ modulo.app_name }}</h3>
                 </div>
                 
                 <div class="hub-links-list">
                     {% for link in modulo.links %}
-                        <a href="{% url link.url %}" class="{{ link.css_class }}" style="justify-content: flex-start; text-transform: none; font-size: 14px;">
+                        <a href="{% url link.url %}" class="{{ link.css_class }}">
                             {{ link.label }}
                         </a>
                     {% endfor %}
