@@ -50,10 +50,10 @@ class HomeView(TemplateView):
 
         # 2. KPIs INTELIGENTES
         status_mapping = [
-            {'nome': 'Aguardando Aprovação', 'css': 'status-pending', 'icon': 'fa-clock'},
-            {'nome': 'Aprovado', 'css': 'status-success', 'icon': 'fa-check-circle'},
-            {'nome': 'Em andamento', 'css': 'status-progress', 'icon': 'fa-tools'},
-            {'nome': 'Aguardando Pagamento', 'css': 'status-waiting', 'icon': 'fa-file-invoice-dollar'},
+            {'nome': 'Aguardando Aprovação', 'css': 'status-pending', 'icon': 'schedule'},
+            {'nome': 'Aprovado', 'css': 'status-success', 'icon': 'check_circle'},
+            {'nome': 'Em andamento', 'css': 'status-progress', 'icon': 'construction'},
+            {'nome': 'Aguardando Pagamento', 'css': 'status-waiting', 'icon': 'payments'},
         ]
 
         kpis = []
