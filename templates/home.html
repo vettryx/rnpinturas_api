@@ -43,7 +43,7 @@ a rolagem é delegada apenas aos painéis internos de dados.
         <section class="kpi-grid">
             {% for kpi in kpis %}
             <div class="kpi-card {{ kpi.css_class }}">
-                <div class="kpi-icon"><i class="fa {{ kpi.icon }}"></i></div>
+                <div class="kpi-icon"><span class="material-symbols-outlined">{{ kpi.icon }}</span></div>
                 <div class="kpi-data">
                     <span class="kpi-label">{{ kpi.label }} ({{ kpi.qtd }})</span>
                     <span class="kpi-value">{{ kpi.soma }}</span>
@@ -55,13 +55,19 @@ a rolagem é delegada apenas aos painéis internos de dados.
         <div class="main-layout-grid">
             
             <section class="dashboard-panel panel-apps">
-                <h4 class="section-title">Acesso Rápido</h4>
+                <div class="section-header">
+                    <h4 class="section-title">
+                        <span class="material-symbols-outlined">bolt</span> Acesso Rápido
+                    </h4>
+                </div>
+                
                 <div class="app-cards-grid">
                     <a href="{% url 'clients:home' %}" class="app-card"><div class="app-icon-container"><span class="material-symbols-outlined">group</span></div><span class="app-name">Clientes</span></a>
                     <a href="{% url 'materials:home' %}" class="app-card"><div class="app-icon-container"><span class="material-symbols-outlined">inventory_2</span></div><span class="app-name">Materiais</span></a>
                     <a href="{% url 'orders:home' %}" class="app-card"><div class="app-icon-container"><span class="material-symbols-outlined">request_quote</span></div><span class="app-name">Orçamentos</span></a>
                     <a href="{% url 'services:home' %}" class="app-card"><div class="app-icon-container"><span class="material-symbols-outlined">build</span></div><span class="app-name">Serviços</span></a>
                 </div>
+                
                 <a href="{% url 'apps_hub' %}" class="btn-apps">
                     Explorar Todos os Módulos
                 </a>
@@ -72,7 +78,7 @@ a rolagem é delegada apenas aos painéis internos de dados.
                     <h4 class="section-title">
                         <span class="material-symbols-outlined">receipt_long</span> Últimos Pedidos
                     </h4>
-                    <a href="{% url 'orders:list' %}" class="btn-link">Ver todos</a>
+                    <a href="{% url 'orders:list' %}" class="btn-view-all">Ver todos</a>
                 </div>
                 
                 <div class="simple-table-container">
