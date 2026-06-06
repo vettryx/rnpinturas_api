@@ -15,4 +15,4 @@ class MaterialsConfig(AppConfig):
     name = "materials"
     hub_name = "Materiais"
     verbose_name = "Materiais necessários para a execução dos serviços"
-    icon = "fa-boxes"
+    icon = "inventory_2"

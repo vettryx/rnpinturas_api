@@ -15,4 +15,4 @@ class RoomsConfig(AppConfig):
     name = "rooms"
     hub_name = "Cômodos e Partes de Cômodos"
     verbose_name = "Gestão de Cômodos e Partes de Cômodos"
-    icon = "fa-vector-square"
+    icon = "other_houses"

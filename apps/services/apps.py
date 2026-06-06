@@ -15,4 +15,4 @@ class ServicesConfig(AppConfig):
     name = "services"
     hub_name = "Serviços"
     verbose_name = "Gestão de Serviços"
-    icon = "fa-screwdriver-wrench"
+    icon = "build"

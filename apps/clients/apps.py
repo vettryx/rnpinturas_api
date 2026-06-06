@@ -15,4 +15,4 @@ class ClientsConfig(AppConfig):
     name = "clients"
     hub_name = "Clientes"
     verbose_name = "Gestão de Clientes"
-    icon = "fa-users"
+    icon = "group"
