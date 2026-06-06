@@ -15,6 +15,7 @@ fidelidade visual da marca, visto que motores PDF não suportam variáveis nativ
     margin: 5mm 5mm 10mm 5mm;
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
     
+    /* 1. Esquerda: Site */
     @bottom-left {
         content: "rnpinturas.com.br";
         font-size: 10pt;
@@ -26,7 +27,7 @@ fidelidade visual da marca, visto que motores PDF não suportam variáveis nativ
         margin-bottom: 10px;
     }
 
-    
+    /* 2. Direita: Numeração */
     @bottom-right {
         content: "Página " counter(page) " de " counter(pages);
         font-size: 10pt;

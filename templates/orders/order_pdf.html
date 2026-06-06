@@ -118,7 +118,7 @@
                 <td class="{% if s.notes %}no-border-bottom{% endif %}">{{ s.room.name }} {% if s.room_part %}({{ s.room_part.name }}){% endif %}</td>
                 <td class="text-center {% if s.notes %}no-border-bottom{% endif %}">{{ s.quantity|floatformat:2 }}</td>
                 <td class="text-right {% if s.notes %}no-border-bottom{% endif %}">R$ {{ s.price|floatformat:"2g" }}</td>
-                <td class="text-right {% if s.notes %}no-border-bottom{% endif %}">R$ {{ s.discount|floatformat:"2g" }}</td>
+                <td class="text-right {% if s.notes %}no-border-bottom{% endif %}" style="color: #d9534f;">R$ {{ s.discount|floatformat:"2g" }}</td>
                 <td class="text-right {% if s.notes %}no-border-bottom{% endif %}">R$ {{ s.total_price|floatformat:"2g" }}</td>
             </tr>
             {% if s.notes %}
@@ -132,38 +132,76 @@
         </tbody>
     </table>
 
-    {% if order.materials.exists %}
-    <div class="section-title">Materiais necessários (Responsabilidade do Cliente)</div>
-    <table class="data-table">
-        <thead>
-            <tr>
-                <th>Material</th>
-                <th class="text-center">Unidade</th>
-                <th class="text-center">Quant.</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for m in order.materials.all %}
-            <tr>
-                <td class="{% if m.notes %}no-border-bottom{% endif %}">{{ m.material.name }}</td>
-                <td class="text-center {% if m.notes %}no-border-bottom{% endif %}">{{ m.unit_measure.code|default:m.unit_measure.name }}</td>
-                <td class="text-center {% if m.notes %}no-border-bottom{% endif %}">{{ m.quantity|floatformat:2 }}</td>
-            </tr>
-            {% if m.notes %}
-            <tr class="obs-row">
-                <td colspan="3">
-                    <strong>Obs:</strong> {{ m.notes }}
-                </td>
-            </tr>
-            {% endif %}
-            {% endfor %}
-        </tbody>
-    </table>
-    {% endif %}
+    <div style="text-align: right; margin-top: 5px; margin-bottom: 25px; font-size: 13px;">
+        <div>Subtotal de Serviços (Bruto): R$ {{ services_subtotal|floatformat:"2g" }}</div>
+        {% if services_discount %}
+        <div style="color: #d9534f;">(-) Descontos de Serviços: R$ {{ services_discount|floatformat:"2g" }}</div>
+        {% endif %}
+        <div><strong>Total Líquido Serviços: R$ {{ services_total|floatformat:"2g" }}</strong></div>
+    </div>
 
-    <div class="total-box">
-        <span class="label">Valor Total dos Serviços Prestados:</span>
-        <span class="value">R$ {{ total_amount|floatformat:"2g" }}</span>
+    <div style="page-break-inside: avoid;">
+        {% if order.materials.exists %}
+        <div class="section-title">Materiais necessários (Responsabilidade do Cliente)</div>
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Material</th>
+                    <th class="text-center">Unidade</th>
+                    <th class="text-center">Quant.</th>
+                    <th class="text-right">Vlr. Unit.</th>
+                    <th class="text-right">Desc.</th>
+                    <th class="text-right">Vlr. Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for m in order.materials.all %}
+                <tr>
+                    <td class="{% if m.notes %}no-border-bottom{% endif %}">{{ m.material.name }}</td>
+                    <td class="text-center {% if m.notes %}no-border-bottom{% endif %}">{{ m.unit_measure.code|default:m.unit_measure.name }}</td>
+                    <td class="text-center {% if m.notes %}no-border-bottom{% endif %}">{{ m.quantity|floatformat:2 }}</td>
+                    <td class="text-right {% if m.notes %}no-border-bottom{% endif %}">R$ {{ m.price|floatformat:"2g" }}</td>
+                    <td class="text-right {% if m.notes %}no-border-bottom{% endif %}" style="color: #d9534f;">R$ {{ m.discount|floatformat:"2g" }}</td>
+                    <td class="text-right {% if m.notes %}no-border-bottom{% endif %}">R$ {{ m.total_price|floatformat:"2g" }}</td>
+                </tr>
+                {% if m.notes %}
+                <tr class="obs-row">
+                    <td colspan="6">
+                        <strong>Obs:</strong> {{ m.notes }}
+                    </td>
+                </tr>
+                {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div style="text-align: right; margin-top: 5px; margin-bottom: 25px; font-size: 13px;">
+            <div>Subtotal de Materiais (Bruto): R$ {{ materials_subtotal|floatformat:"2g" }}</div>
+            {% if materials_discount %}
+            <div style="color: #d9534f;">(-) Descontos de Materiais: R$ {{ materials_discount|floatformat:"2g" }}</div>
+            {% endif %}
+            <div><strong>Total Líquido de Materiais: R$ {{ materials_total|floatformat:"2g" }}</strong></div>
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="totals-wrapper" style="text-align: right; margin-top: 20px; margin-bottom: 20px; border-top: 1px dashed #ccc; padding-top: 10px;">
+        <div style="font-size: 14px; margin-bottom: 5px;">
+            <span>Total Bruto do Pedido:</span> 
+            <strong>R$ {{ services_subtotal|add:materials_subtotal|floatformat:"2g" }}</strong>
+        </div>
+        
+        {% if total_discount %}
+        <div style="font-size: 14px; margin-bottom: 5px; color: #d9534f;">
+            <span>Total de Descontos Concedidos:</span> 
+            <strong>(-) R$ {{ total_discount|floatformat:"2g" }}</strong>
+        </div>
+        {% endif %}
+
+        <div class="total-box" style="margin-top: 10px; display: inline-block;">
+            <span class="label">VALOR TOTAL DO PEDIDO:</span>
+            <span class="value">R$ {{ total_amount|floatformat:"2g" }}</span>
+        </div>
     </div>
 
     <div class="important-notes">

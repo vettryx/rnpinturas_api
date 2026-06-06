@@ -551,16 +551,39 @@ class OrderPDFView(CommonDetailView):
         self.object = self.get_object()
         order = self.object
 
-        # Calcular total
+        # ---- CÁLCULOS DE SERVIÇOS ----
+        # Total líquido (já calculado pelo modelo)
         services_total = sum(s.total_price for s in order.services.all())
+        # Total de descontos em serviços
+        services_discount = sum(s.discount for s in order.services.all() if s.discount)
+        # Subtotal bruto de serviços
+        services_subtotal = services_total + services_discount
+
+        # ---- CÁLCULOS DE MATERIAIS ----
+        # Total líquido (já calculado pelo modelo)
         materials_total = sum(m.total_price for m in order.materials.all())
+        # Total de descontos em materiais
+        materials_discount = sum(m.discount for m in order.materials.all() if m.discount)
+        # Subtotal bruto de materiais
+        materials_subtotal = materials_total + materials_discount
+
+        # ---- TOTAIS GERAIS ----
+        total_discount = services_discount + materials_discount
         total_amount = services_total + materials_total
 
         context = {
             "order": order,
-            "total_amount": total_amount,
+
+            "services_subtotal": services_subtotal,
+            "services_discount": services_discount,
             "services_total": services_total,
+
+            "materials_subtotal": materials_subtotal,
+            "materials_discount": materials_discount,
             "materials_total": materials_total,
+
+            "total_discount": total_discount,
+            "total_amount": total_amount,
         }
 
         html_string = render_to_string("orders/order_pdf.html", context)
