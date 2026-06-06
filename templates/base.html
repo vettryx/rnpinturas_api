@@ -55,18 +55,19 @@ do cabeçalho (navbar), mensagens de alerta e área principal de conteúdo.
                     <form action="{% url 'logout' %}" method="post">
                         {% csrf_token %}
                         <button type="submit" class="btn-icon" title="Sair do Sistema">
-                            <i class="fa fa-sign-out-alt"></i> </button>
+                            <span class="material-symbols-outlined">logout</span>
+                        </button>
                     </form>
 
                 {% else %}
                     
                     <a href="{% url 'two_factor:login' %}" class="btn-icon" title="Fazer Login">
-                        <i class="fa fa-sign-in-alt"></i>
+                        <span class="material-symbols-outlined">login</span>
                     </a>
 
                 {% endif %}
                 <button id="theme-toggle-btn" class="btn-icon" title="Alternar Tema">
-                    <i class="fa fa-moon"></i>
+                    <span class="material-symbols-outlined">dark_mode</span>
                 </button>
             </div>
         </div>
