@@ -5,8 +5,10 @@ from http import HTTPStatus
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db import transaction
 from django.http import JsonResponse
-from django.urls import reverse_lazy
+from django.shortcuts import get_object_or_404, redirect
+from django.urls import NoReverseMatch, reverse
 from django.views.decorators.http import require_http_methods
 from django.views.generic import (
     CreateView,
@@ -15,6 +17,7 @@ from django.views.generic import (
     ListView,
     TemplateView,
     UpdateView,
+    View,
 )
 
 from .utils import buscar_dados_cep
@@ -276,24 +279,37 @@ class CommonDetailView(LoginRequiredMixin, DetailView):
         # Botões Padrão (Editar, Excluir, Voltar)
         if "buttons" not in context:
             app = obj._meta.app_label
-            # Tenta gerar URLs padrão: clients:update, clients:delete
+            buttons = []
+            # Verifica se existe a rota de Editar
             try:
-                edit_url = reverse_lazy(f"{app}:edit", args=[obj.pk])
-                delete_url = reverse_lazy(f"{app}:delete", args=[obj.pk])
-            except Exception:
-                edit_url = "#"
-                delete_url = "#"
+                edit_url = reverse(f"{app}:edit", args=[obj.pk])
+                buttons.append({"class": "btn-edit", "url": edit_url, "title": "Editar", "text": "Editar"})
+            except NoReverseMatch:
+                pass
 
-            context["buttons"] = [
-                {"class": "btn-edit", "url": edit_url, "title": "Editar", "text": "Editar"},
-                {"class": "btn-delete", "url": delete_url, "title": "Excluir", "text": "Excluir"},
-                {
-                    "class": "btn-return",
-                    "url": self.return_url,
-                    "title": "Voltar",
-                    "text": "Voltar",
-                },
-            ]
+            # Verifica se existe a rota de Excluir
+            try:
+                delete_url = reverse(f"{app}:delete", args=[obj.pk])
+                buttons.append({"class": "btn-delete", "url": delete_url, "title": "Excluir", "text": "Excluir"})
+            except NoReverseMatch:
+                pass
+
+            # Verifica se existe a rota de Clonar
+            try:
+                clone_url = reverse(f"{app}:clone", args=[obj.pk])
+                buttons.append({"class": "btn-clone", "url": clone_url, "title": "Clonar", "text": "Clonar"})
+            except NoReverseMatch:
+                pass
+
+            # O botão de voltar é sempre exibido
+            buttons.append({
+                "class": "btn-return",
+                "url": self.return_url,
+                "title": "Voltar",
+                "text": "Voltar",
+            })
+
+            context["buttons"] = buttons
 
         # Se as seções não forem definidas na view filha, cria uma padrão
         if "sections" not in context:
@@ -322,6 +338,50 @@ class CommonDetailView(LoginRequiredMixin, DetailView):
 
         return context
 
+class CommonCloneView(LoginRequiredMixin, View):
+    """
+    View genérica para clonar um registro pai e seus respectivos filhos.
+    """
+    model = None
+    clone_relations = []  # Lista com os related_names dos filhos (ex: ['services', 'materials'])
+
+    def get(self, request, pk):
+        objeto_original = get_object_or_404(self.model, pk=pk)
+
+        with transaction.atomic():
+            # 1. Guarda as listas de objetos filhos em memória antes de alterar o pai
+            dados_relacionados = {}
+            for rel in self.clone_relations:
+                dados_relacionados[rel] = list(getattr(objeto_original, rel).all())
+
+            # 2. Clona o objeto principal (pai)
+            objeto_clonado = objeto_original
+            objeto_clonado.pk = None
+            objeto_clonado.id = None
+            objeto_clonado = self.ajustar_campos_clonados(objeto_clonado)
+            objeto_clonado.save()
+
+            # 3. Clona os filhos associando-os ao novo pai dinamicamente
+            for rel, filhos in dados_relacionados.items():
+                for filho in filhos:
+                    filho.pk = None
+                    filho.id = None
+
+                    # Descobre o nome do campo ForeignKey no filho que aponta para o pai
+                    campo_fk = getattr(objeto_clonado, rel).field.name
+                    setattr(filho, campo_fk, objeto_clonado)
+                    filho.save()
+
+        messages.success(request, "Registro clonado com sucesso!")
+        app = objeto_clonado._meta.app_label
+        return redirect(f"{app}:edit", pk=objeto_clonado.pk)
+
+    def ajustar_campos_clonados(self, obj):
+        """
+        Sobrescreva na view filha caso precise limpar ou alterar
+        algum campo específico (como códigos únicos, datas, etc.) antes de salvar.
+        """
+        return obj
 
 @require_http_methods(["GET"])
 @login_required

@@ -11,6 +11,7 @@ Herdará as views genéricas do app 'common' para padronização.
 from clients.models import Client
 from common.models import AuxStatus
 from common.views import (
+    CommonCloneView,
     CommonCreateView,
     CommonDeleteView,
     CommonDetailView,
@@ -542,6 +543,7 @@ class OrderDeleteView(CommonDeleteView):
     title = "Excluir Pedido"
 
 
+# 7. GERAÇÃO DE PDF
 class OrderPDFView(CommonDetailView):
     model = Order
 
@@ -572,3 +574,13 @@ class OrderPDFView(CommonDetailView):
         response.write(result)
 
         return response
+
+# 8. CLONAGEM
+class OrderCloneView(CommonCloneView):
+    model = Order
+    clone_relations = ["services", "materials"]
+
+    def ajustar_campos_clonados(self, obj):
+        # Limpa o código do pedido para que um novo seja gerado pelo save() ou banco
+        obj.order_code = None
+        return obj
