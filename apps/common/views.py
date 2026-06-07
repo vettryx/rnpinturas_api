@@ -57,15 +57,34 @@ class CommonListView(LoginRequiredMixin, ListView):
             ftype = config.get("type")
             value = self.request.GET.get(field)
 
+            if not value:
+                continue
+
             if value:
                 if ftype == "text":
-                    queryset = queryset.filter(**{f"{field}__icontains": value})
+                    queryset = queryset.filter(
+                        **{f"{field}__icontains": value}
+                    )
                 elif ftype in ("select", "boolean"):
                     if value == "True":
                         value = True
                     elif value == "False":
                         value = False
-                    queryset = queryset.filter(**{field: value})
+                    queryset = queryset.filter(
+                        **{field: value}
+                    )
+                elif ftype == "date":
+                    queryset = queryset.filter(
+                        **{field: value}
+                    )
+                elif ftype == "date_from":
+                    queryset = queryset.filter(
+                        **{f"{field}__gte": value}
+                    )
+                elif ftype == "date_to":
+                    queryset = queryset.filter(
+                        **{f"{field}__lte": value}
+                    )
 
         ordering = self.get_ordering()
         if ordering:

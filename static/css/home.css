@@ -77,7 +77,7 @@ body.body-home {
 /* --- 1. GRIDS DE KPI --- */
 .kpi-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(6, 1fr);
     gap: 1rem;
     margin-bottom: 1rem;
 }
@@ -93,6 +93,17 @@ body.body-home {
     border: 1px solid var(--borda-suave);
     border-left: 5px solid transparent;
     min-height: 70px;
+    text-decoration:none;
+    color:inherit;
+    cursor:pointer;
+}
+
+.kpi-card:hover{
+    transform:translateY(-2px);
+}
+
+.kpi-card:active{
+    transform:scale(.98);
 }
 
 .dashboard-wrapper .kpi-card::before {

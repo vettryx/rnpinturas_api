@@ -7,6 +7,7 @@ Caminho: apps/orders/views.py
 Contém a lógica de apresentação e endpoints da API para o módulo de orders.
 Herdará as views genéricas do app 'common' para padronização.
 """
+from datetime import timedelta
 
 from clients.models import Client
 from common.models import AuxStatus
@@ -24,6 +25,7 @@ from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy
+from django.utils import timezone
 from django.utils.formats import number_format
 from django.utils.html import format_html
 from weasyprint import HTML
@@ -130,6 +132,16 @@ class OrderListView(CommonListView):
             "type": "select",
             "queryset": AuxStatus.objects.all(),
         },
+        {
+            "name": "issue_date",
+            "label": "Data Inicial",
+            "type": "date_from",
+        },
+        {
+            "name": "issue_date",
+            "label": "Data Final",
+            "type": "date_to",
+        },
     ]
     table_headers = [
         {"field": "order_code", "label": "Número"},
@@ -142,10 +154,61 @@ class OrderListView(CommonListView):
 
     def get_queryset(self):
         """
-        Sobrescreve o queryset para otimizar as consultas.
+        Sobrescreve o queryset adicionando filtros do dashboard.
         """
-        queryset = super().get_queryset()
-        return queryset.select_related('client', 'status').prefetch_related('services')
+        queryset = (
+            super()
+            .get_queryset()
+            .select_related(
+                "client",
+                "status"
+            )
+            .prefetch_related(
+                "services"
+            )
+        )
+        period = self.request.GET.get("period")
+        start_date = self.request.GET.get("start_date")
+        end_date = self.request.GET.get("end_date")
+        today = timezone.now().date()
+
+        if start_date:
+            queryset = queryset.filter(
+                issue_date__gte=start_date
+            )
+
+        if end_date:
+            queryset = queryset.filter(
+                issue_date__lte=end_date
+            )
+
+        if period == "7":
+            queryset = queryset.filter(
+                issue_date__gte=
+                today - timedelta(days=7)
+            )
+        elif period == "30":
+            queryset = queryset.filter(
+                issue_date__gte=
+                today - timedelta(days=30)
+            )
+        elif period == "365":
+            queryset = queryset.filter(
+                issue_date__gte=
+                today - timedelta(days=365)
+            )
+        elif (
+            period == "custom"
+            and start_date
+            and end_date
+        ):
+            queryset = queryset.filter(
+                issue_date__range=[
+                    start_date,
+                    end_date
+                ]
+            )
+        return queryset
 
     def get_row_data(self, item):
         """

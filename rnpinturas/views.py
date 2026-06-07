@@ -107,25 +107,41 @@ class HomeView(TemplateView):
         # ==========================================
         status_mapping = [
             {
+                "id": 1,
                 "nome": "Aguardando Aprovação",
                 "css": "status-pending",
                 "icon": "schedule"
             },
             {
+                "id": 2,
                 "nome": "Aprovado",
                 "css": "status-success",
-                "icon": "check_circle"
+                "icon": "thumb_up"
             },
             {
+                "id": 3,
+                "nome": "Reprovado",
+                "css": "status-waiting",
+                "icon": "thumb_down"
+            },
+            {
+                "id": 4,
                 "nome": "Em andamento",
                 "css": "status-progress",
                 "icon": "construction"
             },
             {
-                "nome": "Aguardando Pagamento",
+                "id": 5,
+                "nome": "Pagamento Pendente",
                 "css": "status-waiting",
                 "icon": "payments"
-            }
+            },
+            {
+                "id": 6,
+                "nome": "Concluído",
+                "css": "status-success",
+                "icon": "check_circle"
+            },
         ]
 
         kpis = []
@@ -140,16 +156,17 @@ class HomeView(TemplateView):
                 for pedido in queryset_status
             )
             kpis.append({
-                "label":
-                    status["nome"],
-                "qtd":
-                    quantidade,
+                "label": status["nome"],
+                "qtd": quantidade,
                 "soma":
-                    f"R$ {number_format(soma, decimal_pos=2, force_grouping=True)}",
-                "css_class":
-                    status["css"],
-                "icon":
-                    status["icon"]
+                    f"R$ {number_format(soma,
+                    decimal_pos=2,
+                    force_grouping=True
+                    )}",
+                "css_class": status["css"],
+                "icon": status["icon"],
+                "url":
+                    f"/orders/list/?status={status['id']}&period={period}&start_date={start_date}&end_date={end_date}"
             })
 
         context["kpis"] = kpis

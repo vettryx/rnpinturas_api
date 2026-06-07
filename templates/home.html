@@ -15,184 +15,219 @@ a rolagem é delegada apenas aos painéis internos de dados.
 
 {% load static %}
 
-{% block title %}Dashboard - RN Pinturas{% endblock title %}
-{% block body_class %}body-home{% endblock body_class %}
-{% block header_title %}Visão Geral{% endblock header_title %}
+{% block title %}
+Dashboard - RN Pinturas
+{% endblock title %}
+
+{% block body_class %}
+body-home
+{% endblock body_class %}
+
+{% block header_title %}
+Visão Geral
+{% endblock header_title %}
 
 {% block content %}
+
 <div class="dashboard-wrapper">
     {% if request.user.is_authenticated %}
         
-        <div class="dashboard-header">
-            <div class="welcome-section">
-                <h3>Olá, {{ request.user.first_name }}!</h3>
-                <p class="subtitle">Resumo das atividades e conversões da RN Pinturas.</p>
+    <!-- ===================================== -->
+    <!-- HEADER -->
+    <!-- ===================================== -->
+    <div class="dashboard-header">
+        <div class="welcome-section">
+            <h3>Olá, {{ request.user.first_name }}!</h3>
+            <p class="subtitle">Resumo das atividades e conversões da RN Pinturas.</p>
+        </div>
+        
+        <form method="GET" class="period-filter-form">
+            <label for="period">
+                <span class="material-symbols-outlined">
+                    calendar_month
+                </span>
+                Período:
+            </label>
+
+            <select name="period" id="period" onchange="this.form.submit()">
+                <option value="7"
+                {% if period_atual == '7' %}selected{% endif %}>
+                    Últimos 7 dias
+                </option>
+                <option value="30"
+                {% if period_atual == '30' %}selected{% endif %}>
+                    Últimos 30 dias
+                </option>
+                <option value="365"
+                {% if period_atual == '365' %}selected{% endif %}>
+                    Último ano
+                </option>
+                <option value="custom"
+                {% if period_atual == 'custom' %}selected{% endif %}>
+                    Personalizado
+                </option>
+                <option value="all"
+                {% if period_atual == 'all' %}selected{% endif %}>
+                    Todo período
+                </option>
+            </select>
+
+            {% if period_atual == "custom" %}
+                <input type="date" name="start_date" value="{{ start_date }}">
+                <input type="date" name="end_date" value="{{ end_date }}">
+                <button type="submit" class="btn-list">Filtrar</button>
+            {% endif %}
+        </form>
+    </div>
+
+    <!-- ===================================== -->
+    <!-- KPI -->
+    <!-- ===================================== -->
+    <section class="kpi-grid">
+        {% for kpi in kpis %}
+        <a href="{{ kpi.url }}" class="kpi-card {{ kpi.css_class }}">
+            <div class="kpi-icon">
+                <span class="material-symbols-outlined">
+                    {{ kpi.icon }}
+                </span>
+            </div>
+            <div class="kpi-data">
+                <span class="kpi-label">
+                    {{ kpi.label }}
+                    ({{ kpi.qtd }})
+                </span>
+                <span class="kpi-value">
+                    {{ kpi.soma }}
+                </span>
+            </div>
+        </a>
+        {% endfor %}
+    </section>
+
+    <!-- ===================================== -->
+    <!-- GRID PRINCIPAL -->
+    <!-- ===================================== -->
+    <div class="main-layout-grid">
+        <section class="dashboard-panel panel-apps">
+            <div class="section-header">
+                <h4 class="section-title">
+                    <span class="material-symbols-outlined">bolt</span> Acesso Rápido
+                </h4>
             </div>
             
-            <form method="GET" class="period-filter-form">
-
-                <label for="period">
-                    <span class="material-symbols-outlined">
-                        calendar_month
-                    </span>
-                    Período:
-                </label>
-
-                <select name="period"
-                        id="period"
-                        onchange="this.form.submit()">
-
-                    <option value="7"
-                    {% if period_atual == '7' %}selected{% endif %}>
-                        Últimos 7 dias
-                    </option>
-
-                    <option value="30"
-                    {% if period_atual == '30' %}selected{% endif %}>
-                        Últimos 30 dias
-                    </option>
-
-                    <option value="365"
-                    {% if period_atual == '365' %}selected{% endif %}>
-                        Último ano
-                    </option>
-
-                    <option value="custom"
-                    {% if period_atual == 'custom' %}selected{% endif %}>
-                        Personalizado
-                    </option>
-
-                    <option value="all"
-                    {% if period_atual == 'all' %}selected{% endif %}>
-                        Todo período
-                    </option>
-
-                </select>
-
-                {% if period_atual == "custom" %}
-
-                    <input type="date"
-                        name="start_date"
-                        value="{{ start_date }}">
-
-                    <input type="date"
-                        name="end_date"
-                        value="{{ end_date }}">
-
-                    <button type="submit"
-                            class="btn-list">
-
-                        Filtrar
-
-                    </button>
-
-                {% endif %}
-
-            </form>
-        </div>
-
-        <section class="kpi-grid">
-            {% for kpi in kpis %}
-            <div class="kpi-card {{ kpi.css_class }}">
-                <div class="kpi-icon"><span class="material-symbols-outlined">{{ kpi.icon }}</span></div>
-                <div class="kpi-data">
-                    <span class="kpi-label">{{ kpi.label }} ({{ kpi.qtd }})</span>
-                    <span class="kpi-value">{{ kpi.soma }}</span>
-                </div>
+            <div class="app-cards-grid">
+                <a href="{% url 'clients:home' %}" class="app-card">
+                    <div class="app-icon-container">
+                        <span class="material-symbols-outlined">group</span>
+                    </div>
+                    <span class="app-name">Clientes</span>
+                </a>
+                <a href="{% url 'materials:home' %}" class="app-card">
+                    <div class="app-icon-container">
+                        <span class="material-symbols-outlined">inventory_2</span>
+                    </div>
+                    <span class="app-name">Materiais</span>
+                </a>
+                <a href="{% url 'orders:home' %}" class="app-card">
+                    <div class="app-icon-container">
+                        <span class="material-symbols-outlined">request_quote</span>
+                    </div>
+                    <span class="app-name">Orçamentos</span>
+                </a>
+                <a href="{% url 'services:home' %}" class="app-card">
+                    <div class="app-icon-container">
+                        <span class="material-symbols-outlined">build</span>
+                    </div>
+                    <span class="app-name">Serviços</span>
+                </a>
             </div>
-            {% endfor %}
+            
+            <a href="{% url 'apps_hub' %}" class="btn-apps">
+                Explorar Todos os Módulos
+            </a>
         </section>
 
-        <div class="main-layout-grid">
-            
-            <section class="dashboard-panel panel-apps">
-                <div class="section-header">
-                    <h4 class="section-title">
-                        <span class="material-symbols-outlined">bolt</span> Acesso Rápido
-                    </h4>
-                </div>
-                
-                <div class="app-cards-grid">
-                    <a href="{% url 'clients:home' %}" class="app-card"><div class="app-icon-container"><span class="material-symbols-outlined">group</span></div><span class="app-name">Clientes</span></a>
-                    <a href="{% url 'materials:home' %}" class="app-card"><div class="app-icon-container"><span class="material-symbols-outlined">inventory_2</span></div><span class="app-name">Materiais</span></a>
-                    <a href="{% url 'orders:home' %}" class="app-card"><div class="app-icon-container"><span class="material-symbols-outlined">request_quote</span></div><span class="app-name">Orçamentos</span></a>
-                    <a href="{% url 'services:home' %}" class="app-card"><div class="app-icon-container"><span class="material-symbols-outlined">build</span></div><span class="app-name">Serviços</span></a>
-                </div>
-                
-                <a href="{% url 'apps_hub' %}" class="btn-apps">
-                    Explorar Todos os Módulos
-                </a>
-            </section>
-
-            <section class="dashboard-panel panel-table">
-                <div class="section-header">
-                    <h4 class="section-title">
-                        <span class="material-symbols-outlined">receipt_long</span> Últimos Pedidos
-                    </h4>
-                    <a href="{% url 'orders:list' %}" class="btn-view-all">Ver todos</a>
-                </div>
-                
-                <div class="simple-table-container">
-                    <table class="simple-table">
-                        <thead>
-                            <tr>
-                                <th>Pedido</th>
-                                <th>Data</th>
-                                <th>Valor Total</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for order in recent_orders %}
-                            <tr>
-                                <td>
-                                    <strong>{{ order.order_code|default:order.id }}</strong><br>
-                                    <small style="color: var(--text-secondary);">{{ order.client.name|truncatechars:20 }}</small>
-                                </td>
-                                <td>{{ order.issue_date|date:"d/m/Y" }}</td>
-                                
-                                <td><strong>R$ {{ order.grand_total|floatformat:2 }}</strong></td>
-                                
-                                <td><span class="badge badge-{{ order.status.css_class }}">{{ order.status.name }}</span></td>
-                            </tr>
-                            {% empty %}
-                            <tr><td colspan="4" class="text-center">Nenhum pedido recente.</td></tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            </section>
-
-            <section class="dashboard-panel panel-rankings">
+        <!-- TABELA -->
+        <section class="dashboard-panel panel-table">
+            <div class="section-header">
                 <h4 class="section-title">
-                    <span class="material-symbols-outlined">star</span> Top Serviços & Materiais
+                    <span class="material-symbols-outlined">receipt_long</span> Últimos Pedidos
                 </h4>
-                
-                <div class="ranking-list">
-                    <h5 class="ranking-subtitle">Serviços Mais Realizados</h5>
-                    {% for item in top_services %}
-                        <div class="ranking-item">
-                            <span class="rank-name">{{ item.nome|default:"Serviço Indefinido" }}</span>
-                            <span class="rank-value">{{ item.total_realizado|default:0 }}x</span>
-                        </div>
-                    {% empty %}
-                        <p class="text-muted text-center" style="font-size: 0.8rem;">Sem dados no período.</p>
-                    {% endfor %}
-                </div>
+                <a href="{% url 'orders:list' %}" class="btn-view-all">Ver todos</a>
+            </div>
+            
+            <div class="simple-table-container">
+                <table class="simple-table">
+                    <thead>
+                        <tr>
+                            <th>Pedido</th>
+                            <th>Data</th>
+                            <th>Valor Total</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order in recent_orders %}
+                        <tr>
+                            <td>
+                                <strong>
+                                    {{ order.order_code|default:order.id }}
+                                </strong>
+                                <br>
+                                <small style="color: var(--text-secondary);">
+                                    {{ order.client.name|truncatechars:20 }}
+                                </small>
+                            </td>
+                            <td>{{ order.issue_date|date:"d/m/Y" }}</td>
+                            
+                            <td>
+                                <strong>R$ {{ order.grand_total|floatformat:2 }}</strong>
+                            </td>
+                            <td>
+                                <span class="badge badge-{{ order.status.css_class }}">{{ order.status.name }}</span>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="text-center">Nenhum pedido recente.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
 
-                <div class="ranking-list mt-3">
-                    <h5 class="ranking-subtitle">Materiais Mais Solicitados</h5>
-                    {% for item in top_materials %}
-                        <div class="ranking-item">
-                            <span class="rank-name">{{ item.nome|default:"Material Indefinido" }}</span>
-                            <span class="rank-value">{{ item.total_solicitado|default:0 }}x</span>
-                        </div>
-                    {% empty %}
-                         <p class="text-muted text-center" style="font-size: 0.8rem;">Sem dados no período.</p>
-                    {% endfor %}
-                </div>
-            </section>
-        </div>
+        <!-- RANKING -->
+        <section class="dashboard-panel panel-rankings">
+            <h4 class="section-title">
+                <span class="material-symbols-outlined">star</span> Top Serviços & Materiais
+            </h4>
+            
+            <div class="ranking-list">
+                <h5 class="ranking-subtitle">Serviços Mais Realizados</h5>
+                {% for item in top_services %}
+                    <div class="ranking-item">
+                        <span class="rank-name">{{ item.nome|default:"Serviço Indefinido" }}</span>
+                        <span class="rank-value">{{ item.total_realizado|default:0 }}x</span>
+                    </div>
+                {% empty %}
+                    <p class="text-muted text-center" style="font-size: 0.8rem;">Sem dados no período.</p>
+                {% endfor %}
+            </div>
+
+            <div class="ranking-list mt-3">
+                <h5 class="ranking-subtitle">Materiais Mais Solicitados</h5>
+                {% for item in top_materials %}
+                    <div class="ranking-item">
+                        <span class="rank-name">{{ item.nome|default:"Material Indefinido" }}</span>
+                        <span class="rank-value">{{ item.total_solicitado|default:0 }}x</span>
+                    </div>
+                {% empty %}
+                        <p class="text-muted text-center" style="font-size: 0.8rem;">Sem dados no período.</p>
+                {% endfor %}
+            </div>
+        </section>
+    </div>
 
     {% else %}
         {% endif %}
