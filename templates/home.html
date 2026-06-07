@@ -30,13 +30,64 @@ a rolagem é delegada apenas aos painéis internos de dados.
             </div>
             
             <form method="GET" class="period-filter-form">
-                <label for="period"><span class="material-symbols-outlined">calendar_month</span> Período:</label>
-                <select name="period" id="period" onchange="this.form.submit()">
-                    <option value="7" {% if period_atual == '7' %}selected{% endif %}>Últimos 7 dias</option>
-                    <option value="30" {% if period_atual == '30' %}selected{% endif %}>Últimos 30 dias</option>
-                    <option value="365" {% if period_atual == '365' %}selected{% endif %}>Último ano</option>
-                    <option value="all" {% if period_atual == 'all' %}selected{% endif %}>Todo o período</option>
+
+                <label for="period">
+                    <span class="material-symbols-outlined">
+                        calendar_month
+                    </span>
+                    Período:
+                </label>
+
+                <select name="period"
+                        id="period"
+                        onchange="this.form.submit()">
+
+                    <option value="7"
+                    {% if period_atual == '7' %}selected{% endif %}>
+                        Últimos 7 dias
+                    </option>
+
+                    <option value="30"
+                    {% if period_atual == '30' %}selected{% endif %}>
+                        Últimos 30 dias
+                    </option>
+
+                    <option value="365"
+                    {% if period_atual == '365' %}selected{% endif %}>
+                        Último ano
+                    </option>
+
+                    <option value="custom"
+                    {% if period_atual == 'custom' %}selected{% endif %}>
+                        Personalizado
+                    </option>
+
+                    <option value="all"
+                    {% if period_atual == 'all' %}selected{% endif %}>
+                        Todo período
+                    </option>
+
                 </select>
+
+                {% if period_atual == "custom" %}
+
+                    <input type="date"
+                        name="start_date"
+                        value="{{ start_date }}">
+
+                    <input type="date"
+                        name="end_date"
+                        value="{{ end_date }}">
+
+                    <button type="submit"
+                            class="btn-list">
+
+                        Filtrar
+
+                    </button>
+
+                {% endif %}
+
             </form>
         </div>
 

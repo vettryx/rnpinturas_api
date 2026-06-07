@@ -22,78 +22,252 @@ from orders.models import Order
 class HomeView(TemplateView):
     """
     View para a Página Inicial (Dashboard).
-    Consolida indicadores financeiros, rankings de atividades e orçamentos recentes.
+    Consolida indicadores financeiros, rankings de atividades
+    e orçamentos recentes.
     """
+
     template_name = "home.html"
 
     def get_context_data(self, **kwargs):
+
         context = super().get_context_data(**kwargs)
 
-        # 1. FILTRO DE PERÍODO (Pega via GET da URL, padrão: 30 dias)
-        period = self.request.GET.get('period', '30')
+        # =====================================================
+        # FILTROS
+        # =====================================================
+
+        period = self.request.GET.get(
+            "period",
+            "30"
+        )
+
+        start_date = self.request.GET.get(
+            "start_date",
+            ""
+        )
+
+        end_date = self.request.GET.get(
+            "end_date",
+            ""
+        )
+
         today = timezone.now().date()
 
-        if period == '7':
-            deadline = today - timedelta(days=7)
-        elif period == '30':
-            deadline = today - timedelta(days=30)
-        elif period == '365':
-            deadline = today - timedelta(days=365)
-        else:
-            deadline = None # Todo o período
+        orders_base = (
 
-        # Filtra os pedidos base baseados no período (se houver)
-        orders_base = Order.objects.select_related('client', 'status').prefetch_related('services', 'materials')
+            Order.objects
 
-        if deadline:
-            orders_base = orders_base.filter(issue_date__gte=deadline)
+            .select_related(
+                "client",
+                "status"
+            )
 
-        # 2. KPIs INTELIGENTES
+            .prefetch_related(
+                "services",
+                "materials"
+            )
+
+        )
+
+        # ==========================================
+        # FILTRO POR PERÍODO
+        # ==========================================
+
+        if period == "7":
+
+            deadline = today - timedelta(
+                days=7
+            )
+
+            orders_base = orders_base.filter(
+                issue_date__gte=deadline
+            )
+
+        elif period == "30":
+
+            deadline = today - timedelta(
+                days=30
+            )
+
+            orders_base = orders_base.filter(
+                issue_date__gte=deadline
+            )
+
+        elif period == "365":
+
+            deadline = today - timedelta(
+                days=365
+            )
+
+            orders_base = orders_base.filter(
+                issue_date__gte=deadline
+            )
+
+        elif (
+            period == "custom"
+            and start_date
+            and end_date
+        ):
+
+            orders_base = orders_base.filter(
+                issue_date__range=[
+                    start_date,
+                    end_date
+                ]
+            )
+
+        # ==========================================
+        # MAPEAMENTO DOS KPIs
+        # ==========================================
+
         status_mapping = [
-            {'nome': 'Aguardando Aprovação', 'css': 'status-pending', 'icon': 'schedule'},
-            {'nome': 'Aprovado', 'css': 'status-success', 'icon': 'check_circle'},
-            {'nome': 'Em andamento', 'css': 'status-progress', 'icon': 'construction'},
-            {'nome': 'Aguardando Pagamento', 'css': 'status-waiting', 'icon': 'payments'},
+
+            {
+                "nome": "Aguardando Aprovação",
+                "css": "status-pending",
+                "icon": "schedule"
+            },
+
+            {
+                "nome": "Aprovado",
+                "css": "status-success",
+                "icon": "check_circle"
+            },
+
+            {
+                "nome": "Em andamento",
+                "css": "status-progress",
+                "icon": "construction"
+            },
+
+            {
+                "nome": "Aguardando Pagamento",
+                "css": "status-waiting",
+                "icon": "payments"
+            }
+
         ]
 
         kpis = []
 
+        for status in status_mapping:
 
-        for st in status_mapping:
-            # Filtra pedidos por status
-            orders_status = orders_base.filter(status__name=st['nome'])
-            quantidade = orders_status.count()
+            queryset_status = orders_base.filter(
+                status__name=status["nome"]
+            )
 
-            # Cálculo via Python usando o "Fat Model" (Rápido graças ao prefetch da linha 42)
-            soma = sum(p.grand_total for p in orders_status)
+            quantidade = queryset_status.count()
+
+            soma = sum(
+                pedido.grand_total
+                for pedido in queryset_status
+            )
 
             kpis.append({
-                'label': st['nome'],
-                'qtd': quantidade,
-                'soma': f"R$ {number_format(soma, decimal_pos=2, force_grouping=True)}",
-                'css_class': st['css'],
-                'icon': st['icon']
+
+                "label":
+                    status["nome"],
+
+                "qtd":
+                    quantidade,
+
+                "soma":
+                    f"R$ {number_format(soma, decimal_pos=2, force_grouping=True)}",
+
+                "css_class":
+                    status["css"],
+
+                "icon":
+                    status["icon"]
+
             })
 
-        context['kpis'] = kpis
+        context["kpis"] = kpis
 
-        # 3. ÚLTIMOS ORÇAMENTOS (Com código e valor)
-        context['recent_orders'] = orders_base.order_by('-issue_date', '-id')[:5]
+        # ==========================================
+        # PEDIDOS RECENTES
+        # ==========================================
 
-        # 4. RANKINGS (Serviços e Materiais)
-        context['top_services'] = orders_base.exclude(services__isnull=True).values(
-            nome=F('services__service__name')
-        ).annotate(
-            total_realizado=Sum('services__quantity')
-        ).order_by('-total_realizado')[:5]
+        context["recent_orders"] = (
 
-        context['top_materials'] = orders_base.exclude(materials__isnull=True).values(
-            nome=F('materials__material__name')
-        ).annotate(
-            total_solicitado=Sum('materials__quantity')
-        ).order_by('-total_solicitado')[:5]
+            orders_base
 
-        context['period_atual'] = period
+            .order_by(
+                "-issue_date",
+                "-id"
+            )[:5]
+
+        )
+
+        # ==========================================
+        # TOP SERVIÇOS
+        # ==========================================
+
+        context["top_services"] = (
+
+            orders_base
+
+            .exclude(
+                services__isnull=True
+            )
+
+            .values(
+                nome=F(
+                    "services__service__name"
+                )
+            )
+
+            .annotate(
+                total_realizado=Sum(
+                    "services__quantity"
+                )
+            )
+
+            .order_by(
+                "-total_realizado"
+            )[:5]
+
+        )
+
+        # ==========================================
+        # TOP MATERIAIS
+        # ==========================================
+
+        context["top_materials"] = (
+
+            orders_base
+
+            .exclude(
+                materials__isnull=True
+            )
+
+            .values(
+                nome=F(
+                    "materials__material__name"
+                )
+            )
+
+            .annotate(
+                total_solicitado=Sum(
+                    "materials__quantity"
+                )
+            )
+
+            .order_by(
+                "-total_solicitado"
+            )[:5]
+
+        )
+
+        # ==========================================
+        # CONTEXTO PARA TEMPLATE
+        # ==========================================
+
+        context["period_atual"] = period
+
+        context["start_date"] = start_date
+
+        context["end_date"] = end_date
 
         return context
 
