@@ -29,23 +29,19 @@ class HomeView(TemplateView):
     template_name = "home.html"
 
     def get_context_data(self, **kwargs):
-
         context = super().get_context_data(**kwargs)
 
         # =====================================================
         # FILTROS
         # =====================================================
-
         period = self.request.GET.get(
             "period",
             "30"
         )
-
         start_date = self.request.GET.get(
             "start_date",
             ""
         )
-
         end_date = self.request.GET.get(
             "end_date",
             ""
@@ -54,31 +50,24 @@ class HomeView(TemplateView):
         today = timezone.now().date()
 
         orders_base = (
-
             Order.objects
-
             .select_related(
                 "client",
                 "status"
             )
-
             .prefetch_related(
                 "services",
                 "materials"
             )
-
         )
 
         # ==========================================
         # FILTRO POR PERÍODO
         # ==========================================
-
         if period == "7":
-
             deadline = today - timedelta(
                 days=7
             )
-
             orders_base = orders_base.filter(
                 issue_date__gte=deadline
             )
@@ -88,7 +77,6 @@ class HomeView(TemplateView):
             deadline = today - timedelta(
                 days=30
             )
-
             orders_base = orders_base.filter(
                 issue_date__gte=deadline
             )
@@ -98,7 +86,6 @@ class HomeView(TemplateView):
             deadline = today - timedelta(
                 days=365
             )
-
             orders_base = orders_base.filter(
                 issue_date__gte=deadline
             )
@@ -108,7 +95,6 @@ class HomeView(TemplateView):
             and start_date
             and end_date
         ):
-
             orders_base = orders_base.filter(
                 issue_date__range=[
                     start_date,
@@ -119,67 +105,51 @@ class HomeView(TemplateView):
         # ==========================================
         # MAPEAMENTO DOS KPIs
         # ==========================================
-
         status_mapping = [
-
             {
                 "nome": "Aguardando Aprovação",
                 "css": "status-pending",
                 "icon": "schedule"
             },
-
             {
                 "nome": "Aprovado",
                 "css": "status-success",
                 "icon": "check_circle"
             },
-
             {
                 "nome": "Em andamento",
                 "css": "status-progress",
                 "icon": "construction"
             },
-
             {
                 "nome": "Aguardando Pagamento",
                 "css": "status-waiting",
                 "icon": "payments"
             }
-
         ]
 
         kpis = []
 
         for status in status_mapping:
-
             queryset_status = orders_base.filter(
                 status__name=status["nome"]
             )
-
             quantidade = queryset_status.count()
-
             soma = sum(
                 pedido.grand_total
                 for pedido in queryset_status
             )
-
             kpis.append({
-
                 "label":
                     status["nome"],
-
                 "qtd":
                     quantidade,
-
                 "soma":
                     f"R$ {number_format(soma, decimal_pos=2, force_grouping=True)}",
-
                 "css_class":
                     status["css"],
-
                 "icon":
                     status["icon"]
-
             })
 
         context["kpis"] = kpis
@@ -187,86 +157,65 @@ class HomeView(TemplateView):
         # ==========================================
         # PEDIDOS RECENTES
         # ==========================================
-
         context["recent_orders"] = (
-
             orders_base
-
             .order_by(
                 "-issue_date",
                 "-id"
             )[:5]
-
         )
 
         # ==========================================
         # TOP SERVIÇOS
         # ==========================================
-
         context["top_services"] = (
-
             orders_base
-
             .exclude(
                 services__isnull=True
             )
-
             .values(
                 nome=F(
                     "services__service__name"
                 )
             )
-
             .annotate(
                 total_realizado=Sum(
                     "services__quantity"
                 )
             )
-
             .order_by(
                 "-total_realizado"
             )[:5]
-
         )
 
         # ==========================================
         # TOP MATERIAIS
         # ==========================================
-
         context["top_materials"] = (
-
             orders_base
-
             .exclude(
                 materials__isnull=True
             )
-
             .values(
                 nome=F(
                     "materials__material__name"
                 )
             )
-
             .annotate(
                 total_solicitado=Sum(
                     "materials__quantity"
                 )
             )
-
             .order_by(
                 "-total_solicitado"
             )[:5]
-
         )
 
         # ==========================================
         # CONTEXTO PARA TEMPLATE
         # ==========================================
-
         context["period_atual"] = period
-
         context["start_date"] = start_date
-
         context["end_date"] = end_date
 
         return context
