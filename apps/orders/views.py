@@ -24,7 +24,7 @@ from django.db import transaction
 from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.template.loader import render_to_string
-from django.urls import reverse_lazy
+from django.urls import reverse, reverse_lazy
 from django.utils import timezone
 from django.utils.formats import number_format
 from django.utils.html import format_html
@@ -133,12 +133,12 @@ class OrderListView(CommonListView):
             "queryset": AuxStatus.objects.all(),
         },
         {
-            "name": "issue_date",
+            "name": "start_date",
             "label": "Data Inicial",
             "type": "date_from",
         },
         {
-            "name": "issue_date",
+            "name": "end_date",
             "label": "Data Final",
             "type": "date_to",
         },
@@ -183,38 +183,24 @@ class OrderListView(CommonListView):
             )
 
         if period == "7":
-            queryset = queryset.filter(
-                issue_date__gte=
-                today - timedelta(days=7)
-            )
+            queryset = queryset.filter(issue_date__gte=today - timedelta(days=7))
         elif period == "30":
-            queryset = queryset.filter(
-                issue_date__gte=
-                today - timedelta(days=30)
-            )
+            queryset = queryset.filter(issue_date__gte=today - timedelta(days=30))
         elif period == "365":
-            queryset = queryset.filter(
-                issue_date__gte=
-                today - timedelta(days=365)
-            )
-        elif (
-            period == "custom"
-            and start_date
-            and end_date
-        ):
-            queryset = queryset.filter(
-                issue_date__range=[
-                    start_date,
-                    end_date
-                ]
-            )
+            queryset = queryset.filter(issue_date__gte=today - timedelta(days=365))
+        else:
+            # Captura a busca customizada e os inputs do search_config
+            if start_date:
+                queryset = queryset.filter(issue_date__gte=start_date)
+            if end_date:
+                queryset = queryset.filter(issue_date__lte=end_date)
         return queryset
 
     def get_row_data(self, item):
         """
         Retorna os dados da linha.
         """
-        detail_url = reverse_lazy("orders:detail", args=[item.pk])
+        detail_url = reverse("orders:detail", args=[item.pk])
 
         formatted_total = number_format(item.grand_total, decimal_pos=2, force_grouping=True)
 
@@ -252,7 +238,6 @@ class OrderDetailView(CommonDetailView):
         order = self.object
 
         # Formatação dos valores financeiros (Serviços, Materiais, Descontos e Total)
-
         fmt_services = f"R$ {number_format(order.gross_services, decimal_pos=2, force_grouping=True)}"
         fmt_materials = f"R$ {number_format(order.gross_materials, decimal_pos=2, force_grouping=True)}"
 
@@ -264,15 +249,9 @@ class OrderDetailView(CommonDetailView):
         fmt_total = f"R$ {number_format(order.grand_total, decimal_pos=2, force_grouping=True)}"
 
         # Formatação do título da página (Ex: "2025-0001: Cliente XYZ")
-        context["title"] = f"{order.formatted_code}: {order.client.name}"
+        order_display_code = order.formatted_code if order.order_code else f"#{order.id}"
 
         # Formatação do código do pedido para exibição (Ex: 20250001 -> 2025-0001)
-        if order.order_code:
-            code_str = str(order.order_code)
-            order_display_code = f"{code_str[:4]}-{code_str[-4:]}"
-        else:
-            order_display_code = f"#{order.id}"
-
         context["title"] = f"{order_display_code}: {order.client.name}"
 
         # Montagem das listas de serviços e materiais para exibição nas abas (com formatação adequada)
@@ -308,10 +287,16 @@ class OrderDetailView(CommonDetailView):
         # BOTOES PERSONALIZADOS
         context["buttons"] = [
             {
-                "text": "Gerar PDF",
-                "url": reverse_lazy("orders:pdf", args=[order.pk]),
+                "text": "Visualizar PDF",
+                "url": reverse("orders:pdf", args=[order.pk]),
                 "class": "btn-pdf btn-dark",
-                "icon": "fas fa-file-pdf",
+                "target": "_blank",
+            },
+            {
+                "text": "Baixar PDF",
+                "url": reverse("orders:pdf", args=[order.pk]) + "?download=true",
+                "class": "btn-download btn-dark",
+                "icon": "download",
             },
             *context.get("buttons", [])
         ]
@@ -321,18 +306,18 @@ class OrderDetailView(CommonDetailView):
             {
                 "id": "tab-dados",
                 "label": "Dados Gerais",
-                "icon": "fas fa-file-invoice",
+                "icon": "receipt_long",
                 "active": True,
             },
             {
                 "id": "tab-servicos",
                 "label": f"Serviços ({order.services.count()})",
-                "icon": "fas fa-tools",
+                "icon": "handyman",
             },
             {
                 "id": "tab-materiais",
                 "label": f"Materiais ({order.materials.count()})",
-                "icon": "fas fa-paint-roller",
+                "icon": "format_paint",
             },
         ]
 
@@ -361,7 +346,15 @@ class OrderDetailView(CommonDetailView):
             {
                 "id": "tab-servicos",
                 "is_table": True,
-                "table_headers": ["Serviço", "Ambiente", "Quantidade", "Preço (R$)", "Desconto", "Total", "Observações"],
+                "table_headers": [
+                    "Serviço",
+                    "Ambiente",
+                    "Quantidade",
+                    "Preço (R$)",
+                    "Desconto",
+                    "Total",
+                    "Observações"
+                ],
                 "fields": services_list,
             },
 
@@ -371,7 +364,14 @@ class OrderDetailView(CommonDetailView):
             {
                 "id": "tab-materiais",
                 "is_table": True,
-                "table_headers": ["Material", "Quantidade", "Preço (R$)", "Desconto", "Total", "Observações"],
+                "table_headers": [
+                    "Material",
+                    "Quantidade",
+                    "Preço (R$)",
+                    "Desconto",
+                    "Total",
+                    "Observações"
+                ],
                 "fields": materials_list,
             },
         ]
@@ -583,14 +583,14 @@ class OrderUpdateView(CommonUpdateView):
 
         if form.is_valid() and service_formset.is_valid() and material_formset.is_valid():
             with transaction.atomic():
-                # 1. Salva o cliente (Pai)
+                # 1. Salva o Pedido (Pai)
                 self.object = form.save()
 
-                # 2. Salva Endereços
+                # 2. Salva os Serviços (Filhos)
                 service_formset.instance = self.object
                 service_formset.save()
 
-                # 3. Salva Contatos
+                # 3. Salva os Materiais (Filhos)
                 material_formset.instance = self.object
                 material_formset.save()
 
@@ -610,52 +610,52 @@ class OrderDeleteView(CommonDeleteView):
 class OrderPDFView(CommonDetailView):
     model = Order
 
+    def get_object(self, queryset=None):
+        return (
+            super()
+            .get_queryset()
+            .prefetch_related(
+                "services__service",
+                "services__room",
+                "services__room_part",
+                "materials__material",
+                "materials__unit_measure"
+            )
+            .get(pk=self.kwargs.get("pk"))
+        )
+
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
         order = self.object
 
-        # ---- CÁLCULOS DE SERVIÇOS ----
-        # Total líquido (já calculado pelo modelo)
-        services_total = sum(s.total_price for s in order.services.all())
-        # Total de descontos em serviços
-        services_discount = sum(s.discount for s in order.services.all() if s.discount)
-        # Subtotal bruto de serviços
-        services_subtotal = services_total + services_discount
-
-        # ---- CÁLCULOS DE MATERIAIS ----
-        # Total líquido (já calculado pelo modelo)
-        materials_total = sum(m.total_price for m in order.materials.all())
-        # Total de descontos em materiais
-        materials_discount = sum(m.discount for m in order.materials.all() if m.discount)
-        # Subtotal bruto de materiais
-        materials_subtotal = materials_total + materials_discount
-
-        # ---- TOTAIS GERAIS ----
-        total_discount = services_discount + materials_discount
-        total_amount = services_total + materials_total
-
         context = {
             "order": order,
 
-            "services_subtotal": services_subtotal,
-            "services_discount": services_discount,
-            "services_total": services_total,
+            "services_subtotal": order.gross_services,
+            "services_discount": order.discount_services,
+            "services_total": order.net_services,
 
-            "materials_subtotal": materials_subtotal,
-            "materials_discount": materials_discount,
-            "materials_total": materials_total,
+            "materials_subtotal": order.gross_materials,
+            "materials_discount": order.discount_materials,
+            "materials_total": order.net_materials,
 
-            "total_discount": total_discount,
-            "total_amount": total_amount,
+            "total_discount": order.total_discounts,
+            "total_amount": order.grand_total,
         }
 
+        # Renderiza o template HTML do PDF com o contexto do pedido
         html_string = render_to_string("orders/order_pdf.html", context)
         html = HTML(string=html_string, base_url=request.build_absolute_uri())
-
         result = html.write_pdf()
 
+        # Verifica se o parâmetro "download" está presente na URL para forçar o download do PDF
+        force_download = request.GET.get("download") == "true"
+        disposition = "attachment" if force_download else "inline"
+
         response = HttpResponse(content_type="application/pdf")
-        response["Content-Disposition"] = f'inline; filename="Pedido_{order.id}.pdf"'
+
+        # Define o nome do arquivo para download (ex: "Pedido_2025-0001.pdf") e a codificação de transferência
+        response["Content-Disposition"] = f'{disposition}; filename="Pedido_{order.id}.pdf"'
         response["Content-Transfer-Encoding"] = "binary"
         response.write(result)
 
