@@ -131,6 +131,7 @@
 
 /* 4. Funcionais / Relatórios (Listar, Imprimir, Roxo) - Usa ROXO/AZUL */
 .btn-clone,
+.btn-download,
 .btn-list, 
 .btn-reports, 
 .btn-purple, 
@@ -178,6 +179,7 @@
 
 /* --- ÍCONES DE AÇÃO (Mapeamento Completo - Material Symbols) --- */
 .btn-clone::before { content: "\e14d"; }    /* content_copy */
+.btn-download::before { content: "\f090"; }      /* download */
 .btn-home::before { content: "\e88a"; }     /* home */
 .btn-first::before { content: "\e5dc"; }    /* first_page */
 .btn-last::before { content: "\e5dd"; }     /* last_page */

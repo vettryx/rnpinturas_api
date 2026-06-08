@@ -24,7 +24,7 @@ e um painel de resumo financeiro (summary_totals) flutuante no rodapé.
     <div class="verticalTab-sidebar">
         {% for tab in tabs %}
             <div class="verticalTab {{ tab.class }} {% if tab.active %}active{% endif %}" data-content="{{ tab.id }}">
-                <i class="{{ tab.icon }}"></i>
+                <i class="material-symbols-outlined">{{ tab.icon }}</i>
                 <span>{{ tab.label }}</span>
             </div>
         {% endfor %}
@@ -117,6 +117,7 @@ e um painel de resumo financeiro (summary_totals) flutuante no rodapé.
                     href="{{ button.url }}"
                     role="button"
                     title="{{ button.title }}"
+                    target="{{ button.target|default:'_self' }}"
                     {% if button.data %}
                         {% for key, value in button.data.items %}
                             data-{{ key }}="{{ value }}"
