@@ -50,6 +50,17 @@ class CommonListView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         queryset = super().get_queryset()
+        filter_kwargs = {}
+
+        # Mapeamento de tipos para os sufixos de lookup do Django ORM
+        lookup_map = {
+            "text": "__icontains",
+            "date_from": "__gte",
+            "date_to": "__lte",
+            "select": "",   # Exact match
+            "boolean": "",  # Exact match
+            "date": ""      # Exact match
+        }
 
         # Filtro automático baseado no search_config
         for config in self.search_config:
@@ -60,35 +71,22 @@ class CommonListView(LoginRequiredMixin, ListView):
             if not value:
                 continue
 
-            if value:
-                if ftype == "text":
-                    queryset = queryset.filter(
-                        **{f"{field}__icontains": value}
-                    )
-                elif ftype in ("select", "boolean"):
-                    if value == "True":
-                        value = True
-                    elif value == "False":
-                        value = False
-                    queryset = queryset.filter(
-                        **{field: value}
-                    )
-                elif ftype == "date":
-                    queryset = queryset.filter(
-                        **{field: value}
-                    )
-                elif ftype == "date_from":
-                    queryset = queryset.filter(
-                        **{f"{field}__gte": value}
-                    )
-                elif ftype == "date_to":
-                    queryset = queryset.filter(
-                        **{f"{field}__lte": value}
-                    )
+            # Conversão estrita para booleanos
+            if ftype in ("select", "boolean") and value in ("True", "False"):
+                value = value == "True"
+
+            # Constrói o sufixo dinamicamente (ex: nome__icontains ou apenas status)
+            lookup = lookup_map.get(ftype, "")
+            filter_kwargs[f"{field}{lookup}"] = value
+
+        # Aplica todos os filtros de uma só vez
+        if filter_kwargs:
+            queryset = queryset.filter(**filter_kwargs)
 
         ordering = self.get_ordering()
         if ordering:
             queryset = queryset.order_by(ordering)
+
         return queryset
 
     def get_row_data(self, item):
