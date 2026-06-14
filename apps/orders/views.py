@@ -119,7 +119,11 @@ class OrderListView(CommonListView):
     ]
 
     search_config = [
-        {"name": "order_code", "label": "Código", "type": "text"},
+        {
+            "name": "order_code",
+            "label": "Código",
+            "type": "text",
+        },
         {
             "name": "client",
             "label": "Cliente",
@@ -134,11 +138,13 @@ class OrderListView(CommonListView):
         },
         {
             "name": "start_date",
+            "field": "issue_date",
             "label": "Data Inicial",
             "type": "date_from",
         },
         {
             "name": "end_date",
+            "field": "issue_date",
             "label": "Data Final",
             "type": "date_to",
         },
@@ -168,19 +174,7 @@ class OrderListView(CommonListView):
             )
         )
         period = self.request.GET.get("period")
-        start_date = self.request.GET.get("start_date")
-        end_date = self.request.GET.get("end_date")
         today = timezone.now().date()
-
-        if start_date:
-            queryset = queryset.filter(
-                issue_date__gte=start_date
-            )
-
-        if end_date:
-            queryset = queryset.filter(
-                issue_date__lte=end_date
-            )
 
         if period == "7":
             queryset = queryset.filter(issue_date__gte=today - timedelta(days=7))
@@ -188,12 +182,7 @@ class OrderListView(CommonListView):
             queryset = queryset.filter(issue_date__gte=today - timedelta(days=30))
         elif period == "365":
             queryset = queryset.filter(issue_date__gte=today - timedelta(days=365))
-        else:
-            # Captura a busca customizada e os inputs do search_config
-            if start_date:
-                queryset = queryset.filter(issue_date__gte=start_date)
-            if end_date:
-                queryset = queryset.filter(issue_date__lte=end_date)
+
         return queryset
 
     def get_row_data(self, item):

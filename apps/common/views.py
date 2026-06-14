@@ -64,9 +64,10 @@ class CommonListView(LoginRequiredMixin, ListView):
 
         # Filtro automático baseado no search_config
         for config in self.search_config:
-            field = config.get("name")
+            input_name = config.get("name")
+            db_field = config.get("field", input_name)
             ftype = config.get("type")
-            value = self.request.GET.get(field)
+            value = self.request.GET.get(input_name)
 
             if not value:
                 continue
@@ -77,7 +78,7 @@ class CommonListView(LoginRequiredMixin, ListView):
 
             # Constrói o sufixo dinamicamente (ex: nome__icontains ou apenas status)
             lookup = lookup_map.get(ftype, "")
-            filter_kwargs[f"{field}{lookup}"] = value
+            filter_kwargs[f"{db_field}{lookup}"] = value
 
         # Aplica todos os filtros de uma só vez
         if filter_kwargs:
@@ -112,8 +113,12 @@ class CommonListView(LoginRequiredMixin, ListView):
 
         # 3. PROCESSAMENTO DOS BOTÕES DE AÇÃO DA BUSCA (search_actions)
         context["search_actions"] = [
-            {"type": "submit", "label": "Buscar", "class": "btn-list"},
-            {"type": "clear", "label": "Limpar", "class": "btn-clear", "url": self.request.path},
+            {
+                "type": "clear",
+                "label": "Limpar",
+                "class": "btn-clear",
+                "url": self.request.path,
+            },
         ]
 
         # Monta o contexto padrão
