@@ -1,6 +1,19 @@
-/* static/css/buttons.css */
+/*
+==============================================================================
+Módulo: Botões (Buttons)
+Caminho: static/css/buttons.css
+==============================================================================
 
-/* --- GRUPOS DE BOTÕES --- */
+Estilização do sistema de botões da aplicação. Define o estilo base, estados
+interativos, variações de formato (circular e quadrado), temas semânticos e
+integração com ícones Material Symbols. Utiliza as variáveis de cor e tema
+definidas em global.css.
+==============================================================================
+*/
+
+/* ==========================================================================
+   GRUPOS DE BOTÕES
+   ========================================================================== */
 .btn-group {
     display: flex;
     gap: 10px;
@@ -17,9 +30,10 @@
     margin-top: 15px;
 }
 
-/* --- ESTILO BASE PARA TODOS OS BOTÕES --- */
-/* Seleciona todas as classes que começam com 'btn-' */
-[class*="btn-"] {
+/* ==========================================================================
+   BASE GLOBAL DE BOTÕES (SEM DEPENDER DE .btn)
+   ========================================================================== */
+[class^="btn-"], .btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -27,109 +41,111 @@
     border-radius: 6px;
     padding: 10px 20px;
     cursor: pointer;
+    text-decoration: none;
     font-family: 'Fredoka', sans-serif;
     font-size: 16px;
     font-weight: 500;
     text-transform: uppercase;
-    text-decoration: none;
-    transition: all 0.2s ease;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     line-height: 1;
     position: relative;
     z-index: 1;
+    transition: transform 0.2s ease,
+                box-shadow 0.2s ease,
+                filter 0.2s ease,
+                background-color 0.2s ease,
+                color 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-/* Efeito Hover Geral */
-[class*="btn-"]:hover {
+/* ==========================================================================
+   ESTADOS INTERATIVOS
+   ========================================================================== */
+
+[class^="btn-"]:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-    filter: brightness(1.1); /* Clareia levemente qualquer cor */
+    filter: brightness(1.08);
 }
 
-[class*="btn-"]:active {
+[class^="btn-"]:active {
     transform: translateY(0);
     box-shadow: 0 1px 2px rgba(0,0,0,0.1);
 }
 
-/* Configuração dos Ícones (Material Symbols) antes do texto */
-[class*="btn-"]::before {
+[class^="btn-"]:focus-visible {
+    outline: 2px solid var(--cor-brand-primary);
+    outline-offset: 2px;
+}
+
+/* ==========================================================================
+   ÍCONES (Material Symbols via ::before)
+   ========================================================================== */
+[class^="btn-"]::before {
     font-family: 'Material Symbols Outlined';
-    font-weight: normal;
     font-style: normal;
     display: inline-block;
-    line-height: 1;
-    text-transform: none;
-    letter-spacing: normal;
-    word-wrap: normal;
-    white-space: nowrap;
-    direction: ltr;
-    -webkit-font-smoothing: antialiased;
     margin-right: 8px;
     font-size: 1.2em;
-    
-    /* CONTROLE DE ESPESSURA: Altere o valor de 'wght' (de 100 a 700). 
-       300 é leve/fino, 400 é o padrão, 200 é ultrafino. */
-    font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+    white-space: nowrap;
+    -webkit-font-smoothing: antialiased;
+    font-variation-settings:
+        'FILL' 0,
+        'wght' 300,
+        'GRAD' 0,
+        'opsz' 24;
+
 }
 
-/* --- VARIAÇÕES DE FORMATO --- */
-
-/* Botão Circular (usado em paginação e ações rápidas) */
-.btn-circle {
-    width: 45px;
-    height: 45px;
-    padding: 0;
-    border-radius: 50%;
-    margin: 0 5px;
-}
-
-.btn-circle::before {
-    margin-right: 0;
-}
-
-/* Botão Quadrado (Icon Only) */
+/* ==========================================================================
+   FORMATO
+   ========================================================================== */
+.btn-circle,
 .btn-square {
     width: 45px;
     height: 45px;
     padding: 0;
-    border-radius: 6px;
-    margin: 5px;
 }
 
+.btn-circle {
+    border-radius: 50%;
+}
+
+.btn-square {
+    border-radius: 6px;
+}
+
+.btn-circle::before,
 .btn-square::before {
     margin-right: 0;
 }
 
-/* --- CORES E TEMAS (Padronizados com Variáveis) --- */
-
-/* 1. Primários / Ação (Salvar, Confirmar, Novo, Escuro) - Usa cor da MARCA */
-.btn-save, 
-.btn-confirm, 
-.btn-new, 
+/* ==========================================================================
+   CORES
+   ========================================================================== */
+.btn-save,
+.btn-confirm,
+.btn-new,
 .btn-dark {
     background-color: var(--cor-brand-primary);
-    color: white;
+    color: var(--text-inverse);
 }
 
-/* 2. Secundários / Aviso (Editar, Voltar, Home, Laranja) - Usa AMARELO/LARANJA */
 .btn-edit, 
 .btn-return, 
 .btn-home, 
 .btn-orange {
     background-color: var(--cor-status-warning);
-    color: #584c03; /* Texto escuro para contraste no amarelo */
+    color: #584c03;
 }
 
-/* 3. Perigo / Cancelar (Excluir, Cancelar, Fechar, Sair) - Usa VERMELHO */
 .btn-delete, 
 .btn-cancel, 
 .btn-close, 
 .btn-exit {
     background-color: var(--cor-status-danger);
-    color: white;
+    color: var(--text-inverse);
 }
 
-/* 4. Funcionais / Relatórios (Listar, Imprimir, Roxo) - Usa ROXO/AZUL */
 .btn-clone,
 .btn-download,
 .btn-list, 
@@ -140,11 +156,13 @@
 .btn-reset, 
 .btn-access, 
 .btn-clear {
-    background-color: #5D3FD3; /* Mantendo o roxo original */
-    color: white;
+    background-color: var(--cor-accent, #5D3FD3);
+    color: var(--text-inverse);
 }
 
-/* 5. Navegação (Paginação) - Específicos */
+/* ==========================================================================
+   BOTÕES DE NAVEGAÇÃO
+   ========================================================================== */
 .btn-first, 
 .btn-last, 
 .btn-previous, 
@@ -153,31 +171,41 @@
     color: var(--text-primary);
     border: 1px solid var(--borda-suave);
 }
-.btn-first:hover, .btn-last:hover, .btn-previous:hover, .btn-next:hover {
+
+.btn-first:hover,
+.btn-last:hover,
+.btn-previous:hover,
+.btn-next:hover {
     background-color: var(--cor-brand-primary);
-    color: white;
+    color: var(--text-inverse);
 }
 
-/* 6. Transparente */
+/* ==========================================================================
+   BOTÃO TRANSPARENTE
+   ========================================================================== */
 .btn-transparent {
     background-color: transparent;
     color: var(--cor-brand-primary);
     box-shadow: none;
     border: 1px solid var(--borda-suave);
 }
+
 .btn-transparent:hover {
     background-color: var(--bg-body);
 }
 
-/* 7. Desabilitado */
-.btn-disabled {
-    pointer-events: none;
+/* ==========================================================================
+   ESTADO DESABILITADO (REAL)
+   ========================================================================== */
+button[class^="btn-"]:disabled {
+    cursor: not-allowed;
     opacity: 0.5;
-    background-color: var(--base-gray-200);
-    color: var(--text-secondary);
+    box-shadow: none;
 }
 
-/* --- ÍCONES DE AÇÃO (Mapeamento Completo - Material Symbols) --- */
+/* ==========================================================================
+   MAPEAMENTO DE ÍCONES
+   ========================================================================== */
 .btn-clone::before { content: "\e14d"; }    /* content_copy */
 .btn-download::before { content: "\f090"; }      /* download */
 .btn-home::before { content: "\e88a"; }     /* home */
@@ -203,9 +231,9 @@
 .btn-reset::before { content: "\e5d5"; }    /* refresh */
 .btn-view-all::before { content: "\e8ef"; } /* visibility (ver todos) */
 
-/* --- BOTÕES DOS APLICATIVOS (Links Rápidos) --- */
-/* Estes botões aparecem em listas ou grids, geralmente sem fundo */
-
+/* ==========================================================================
+   BOTÕES DE APP (LINK STYLE)
+   ========================================================================== */
 .btn-address,
 .btn-apps,
 .btn-budget, 
@@ -230,13 +258,12 @@
 .btn-view-all, 
 .btn-voucher {
     background-color: transparent;
-    color: var(--text-primary); /* Adapta ao tema claro/escuro */
+    color: var(--text-primary);
     box-shadow: none;
     padding: 8px 12px;
     font-size: 14px;
-    text-transform: none; /* Mantém texto normal se preferir */
-    justify-content: flex-start; /* Alinha à esquerda */
-    width: auto;
+    text-transform: none;
+    justify-content: flex-start;
 }
 
 .btn-address:hover,
@@ -263,12 +290,13 @@
 .btn-view-all:hover,
 .btn-voucher:hover {
     color: var(--cor-brand-primary);
-    background-color: rgba(0,0,0,0.02);
-    transform: none; /* Sem pulo para links de texto */
-    box-shadow: none;
+    background-color: rgba(0,0,0,0.03);
+    transform: none;
 }
 
-/* Ícones Específicos dos Apps (Mapeamento Google Material Symbols) */
+/* ==========================================================================
+   ÍCONES DOS APPS
+   ========================================================================== */
 .btn-address::before { content: "\e0c8"; }          /* location_on */
 .btn-apps::before { content: "\e5c3"; }             /* apps */
 .btn-budget::before { content: "\f8b6"; }           /* request_quote */
