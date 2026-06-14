@@ -21,13 +21,8 @@ document.addEventListener('DOMContentLoaded', function() {
             return response.text();
         })
         .then(html => {
-            // Atualiza apenas o container de resultados
             listContainer.innerHTML = html;
-            
-            // Atualiza a URL do navegador sem recarregar (Histórico)
             window.history.pushState({path: url}, '', url);
-            
-            // Reatribui os eventos aos novos elementos carregados via AJAX
             attachDynamicEvents();
         })
         .catch(error => console.error('Error:', error))
@@ -52,15 +47,10 @@ document.addEventListener('DOMContentLoaded', function() {
         const perPageSelect = document.getElementById('records_per_page');
         if (perPageSelect) {
             perPageSelect.addEventListener('change', function() {
-                // Busca o form que envolve o select (que tem os hidden inputs dos filtros atuais)
                 const form = this.closest('form');
                 const url = new URL(form.action, window.location.origin);
                 const formData = new FormData(form);
-                
-                // Converte FormData para QueryString
-                const params = new URLSearchParams(formData);
-                url.search = params.toString();
-                
+                url.search = new URLSearchParams(formData).toString();
                 fetchResults(url.toString());
             });
         }
@@ -68,43 +58,66 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // --- EVENTOS ESTÁTICOS (Sidebar) ---
 
-    // 1. Interceptar o Submit do Formulário de Busca
     if (searchForm) {
+        let timeout = null;
+
+        // Função central para disparar a busca
+        const triggerSearch = () => {
+            const url = new URL(searchForm.action, window.location.origin);
+            const formData = new FormData(searchForm);
+            url.search = new URLSearchParams(formData).toString();
+            fetchResults(url.toString());
+        };
+
+        // Previne o submit tradicional (caso o usuário dê Enter)
         searchForm.addEventListener('submit', function(e) {
             e.preventDefault();
-            const url = new URL(this.action, window.location.origin);
-            const formData = new FormData(this);
-            url.search = new URLSearchParams(formData).toString();
-            
-            fetchResults(url.toString());
+            triggerSearch();
         });
-    }
 
-    // 2. Botão Limpar
-    if (clearBtn) {
-        clearBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            
-            // Limpa visualmente os inputs do formulário
-            if (searchForm) {
-                searchForm.reset();
-                // Se houver selects customizados ou lógica extra, resetar aqui
+        // Dispara automaticamente ao alterar selects, checkboxes e datas
+        searchForm.addEventListener('change', function(e) {
+            if (e.target.type !== 'text' && !e.target.classList.contains('select2')) {
+                triggerSearch();
             }
-
-            // Busca a URL limpa (href do botão limpar)
-            fetchResults(this.href);
         });
+
+        // Dispara automaticamente ao digitar em campos de texto (com delay de 500ms)
+        searchForm.addEventListener('input', function(e) {
+            if (e.target.type === 'text') {
+                clearTimeout(timeout);
+                timeout = setTimeout(triggerSearch, 500);
+            }
+        });
+
+        // 2. Integração com Select2 (Requer jQuery)
+        if (typeof jQuery !== 'undefined') {
+            $('.select2').on('change', function() {
+                triggerSearch();
+            });
+        }
+
+        // 3. Botão Limpar ÚNICO
+        if (clearBtn) {
+            clearBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                searchForm.reset();
+                triggerSearch();if (typeof jQuery !== 'undefined') {
+                    $('.select2').val(null).trigger('change.select2');
+                }
+                triggerSearch();
+            });
+        }
     }
 
     // Inicializa os eventos na primeira carga da página
     attachDynamicEvents();
 
-    // Suporte ao botão "Voltar" do navegador
     window.addEventListener('popstate', function(event) {
         if (event.state && event.state.path) {
-            fetchResults(event.state.path); // Carrega via AJAX
+            fetchResults(event.state.path);
         } else {
-            window.location.reload(); // Fallback
+            window.location.reload();
         }
     });
 });

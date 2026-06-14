@@ -3,11 +3,6 @@
 <div class="apps-list-form-group-search">
     {% for field in search_fields %}
         <div class="apps-list-form-group-search-sub">
-            <input
-                type="checkbox"
-                id="check-{{ field.id }}"
-                data-target="{{ field.id }}"
-            >
             <label for="search-{{ field.id }}">{{ field.label }}</label>
 
             {% if field.type == 'select' %}
