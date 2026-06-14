@@ -3,7 +3,12 @@
 Módulo: Badges (Indicadores Visuais)
 Caminho: static/css/badges.css
 ==============================================================================
+
+Define o estilo dos badges utilizados em tabelas, listas e detalhes.
+Segue o padrão semântico baseado em workflow definido no global.css.
+==============================================================================
 */
+
 
 /* ==========================================================================
    BASE
@@ -21,7 +26,7 @@ Caminho: static/css/badges.css
 }
 
 /* ==========================================================================
-   WORKFLOW (PADRÃO COM CONTRASTE)
+   WORKFLOW (SEMÂNTICA DE NEGÓCIO)
 ========================================================================== */
 
 /* Aguardando aprovação */
@@ -66,6 +71,10 @@ Caminho: static/css/badges.css
     border: 1px solid rgba(27, 94, 32, 0.3);
 }
 
+/* ==========================================================================
+   ESTADOS AUXILIARES
+========================================================================== */
+
 /* Ativo */
 .badge-ativo {
     background-color: #E8F5E9;
@@ -79,7 +88,7 @@ Caminho: static/css/badges.css
 }
 
 /* ==========================================================================
-   TEMA ESCURO (MANTER SUAVE)
+   TEMA ESCURO
 ========================================================================== */
 [data-theme="dark"] .badge-aguardando-aprovacao {
     background-color: rgba(251, 192, 45, 0.15);
