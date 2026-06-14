@@ -13,31 +13,51 @@ aplica o atributo data-theme no HTML global e alterna o ícone do botão.
 document.addEventListener('DOMContentLoaded', () => {
     const themeToggleBtn = document.getElementById('theme-toggle-btn');
     const htmlElement = document.documentElement;
-    // Puxa o span em vez do i
-    const iconElement = themeToggleBtn ? themeToggleBtn.querySelector('span') : null;
+
+    // Puxa o span em vez do icone diretamente para facilitar a troca de conteúdo
+    const iconElement = themeToggleBtn
+        ? themeToggleBtn.querySelector('span')
+        : null;
 
     // 1. Verificar preferência salva ou do sistema
     const savedTheme = localStorage.getItem('theme');
     const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-
-    if (savedTheme === 'dark' || (!savedTheme && systemPrefersDark)) {
+    
+    function setDarkMode() {
         htmlElement.setAttribute('data-theme', 'dark');
-        if(iconElement) iconElement.textContent = 'light_mode';
+        if (iconElement) {
+            iconElement.classList.remove('icon-dark-mode');
+            iconElement.classList.add('icon-light-mode');
+        }
     }
 
-    // 2. Evento de Clique
+    function setLightMode() {
+        htmlElement.setAttribute('data-theme', 'light');
+        if (iconElement) {
+            iconElement.classList.remove('icon-light-mode');
+            iconElement.classList.add('icon-dark-mode');
+        }
+    }
+
+    // Inicialização
+    if (savedTheme === 'dark' || (!savedTheme && systemPrefersDark)) {
+        setDarkMode();
+    } else {
+        setLightMode();
+    }
+
+
+    // Clique
     if (themeToggleBtn) {
         themeToggleBtn.addEventListener('click', () => {
             const currentTheme = htmlElement.getAttribute('data-theme');
-            
+
             if (currentTheme === 'dark') {
-                htmlElement.setAttribute('data-theme', 'light');
                 localStorage.setItem('theme', 'light');
-                if(iconElement) iconElement.textContent = 'dark_mode';
+                setLightMode();
             } else {
-                htmlElement.setAttribute('data-theme', 'dark');
                 localStorage.setItem('theme', 'dark');
-                if(iconElement) iconElement.textContent = 'light_mode';
+                setDarkMode();
             }
         });
     }
