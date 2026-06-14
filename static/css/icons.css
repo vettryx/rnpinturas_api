@@ -14,8 +14,6 @@ Utiliza variáveis de estilo definidas em global.css.
    BASE DOS ÍCONES
    ========================================================================== */
 
-/* Elemento visual do ícone */
-
 [class^="icon-"]::before {
     font-family: 'Material Symbols Outlined';
     font-style: normal;
