@@ -21,6 +21,7 @@ from common.views import (
     CommonUpdateView,
 )
 from django.db import transaction
+from django.db.models import Count
 from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.template.loader import render_to_string
@@ -38,42 +39,72 @@ from .models import Order
 class OrderHomeView(CommonTemplateView):
     template_name = "includes/apps_home.html"
     title = "Dashboard de Orçamentos"
+    description = "Visão geral dos pedidos, KPIs, ações rápidas e ranking de clientes."
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        orders_base = (
+            Order.objects
+            .select_related("client", "status")
+            .prefetch_related("services", "materials")
+        )
 
-        # --- KPIs para o Dashboard ---
-        total_orders = Order.objects.count()
-        orders_waiting_payment = Order.objects.filter(status__name="Aguardando Pagamento").count()
-        orders_approved = Order.objects.filter(status__name="Aprovado").count()
-        orders_cancelled = Order.objects.filter(status__name="Cancelado").count()
-
-        context["kpis"] = [
+        # --- KPIs ---
+        status_mapping = [
             {
-                "label": "Total de Pedidos",
-                "value": total_orders,
-                "style": "",
-                "footer": "Base completa",
+                "id": 1,
+                "nome": "Aguardando Aprovação",
+                "css": "kpi-aguardando-aprovacao",
+                "icon": "schedule"
             },
             {
-                "label": "Pedidos em Aberto",
-                "value": orders_waiting_payment,
-                "style": "bg-warning",
-                "footer": "Aguardando pagamento",
+                "id": 2,
+                "nome": "Aprovado",
+                "css": "kpi-aprovado",
+                "icon": "thumb_up"
             },
             {
-                "label": "Pedidos Aprovados",
-                "value": orders_approved,
-                "style": "success",
-                "footer": "Aprovados",
+                "id": 3,
+                "nome": "Reprovado",
+                "css": "kpi-reprovado",
+                "icon": "thumb_down"
             },
             {
-                "label": "Pedidos Cancelados",
-                "value": orders_cancelled,
-                "style": "alert",
-                "footer": "Cancelados",
-            }
+                "id": 4,
+                "nome": "Em andamento",
+                "css": "kpi-em-andamento",
+                "icon": "construction"
+            },
+            {
+                "id": 5,
+                "nome": "Pagamento Pendente",
+                "css": "kpi-pagamento-pendente",
+                "icon": "payments"
+            },
+            {
+                "id": 6,
+                "nome": "Concluído",
+                "css": "kpi-concluido",
+                "icon": "check_circle"
+            },
         ]
+        kpis = []
+
+        for status in status_mapping:
+            queryset = orders_base.filter(status__name=status["nome"])
+            quantidade = queryset.count()
+            soma = sum(pedido.grand_total for pedido in queryset)
+
+            kpis.append({
+                "label": status["nome"],
+                "qtd": quantidade,
+                "soma": f"R$ {number_format(soma, decimal_pos=2, force_grouping=True)}",
+                "css_class": status["css"],
+                "icon": status["icon"],
+                "url": f"/orders/list/?status={status['id']}"
+            })
+
+        context["kpis"] = kpis
 
         # --- Ações Rápidas ---
         context["actions_list"] = [
@@ -89,18 +120,38 @@ class OrderHomeView(CommonTemplateView):
             },
         ]
 
-        # --- Itens Recentes (Últimos 5 cadastrados) ---
-        last_orders = Order.objects.order_by("-id")[:5]
+        # --- Tabela Dinâmica (Últimos 10 cadastrados) ---
+        context["table_columns"] = ["Pedido", "Cliente", "Status"]
 
-        context["recent_items"] = []
-        for order in last_orders:
-            context["recent_items"].append(
-                {
-                    "label": f"{order.order_code} - {order.client.name}",
-                    "url": reverse_lazy("orders:detail", args=[order.pk]),
-                    "meta": f"Status: {order.status}",
-                }
+        context["table_rows"] = [
+            {
+                "cols": [
+                    f'<a href="{reverse_lazy("orders:detail", args=[order.pk])}"><strong>{order.formatted_code}</strong></a>',
+                    order.client.name,
+                    f'<span class="badge-{order.status.css_class}">{order.status.name}</span>',
+                ]
+            }
+            for order in orders_base.order_by("-id")[:10]
+        ]
+
+        # --- Ranking ---
+        context["ranking_title"] = "Top Clientes"
+        context["ranking_label"] = "Cliente"
+        context["ranking_value"] = "Pedidos"
+
+        context["ranking"] = [
+            {
+                "label": item["client__name"],
+                "value": item["total_pedidos"],
+                "url": f"/orders/list/?client={item['client_id']}",
+            }
+            for item in (
+                Order.objects
+                .values("client_id", "client__name")
+                .annotate(total_pedidos=Count("id"))
+                .order_by("-total_pedidos")[:10]
             )
+        ]
 
         return context
 
