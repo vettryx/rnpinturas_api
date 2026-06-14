@@ -11,7 +11,9 @@ para todas as interfaces do sistema.
 */
 
 :root {
-    /* --- PALETA BASE --- */
+    /* =======================================================================
+        PALETA BASE
+    ======================================================================= */
     --base-teal: #03989E;
     --base-dark-blue: #0F2026;
     --base-yellow: #FFEB3B;
@@ -23,17 +25,36 @@ para todas as interfaces do sistema.
     --base-gray-800: #323F4B;
     --base-black: #121212;
 
-    /* --- VARIÁVEIS FUNCIONAIS --- */
+    /* =======================================================================
+        VARIÁVEIS FUNCIONAIS
+    ======================================================================= */
     --cor-brand-primary: var(--base-teal);
     --cor-brand-secondary: var(--base-dark-blue);
     
-    /* Cores de Estado */
+    /* =======================================================================
+        ESTADOS GENÉRICOS
+    ======================================================================= */
     --cor-status-info: var(--base-teal);
     --cor-status-warning: #FBC02D;
     --cor-status-danger: var(--base-red);
     --cor-status-success: var(--base-green);
+    --cor-status-neutral: var(--base-gray-800);
 
-    /* --- TEMA CLARO (Padrão) --- */
+    /* =======================================================================
+        WORKFLOWS (SEMÂNTICA DE NEGÓCIO)
+    ======================================================================= */
+    --cor-aguardando-aprovacao: var(--base-yellow);
+    --cor-aprovado: var(--base-green);
+    --cor-reprovado: var(--base-red);
+    --cor-em-andamento: var(--base-teal);
+    --cor-pagamento-pendente: #FF9800;
+    --cor-concluido: #2E7D32;
+    --cor-ativo: var(--base-green);
+    --cor-inativo: var(--base-gray-800);
+
+    /* =======================================================================
+        TEMA CLARO (Padrão)
+    ======================================================================= */
     --bg-body: var(--base-gray-100);
     --bg-card: var(--base-white);
     --bg-header: var(--base-white);
@@ -45,7 +66,9 @@ para todas as interfaces do sistema.
     --sombra-card: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
-/* --- TEMA ESCURO --- */
+/* ==========================================================================
+    TEMA ESCURO
+ ========================================================================= */
 [data-theme="dark"] {
     --bg-body: #0A1014;
     --bg-card: #15202B;
@@ -57,7 +80,9 @@ para todas as interfaces do sistema.
     --cor-brand-primary: #04DBE4; 
 }
 
-/* --- RESET E ESTRUTURA GLOBAL --- */
+/* ==========================================================================
+    RESET E ESTRUTURA GLOBAL
+ ========================================================================= */
 * {
     margin: 0;
     padding: 0;
@@ -69,16 +94,28 @@ html, body {
     width: 100%;
 }
 
+/* ==========================================================================
+    ESTRUTURA BASE
+ ========================================================================= */
 html body {
-    background-color: var(--bg-body);
-    color: var(--text-primary);
-    font-family: 'Montserrat', sans-serif;
-    transition: background-color 0.3s ease, color 0.3s ease;
     display: flex;
     flex-direction: column;
+    font-family: 'Montserrat', sans-serif;
+    background-color: var(--bg-body);
+    color: var(--text-primary);
+    transition: background-color 0.3s ease,
+                color 0.3s ease;
 }
 
-h1, h2, h3, h4, h5, h6 {
+/* ==========================================================================
+    TIPOGRAFIA
+ ========================================================================= */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
     font-family: 'Fredoka', sans-serif;
     color: var(--text-primary);
     margin-bottom: 0.5rem;
@@ -90,7 +127,9 @@ a {
     transition: 0.2s;
 }
 
-/* Controle de Tema da Logo */
+/* ==========================================================================
+    CONTROLE DE TEMA (LOGOS)
+ ========================================================================= */
 [data-theme="dark"] .logo-light { 
     display: none; 
 }
