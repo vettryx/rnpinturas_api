@@ -366,6 +366,11 @@ class CommonDetailView(LoginRequiredMixin, DetailView):
 
         return context
 
+
+class CommonAppHomeView(CommonTemplateView):
+    template_name = "includes/apps_home.html"
+
+
 class CommonCloneView(LoginRequiredMixin, View):
     """
     View genérica para clonar um registro pai e seus respectivos filhos.
