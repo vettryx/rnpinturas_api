@@ -70,13 +70,13 @@ class AuxStatus(IdleBase):
     def css_class(self):
         """Mapeia o nome do status para uma classe CSS de cor"""
         mapping = {
-            'Aguardando Aprovação': 'warning',
-            'Aprovado': 'success',
-            'Reprovado': 'danger',
-            'Em andamento': 'info',
-            'Aguardando Pagamento': 'danger',
-            'Concluído': 'success',
-            'Cancelado': 'dark',
+            'Aguardando Aprovação': 'aguardando-aprovacao',
+            'Aprovado': 'aprovado',
+            'Reprovado': 'reprovado',
+            'Em andamento': 'em-andamento',
+            'Aguardando Pagamento': 'pagamento-pendente',
+            'Concluído': 'concluido',
+            'Cancelado': 'reprovado',
         }
         # Se não achar na lista acima, devolve 'secondary' (cinza neutro)
         return mapping.get(self.name, 'secondary')

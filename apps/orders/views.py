@@ -197,7 +197,11 @@ class OrderListView(CommonListView):
             item.formatted_code,
             item.issue_date.strftime("%d/%m/%Y") if item.issue_date else "-",
             format_html('<a href="{}">{}</a>', detail_url, item.client.name),
-            item.status.name,
+            format_html(
+                '<span class="badge-{}">{}</span>',
+                item.status.css_class,
+                item.status.name
+            ),
             f"R$ {formatted_total}",
             item.notes,
         ]
@@ -320,13 +324,38 @@ class OrderDetailView(CommonDetailView):
                 "active": True,
                 "title": "Informações do Pedido",
                 "fields": [
-                    {"label": "Código do Pedido", "value": order_display_code},
-                    {"label": "Cliente", "value": order.client.name},
-                    {"label": "Status", "value": order.status.name},
-                    {"label": "Emissão", "value": order.issue_date.strftime("%d/%m/%Y") if order.issue_date else "-"},
-                    {"label": "Vencimento", "value": order.due_date.strftime("%d/%m/%Y") if order.due_date else "-"},
-                    {"label": "Prazo", "value": f"{order.lead_time} dias" if order.lead_time else "-"},
-                    {"label": "Observações", "value": order.notes or "-"},
+                    {
+                        "label": "Código do Pedido",
+                        "value": order_display_code
+                    },
+                    {
+                        "label": "Cliente",
+                        "value": order.client.name
+                    },
+                    {
+                        "label": "Status",
+                        "value": format_html(
+                            '<span class="badge-{}">{}</span>',
+                            order.status.css_class,
+                            order.status.name
+                        )
+                    },
+                    {
+                        "label": "Emissão",
+                        "value": order.issue_date.strftime("%d/%m/%Y") if order.issue_date else "-"
+                    },
+                    {
+                        "label": "Vencimento",
+                        "value": order.due_date.strftime("%d/%m/%Y") if order.due_date else "-"
+                    },
+                    {
+                        "label": "Prazo",
+                        "value": f"{order.lead_time} dias" if order.lead_time else "-"
+                    },
+                    {
+                        "label": "Observações",
+                        "value": order.notes or "-"
+                    },
                 ],
             },
             # ==========================================
