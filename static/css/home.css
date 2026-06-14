@@ -1,14 +1,29 @@
-/* static/css/home.css */
 
+/*
+==============================================================================
+Módulo: Home (Dashboard)
+Caminho: static/css/home.css
+==============================================================================
+
+Define o layout estrutural da home/dashboard.
+Controla organização, painéis, filtros e responsividade da página.
+==============================================================================
+*/
+
+/* ==========================================================================
+   BASE DA PÁGINA
+========================================================================== */
 body.body-home {
+    display: flex;
+    flex-direction: column;
     height: auto;
     min-height: 100vh;
     overflow: hidden;
-    display: flex;
-    flex-direction: column;
 }
 
-/* Container Principal*/
+/* ==========================================================================
+   CONTAINER PRINCIPAL
+========================================================================== */
 .dashboard-wrapper {
     flex: 1;
     display: flex;
@@ -20,7 +35,9 @@ body.body-home {
     min-height: 0;
 }
 
-/* Header do Dashboard e Filtro */
+/* ==========================================================================
+   HEADER (TÍTULO + FILTRO)
+========================================================================== */
 .dashboard-header {
     display: flex;
     justify-content: space-between;
@@ -30,21 +47,24 @@ body.body-home {
 
 .welcome-section h3 {
     font-size: 1.5rem;
-    color: var(--text-primary);
     margin-bottom: 0.1rem;
+    color: var(--text-primary);
 }
 
 .welcome-section .subtitle {
-    color: var(--text-secondary);
     font-size: 0.85rem;
+    color: var(--text-secondary);
 }
 
+/* ==========================================================================
+   FILTRO DE PERÍODO
+========================================================================== */
 .period-filter-form {
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    background-color: var(--bg-card);
     padding: 6px 12px;
+    background-color: var(--bg-card);
     border-radius: 8px;
     border: 1px solid var(--borda-suave);
     box-shadow: var(--sombra-card);
@@ -54,17 +74,17 @@ body.body-home {
     display: flex;
     align-items: center;
     gap: 0.4rem;
-    white-space: nowrap;
     font-size: 0.8rem;
     font-weight: 700;
     color: var(--text-secondary);
+    white-space: nowrap;
 }
 
 .period-filter-form select {
     font-size: 0.85rem;
-    border: 1px solid var(--borda-suave);
-    background: transparent;
     font-weight: 600;
+    background: transparent;
+    border: 1px solid var(--borda-suave);
     color: var(--text-primary);
     outline: none;
     cursor: pointer;
@@ -74,128 +94,28 @@ body.body-home {
     background-color: var(--bg-card);
 }
 
-/* --- 1. GRIDS DE KPI --- */
-.kpi-grid {
-    display: grid;
-    grid-template-columns: repeat(6, 1fr);
-    gap: 1rem;
-    margin-bottom: 1rem;
-}
-
-.kpi-card {
-    background-color: var(--bg-card);
-    padding: 0.8rem 1rem;
-    border-radius: 12px;
-    box-shadow: var(--sombra-card);
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    border: 1px solid var(--borda-suave);
-    border-left: 5px solid transparent;
-    min-height: 70px;
-    text-decoration:none;
-    color:inherit;
-    cursor:pointer;
-}
-
-.kpi-card:hover{
-    transform:translateY(-2px);
-}
-
-.kpi-card:active{
-    transform:scale(.98);
-}
-
-.dashboard-wrapper .kpi-card::before {
-    display: none;
-}
-
-.kpi-icon {
-    width: 38px;
-    height: 38px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.1rem;
-    flex-shrink: 0;
-}
-
-.kpi-data {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-}
-
-.kpi-label {
-    font-size: 0.7rem;
-    color: var(--text-secondary);
-    font-weight: 700;
-    text-transform: uppercase;
-}
-
-.kpi-value {
-    font-family: 'Fredoka', sans-serif;
-    font-size: 1.3rem;
-    font-weight: 700;
-    color: var(--text-primary);
-    line-height: 1;
-}
-
-/* Cores dos KPIs e Badges */
-.status-pending {
-    border-left-color: var(--cor-status-warning);
-}
-.status-pending .kpi-icon {
-    background-color: rgba(251, 192, 45, 0.15);
-    color: var(--cor-status-warning);
-}
-
-.status-progress {
-    border-left-color: var(--cor-status-info);
-}
-
-.status-progress .kpi-icon {
-    background-color: rgba(3, 152, 158, 0.15);
-    color: var(--cor-status-info);
-}
-
-.status-waiting {
-    border-left-color: var(--cor-status-danger);
-}
-
-.status-waiting .kpi-icon {
-    background-color: rgba(244, 67, 54, 0.15);
-    color: var(--cor-status-danger);
-}
-
-.status-success {
-    border-left-color: var(--cor-status-success);
-}
-
-.status-success .kpi-icon {
-    background-color: rgba(76, 175, 80, 0.15);
-    color: var(--cor-status-success);
-}
-
-/* --- 2. LAYOUT PRINCIPAL (TRÊS BLOCOS) --- */
+/* ==========================================================================
+   LAYOUT PRINCIPAL
+========================================================================== */
 .main-layout-grid {
     display: grid;
-    grid-template-columns: 260px 1fr 300px;
+    grid-template-columns:minmax(240px,260px) 1fr minmax(260px,300px);
     gap: 1.2rem;
     margin-bottom: 0.75rem;
     flex: 1;
     min-height: 0;
 }
 
-/* Estilo Base dos Painéis Inferiores */
+/* ==========================================================================
+   PAINÉIS (BASE)
+========================================================================== */
 .dashboard-panel {
-    background-color: var(--bg-card);
-    border-radius: 12px;
-    box-shadow: var(--sombra-card);
-    border: 1px solid var(--borda-suave);
     display: flex;
     flex-direction: column;
+    background-color: var(--bg-card);
+    border-radius: 12px;
+    border: 1px solid var(--borda-suave);
+    box-shadow: var(--sombra-card);
     height:auto;
     min-height:auto;
 }
@@ -208,14 +128,16 @@ body.body-home {
     margin: 0;
     font-size: 0.8rem;
     font-weight: 800; 
-    color: var(--text-primary); 
     text-transform: uppercase;
     letter-spacing: 0.03rem;
     line-height: 1;
+    color: var(--text-primary); 
     background-color: var(--borda-suave);
 }
 
-/* Bloco Esquerdo: Apps */
+/* ==========================================================================
+   APPS (PAINEL ESQUERDO)
+========================================================================== */
 .panel-apps .app-cards-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -224,21 +146,20 @@ body.body-home {
 }
 
 .app-card {
-    background-color: var(--bg-body);
-    border-radius: 8px;
-    padding: 0.8rem;
     display: flex;
     flex-direction: column;
     align-items: center;
+    padding: 0.8rem;
+    background-color: var(--bg-body);
+    border-radius: 8px;
     border: 1px solid transparent;
-    transition: 0.2s;
     text-decoration: none;
+    transition: 0.2s;
 }
 
 .app-card:hover {
     border-color: var(--cor-brand-primary);
     transform: translateY(-2px);
-    text-decoration: none;
 }
 
 .app-icon-container {
@@ -248,13 +169,14 @@ body.body-home {
 }
 
 .app-name {
-    font-weight: 700;
     font-size: 0.75rem;
+    font-weight: 700;
     color: var(--text-primary);
-    text-decoration: none;
 }
 
-/* Bloco Central: Tabela */
+/* ==========================================================================
+   TABELA (PAINEL CENTRAL)
+========================================================================== */
 .panel-table .section-header {
     display: flex;
     justify-content: space-between;
@@ -271,24 +193,24 @@ body.body-home {
 
 .simple-table-container {
     flex-grow: 1;
+    padding: 1.2rem;
     overflow-x: auto;
     overflow-y: auto;
-    padding: 1.2rem;
 }
 
 .simple-table {
     width: 100%;
-    border-collapse:
-    collapse; font-size: 0.85rem;
+    border-collapse:collapse;
+    font-size: 0.85rem;
 }
 
 .simple-table th {
-    font-size: 0.8rem;
-    text-align: left;
     padding: 8px 10px;
-    color: var(--text-secondary);
+    font-size: 0.8rem;
     font-weight: 700;
     text-transform: uppercase;
+    text-align: left;
+    color: var(--text-secondary);
     border-bottom: 2px solid var(--borda-suave);
     position: sticky;
     top: 0;
@@ -296,8 +218,8 @@ body.body-home {
 }
 
 .simple-table td {
-    font-size: 0.8rem;
     padding: 8px 10px;
+    font-size: 0.8rem;
     color: var(--text-primary);
     border-bottom: 1px solid var(--borda-suave);
     vertical-align: middle;
@@ -309,7 +231,9 @@ body.body-home {
     overflow-y: auto;
 }
 
-/* Bloco Direito: Rankings */
+/* ==========================================================================
+   RANKINGS (PAINEL DIREITO)
+========================================================================== */
 .panel-rankings {
     padding-bottom: 1.2rem;
     overflow-y: auto;
@@ -322,9 +246,9 @@ body.body-home {
 
 .ranking-subtitle {
     font-size: 0.8rem;
-    color: var(--text-secondary);
-    text-transform: uppercase;
     font-weight: 700;
+    text-transform: uppercase;
+    color: var(--text-secondary);
     margin-bottom: 10px;
     border-bottom: 1px solid var(--borda-suave);
     padding-bottom: 5px;
@@ -341,17 +265,17 @@ body.body-home {
     border-bottom: none;
 }
 .rank-name {
+    max-width: 180px;
     font-size: 0.85rem;
-    color: var(--text-primary);
     font-weight: 600;
+    color: var(--text-primary);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 180px;
 }
 .rank-value {
-    background-color: var(--bg-body);
     padding: 2px 8px;
+    background-color: var(--bg-body);
     border-radius: 20px;
     font-size: 0.75rem;
     font-weight: 800;
@@ -362,66 +286,8 @@ body.body-home {
 }
 
 /* ==========================================================================
-   BADGES DE STATUS (CORES BLINDADAS COM ALTO CONTRASTE)
-   ========================================================================== */
-
-/* Cores Claras (Modo Claro) - Uso do !important para matar regras do Bootstrap/Globais */
-.badge-warning { 
-    background-color: #FFF9C4 !important; 
-    color: #E65100 !important; /* Laranja bem escuro */
-    border: 1px solid rgba(230, 81, 0, 0.3) !important; 
-}
-.badge-success { 
-    background-color: #E8F5E9 !important; 
-    color: #1B5E20 !important; /* Verde bem escuro */
-    border: 1px solid rgba(27, 94, 32, 0.3) !important; 
-}
-.badge-info { 
-    background-color: #E0F7FA !important; 
-    color: #004D40 !important; /* Ciano/Teal bem escuro */
-    border: 1px solid rgba(0, 77, 64, 0.3) !important; 
-}
-.badge-danger { 
-    background-color: #FFEBEE !important; 
-    color: #B71C1C !important; /* Vermelho sangue escuro */
-    border: 1px solid rgba(183, 28, 28, 0.3) !important; 
-}
-.badge-dark { 
-    background-color: var(--base-gray-200) !important; 
-    color: var(--text-secondary) !important; 
-    border: 1px solid var(--borda-suave) !important; 
-}
-.badge-secondary { 
-    background-color: var(--bg-body) !important; 
-    color: var(--text-secondary) !important; 
-}
-
-/* Cores Escuras (Modo Escuro) - Texto mais claro para contrastar com o fundo noturno */
-[data-theme="dark"] .badge-warning {
-    background-color: rgba(251, 192, 45, 0.15) !important;
-    color: #FFF176 !important;
-}
-
-[data-theme="dark"] .badge-success {
-    background-color: rgba(76, 175, 80, 0.15) !important;
-    color: #A5D6A7 !important;
-}
-
-[data-theme="dark"] .badge-info {
-    background-color: rgba(3, 152, 158, 0.15) !important;
-    color: #80DEEA !important;
-}
-
-[data-theme="dark"] .badge-danger {
-    background-color: rgba(244, 67, 54, 0.15) !important;
-    color: #EF9A9A !important;
-}
-
-[data-theme="dark"] .badge-dark {
-    background-color: rgba(255, 255, 255, 0.1) !important;
-    color: #E4E7EB !important;
-}
-
+   RESPONSIVIDADE
+========================================================================== */
 @media (max-width:992px){
 
     body.body-home{
@@ -460,7 +326,6 @@ body.body-home {
 
     .dashboard-panel{
         height:auto;
-        min-height:auto;
         overflow:visible;
     }
 
@@ -499,12 +364,8 @@ body.body-home {
         font-size:.8rem;
     }
 
-    .app-cards-grid{
+    .panel-apps .app-cards-grid{
         grid-template-columns:1fr 1fr;
-    }
-
-    .kpi-card{
-        padding:.8rem;
     }
 
     .section-title{
@@ -512,13 +373,9 @@ body.body-home {
     }
 
     .period-filter-form{
-
         flex-direction:column;
-
         align-items:stretch;
-
         gap:.7rem;
-
         width:100%;
     }
 
@@ -527,13 +384,9 @@ body.body-home {
     }
 
     .period-filter-form select,
-
     .period-filter-form input[type="date"],
-
     .period-filter-form button{
-
         width:100%;
-
         min-width:unset;
     }
 }

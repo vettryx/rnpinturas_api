@@ -94,10 +94,14 @@ Visão Geral
             <div class="kpi-data">
                 <span class="kpi-label">
                     {{ kpi.label }}
-                    ({{ kpi.qtd }})
                 </span>
+
                 <span class="kpi-value">
                     {{ kpi.soma }}
+                </span>
+
+                <span class="kpi-count">
+                    {{ kpi.qtd }} pedidos
                 </span>
             </div>
         </a>
@@ -184,7 +188,7 @@ Visão Geral
                                 <strong>R$ {{ order.grand_total|floatformat:2 }}</strong>
                             </td>
                             <td>
-                                <span class="badge badge-{{ order.status.css_class }}">{{ order.status.name }}</span>
+                                <span class="badge-{{ order.status.css_class }}">{{ order.status.name }}</span>
                             </td>
                         </tr>
                         {% empty %}

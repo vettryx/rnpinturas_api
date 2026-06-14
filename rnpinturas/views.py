@@ -109,37 +109,37 @@ class HomeView(TemplateView):
             {
                 "id": 1,
                 "nome": "Aguardando Aprovação",
-                "css": "status-pending",
+                "css": "kpi-aguardando-aprovacao",
                 "icon": "schedule"
             },
             {
                 "id": 2,
                 "nome": "Aprovado",
-                "css": "status-success",
+                "css": "kpi-aprovado",
                 "icon": "thumb_up"
             },
             {
                 "id": 3,
                 "nome": "Reprovado",
-                "css": "status-waiting",
+                "css": "kpi-reprovado",
                 "icon": "thumb_down"
             },
             {
                 "id": 4,
                 "nome": "Em andamento",
-                "css": "status-progress",
+                "css": "kpi-em-andamento",
                 "icon": "construction"
             },
             {
                 "id": 5,
                 "nome": "Pagamento Pendente",
-                "css": "status-waiting",
+                "css": "kpi-pagamento-pendente",
                 "icon": "payments"
             },
             {
                 "id": 6,
                 "nome": "Concluído",
-                "css": "status-success",
+                "css": "kpi-concluido",
                 "icon": "check_circle"
             },
         ]
