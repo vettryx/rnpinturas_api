@@ -1,0 +1,117 @@
+/*
+==============================================================================
+Módulo: Badges (Indicadores Visuais)
+Caminho: static/css/badges.css
+==============================================================================
+*/
+
+/* ==========================================================================
+   BASE
+========================================================================== */
+[class^="badge-"] {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2px 8px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    border-radius: 20px;
+    line-height: 1;
+    white-space: nowrap;
+}
+
+/* ==========================================================================
+   WORKFLOW (PADRÃO COM CONTRASTE)
+========================================================================== */
+
+/* Aguardando aprovação */
+.badge-aguardando-aprovacao {
+    background-color: #FFF9C4;
+    color: #E65100;
+    border: 1px solid rgba(230, 81, 0, 0.3);
+}
+
+/* Aprovado */
+.badge-aprovado {
+    background-color: #E8F5E9;
+    color: #1B5E20;
+    border: 1px solid rgba(27, 94, 32, 0.3);
+}
+
+/* Reprovado */
+.badge-reprovado {
+    background-color: #FFEBEE;
+    color: #B71C1C;
+    border: 1px solid rgba(183, 28, 28, 0.3);
+}
+
+/* Em andamento */
+.badge-em-andamento {
+    background-color: #E0F7FA;
+    color: #004D40;
+    border: 1px solid rgba(0, 77, 64, 0.3);
+}
+
+/* Pagamento pendente */
+.badge-pagamento-pendente {
+    background-color: #FFF3E0;
+    color: #E65100;
+    border: 1px solid rgba(230, 81, 0, 0.3);
+}
+
+/* Concluído */
+.badge-concluido {
+    background-color: #E8F5E9;
+    color: #1B5E20;
+    border: 1px solid rgba(27, 94, 32, 0.3);
+}
+
+/* Ativo */
+.badge-ativo {
+    background-color: #E8F5E9;
+    color: #1B5E20;
+}
+
+/* Inativo */
+.badge-inativo {
+    background-color: var(--base-gray-200);
+    color: var(--text-secondary);
+}
+
+/* ==========================================================================
+   TEMA ESCURO (MANTER SUAVE)
+========================================================================== */
+[data-theme="dark"] .badge-aguardando-aprovacao {
+    background-color: rgba(251, 192, 45, 0.15);
+    color: #FFF176;
+}
+
+[data-theme="dark"] .badge-aprovado {
+    background-color: rgba(76, 175, 80, 0.15);
+    color: #A5D6A7;
+}
+
+[data-theme="dark"] .badge-reprovado {
+    background-color: rgba(244, 67, 54, 0.15);
+    color: #EF9A9A;
+}
+
+[data-theme="dark"] .badge-em-andamento {
+    background-color: rgba(3, 152, 158, 0.15);
+    color: #80DEEA;
+}
+
+[data-theme="dark"] .badge-pagamento-pendente {
+    background-color: rgba(255, 152, 0, 0.15);
+    color: #FFCC80;
+}
+
+[data-theme="dark"] .badge-concluido {
+    background-color: rgba(46, 125, 50, 0.15);
+    color: #A5D6A7;
+}
+
+[data-theme="dark"] .badge-inativo {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #E4E7EB;
+}
