@@ -15,94 +15,145 @@ rápidas e listagem de atividades recentes.
 
 {% load static %}
 
-{% block title %}{{ title }}{% endblock title %}
-{% block body_class %}body-apps-home{% endblock body_class %}
-{% block header_title %}{{ title }}{% endblock header_title %}
+{% block title %}{{ title }}{% endblock %}
+{% block body_class %}body-apps-home{% endblock %}
+{% block header_title %}{{ title }}{% endblock %}
 
 {% block content %}
 
-<div class="container-apps-home">
-    
-    {# --- SEÇÃO 1: KPIs (Indicadores) --- #}
-    {% if kpis %}
-    <div class="dashboard-kpi-grid">
-        {% for kpi in kpis %}
-            <div class="kpi-card {{ kpi.style|default:'' }}">
-                <div class="kpi-header">
-                    <span class="kpi-label">{{ kpi.label }}</span>
-                    {% if kpi.icon %}
-                        <i class="{{ kpi.icon }} kpi-icon"></i>
-                    {% endif %}
-                </div>
-                <div class="kpi-body">
-                    <span class="kpi-value">{{ kpi.value }}</span>
-                </div>
-                {% if kpi.footer %}
-                <div class="kpi-footer">
-                    {{ kpi.footer }}
-                </div>
-                {% endif %}
-            </div>
-        {% endfor %}
+<div class="apps-home-wrapper">
+
+    <!-- HEADER -->
+    <div class="apps-home-header">
+        <div class="apps-home-header-content">
+            <h3 class="apps-home-header-title">{{ title }}</h3>
+            <p class="apps-home-header-description">{{ description }}</p>
+        </div>
     </div>
-    {% endif %}
 
-    {# --- SEÇÃO 2: ÁREA PRINCIPAL (Ações e Recentes) --- #}
-    <div class="dashboard-main-grid">
-        
-        {# COLUNA ESQUERDA: Ações Rápidas #}
-        <div class="apps-home-card actions-card">
-            <div class="card-header">
-                <h3>Ações Rápidas</h3>
+    <!-- KPI -->
+    <section class="kpi-grid">
+        {% for kpi in kpis %}
+        <a href="{{ kpi.url }}" class="kpi-card {{ kpi.css_class }}">
+            
+            <div class="kpi-icon">
+                <span class="material-symbols-outlined">
+                    {{ kpi.icon }}
+                </span>
             </div>
-            <div class="card-body">
-                <div class="dashboard-actions-group">
-                    {% if actions_list %}
-                        {% for action in actions_list %}
-                            <a href="{{ action.url }}" class="{{ action.class }} dashboard-btn" aria-label="{{ action.label }}">
-                                {# Lógica visual de ícones baseada na classe #}
-                                {% if 'btn-new' in action.class %}
-                                    <i class="fas fa-plus"></i>
-                                {% elif 'btn-list' in action.class %}
-                                    <i class="fas fa-list"></i>
-                                {% else %}
-                                    <i class="fas fa-chevron-right"></i>
-                                {% endif %}
-                                {{ action.label }}
-                            </a>
+
+            <div class="kpi-data">
+                <span class="kpi-label">{{ kpi.label }}</span>
+
+                <span class="kpi-value">
+                    {{ kpi.soma }}
+                </span>
+
+                <span class="kpi-count">
+                    {{ kpi.qtd }} pedidos
+                </span>
+            </div>
+
+        </a>
+        {% endfor %}
+    </section>
+
+    <!-- GRID PRINCIPAL -->
+    <div class="apps-home-main-layout-grid">
+
+        <!-- ESQUERDA: AÇÕES -->
+        <section class="apps-home-panel apps-home-actions">
+            <div class="apps-home-actions-header">
+                <h4 class="apps-home-section-title">
+                    <span class="material-symbols-outlined">bolt</span>
+                    Ações
+                </h4>
+            </div>
+
+            <div class="apps-home-grid">
+                {% for action in actions_list %}
+                <a href="{{ action.url }}" class="app-card">
+                    <span class="{{ action.class }}"></span>
+                    <span class="apps-home-actions-name">{{ action.label }}</span>
+                </a>
+                {% endfor %}
+            </div>
+        </section>
+
+        <!-- CENTRO: RECENTES -->
+        <section class="apps-home-panel apps-home-recent">
+            <div class="apps-home-recent-header">
+                <h4 class="apps-home-section-title">
+                    <span class="material-symbols-outlined">
+                        history
+                    </span>
+                    Recentes
+                </h4>
+            </div>
+
+            <div class="apps-home-table-container">
+                <table class="apps-home-table">
+                    <thead>
+                        <tr>
+                            {% for col in table_columns %}
+                                <th>{{ col }}</th>
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in table_rows %}
+                        <tr>
+                            {% for col in item.cols %}
+                            <td>
+                                {{ col|safe }}
+                            </td>
+                            {% endfor %}
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="{{ table_columns|length }}">
+                                Nenhum registro.
+                            </td>
+                        </tr>
                         {% endfor %}
-                    {% else %}
-                        <p class="empty-state">Nenhuma ação definida.</p>
-                    {% endif %}
-                </div>
+                    </tbody>
+                </table>
             </div>
-        </div>
+        </section>
 
-        {# COLUNA DIREITA: Recentes #}
-        {% if recent_items %}
-        <div class="apps-home-card recent-card">
-            <div class="card-header">
-                <h3>Adicionados Recentemente</h3>
-            </div>
-            <div class="card-body no-padding">
-                <div class="recent-list">
-                    {% for item in recent_items %}
-                        <div class="recent-item">
-                            <div class="recent-info">
-                                <a href="{{ item.url }}" class="recent-link">{{ item.label }}</a>
-                                <span class="recent-meta">{{ item.meta }}</span>
-                            </div>
-                            <div class="recent-action">
-                                <i class="fas fa-chevron-right"></i>
-                            </div>
-                        </div>
-                    {% endfor %}
+        <!-- DIREITA: RANKING -->
+        {% if ranking %}
+        <section class="apps-home-panel apps-home-ranking">
+            <h4 class="apps-home-section-title">
+                <span class="material-symbols-outlined">star</span>
+                {{ ranking_title|default:"Destaques" }}
+            </h4>
+
+            <div class="apps-home-ranking-list">
+                <div class="apps-home-ranking-table-header">
+                    <span class="apps-home-ranking-name">
+                        {{ ranking_label|default:"Nome" }}
+                    </span>
+                    <span class="apps-home-ranking-value">
+                        {{ ranking_value|default:"Valor" }}
+                    </span>
                 </div>
+
+                {% for item in ranking %}
+                <a href="{{ item.url }}" class="apps-home-ranking-item">
+                    <span class="apps-home-ranking-name">
+                        {{ item.label }}
+                    </span>
+                    <span class="apps-home-ranking-value">
+                        {{ item.value }}
+                    </span>
+                </a>
+                {% endfor %}
             </div>
-        </div>
+        </section>
         {% endif %}
-        
+
     </div>
 </div>
 
-{% endblock content %}
+{% endblock %}
