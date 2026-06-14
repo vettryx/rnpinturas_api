@@ -242,11 +242,15 @@ class CommonDeleteView(LoginRequiredMixin, DeleteView):
         context["buttons"] = [
             {
                 "type": "submit",
-                "class": "btn-delete-confirm",
+                "class": "btn-delete",
                 "text": "Sim, excluir permanentemente",
-                "icon": "fas fa-trash-alt",
             },
-            {"type": "link", "url": cancel_url, "class": "btn-return", "text": "Cancelar operação"},
+            {
+                "type": "link",
+                "url": cancel_url,
+                "class": "btn-cancel",
+                "text": "Cancelar operação"
+            },
         ]
         return context
 
