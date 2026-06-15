@@ -114,6 +114,7 @@ class ClientHomeView(CommonAppHomeView):
             }
             for item in (
                 Order.objects
+                .filter(status__id="6")
                 .values("client_id", "client__name")
                 .annotate(total_pedidos=Count("id"))
                 .order_by("-total_pedidos")[:10]

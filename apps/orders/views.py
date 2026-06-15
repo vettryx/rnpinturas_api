@@ -142,10 +142,11 @@ class OrderHomeView(CommonAppHomeView):
             {
                 "label": item["client__name"],
                 "value": item["total_pedidos"],
-                "url": f"/orders/list/?client={item['client_id']}",
+                "url": f"/orders/list/?client={item['client_id']}&status=6",
             }
             for item in (
                 Order.objects
+                .filter(status__id="6")
                 .values("client_id", "client__name")
                 .annotate(total_pedidos=Count("id"))
                 .order_by("-total_pedidos")[:10]
