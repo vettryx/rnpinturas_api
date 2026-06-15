@@ -147,6 +147,7 @@ definidas em global.css.
 }
 
 .btn-clone,
+.btn-dashboard,
 .btn-download,
 .btn-list, 
 .btn-reports, 
@@ -206,30 +207,31 @@ button[class^="btn-"]:disabled {
 /* ==========================================================================
    MAPEAMENTO DE ÍCONES
    ========================================================================== */
-.btn-clone::before { content: "\e14d"; }    /* content_copy */
-.btn-download::before { content: "\f090"; }      /* download */
-.btn-home::before { content: "\e88a"; }     /* home */
-.btn-first::before { content: "\e5dc"; }    /* first_page */
-.btn-last::before { content: "\e5dd"; }     /* last_page */
-.btn-previous::before { content: "\e408"; } /* navigate_before */
-.btn-next::before { content: "\e409"; }     /* navigate_next */
-.btn-new::before { content: "\e145"; }      /* add */
-.btn-list::before { content: "\e8b6"; }     /* search */
-.btn-reports::before { content: "\e26b"; }  /* bar_chart */
-.btn-save::before { content: "\e161"; }     /* save */
-.btn-edit::before { content: "\e254"; }     /* edit */
-.btn-delete::before { content: "\e872"; }   /* delete */
-.btn-return::before { content: "\e5c4"; }   /* arrow_back */
-.btn-confirm::before { content: "\e5ca"; }  /* check */
-.btn-cancel::before { content: "\e14b"; }   /* block */
-.btn-close::before { content: "\e5cd"; }    /* close */
-.btn-clear::before { content: "\e14a"; }    /* backspace */
-.btn-access::before { content: "\ea77"; }   /* login */
-.btn-exit::before { content: "\e9ba"; }     /* logout */
-.btn-pdf::before { content: "\e415"; }      /* picture_as_pdf */
-.btn-excel::before { content: "\f1be"; }    /* table_view */
-.btn-reset::before { content: "\e5d5"; }    /* refresh */
-.btn-view-all::before { content: "\e8ef"; } /* visibility (ver todos) */
+.btn-access::before { content: "\ea77"; }       /* login */
+.btn-cancel::before { content: "\e14b"; }       /* block */
+.btn-clear::before { content: "\e14a"; }        /* backspace */
+.btn-clone::before { content: "\e14d"; }        /* content_copy */
+.btn-close::before { content: "\e5cd"; }        /* close */
+.btn-confirm::before { content: "\e5ca"; }      /* check */
+.btn-dashboard::before { content: "\e871"; }    /* dashboard */
+.btn-delete::before { content: "\e872"; }       /* delete */
+.btn-download::before { content: "\f090"; }     /* download */
+.btn-edit::before { content: "\e254"; }         /* edit */
+.btn-excel::before { content: "\f1be"; }        /* table_view */
+.btn-exit::before { content: "\e9ba"; }         /* logout */
+.btn-first::before { content: "\e5dc"; }        /* first_page */
+.btn-home::before { content: "\e88a"; }         /* home */
+.btn-last::before { content: "\e5dd"; }         /* last_page */
+.btn-list::before { content: "\e8b6"; }         /* search */
+.btn-new::before { content: "\e145"; }          /* add */
+.btn-next::before { content: "\e409"; }         /* navigate_next */
+.btn-pdf::before { content: "\e415"; }          /* picture_as_pdf */
+.btn-previous::before { content: "\e408"; }     /* navigate_before */
+.btn-reports::before { content: "\e26b"; }      /* bar_chart */
+.btn-reset::before { content: "\e5d5"; }        /* refresh */
+.btn-return::before { content: "\e5c4"; }       /* arrow_back */
+.btn-save::before { content: "\e161"; }         /* save */
+.btn-view-all::before { content: "\e8ef"; }     /* visibility (ver todos) */
 
 /* ==========================================================================
    BOTÕES DE APP (LINK STYLE)
