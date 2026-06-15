@@ -12,12 +12,12 @@ from datetime import timedelta
 from clients.models import Client
 from common.models import AuxStatus
 from common.views import (
+    CommonAppHomeView,
     CommonCloneView,
     CommonCreateView,
     CommonDeleteView,
     CommonDetailView,
     CommonListView,
-    CommonTemplateView,
     CommonUpdateView,
 )
 from django.db import transaction
@@ -36,8 +36,7 @@ from .models import Order
 
 
 # 1. HOME
-class OrderHomeView(CommonTemplateView):
-    template_name = "includes/apps_home.html"
+class OrderHomeView(CommonAppHomeView):
     title = "Dashboard de Orçamentos"
     description = "Visão geral dos pedidos, KPIs, ações rápidas e ranking de clientes."
 
@@ -97,8 +96,8 @@ class OrderHomeView(CommonTemplateView):
 
             kpis.append({
                 "label": status["nome"],
-                "qtd": quantidade,
-                "soma": f"R$ {number_format(soma, decimal_pos=2, force_grouping=True)}",
+                "value": f"R$ {number_format(soma, decimal_pos=2, force_grouping=True)}",
+                "extra": f"{quantidade} pedidos",
                 "css_class": status["css"],
                 "icon": status["icon"],
                 "url": f"/orders/list/?status={status['id']}"
