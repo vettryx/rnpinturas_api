@@ -7,55 +7,65 @@ Caminho: apps/clients/views.py
 Contém a lógica de apresentação e endpoints da API para o módulo de clientes.
 Herdará as views genéricas do app 'common' para padronização.
 """
-
 from common.views import (
+    CommonAppHomeView,
     CommonCreateView,
     CommonDeleteView,
     CommonDetailView,
     CommonListView,
-    CommonTemplateView,
     CommonUpdateView,
 )
 from django.db import transaction
+from django.db.models import Count
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.utils.html import format_html
+from orders.models import Order
 
 from .forms import ClientAddressFormSet, ClientContactFormSet, ClientForm
 from .models import Client
 
 
 # 1. HOME
-class ClientHomeView(CommonTemplateView):
-    template_name = "includes/apps_home.html"
+class ClientHomeView(CommonAppHomeView):
     title = "Dashboard de Clientes"
+    description = "Visão geral dos clientes"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
+        clients_base = Client.objects.all()
+
         # --- KPIs para o Dashboard ---
-        total_clients = Client.objects.count()
-        active_clients = Client.objects.filter(idle=False).count()
-        inactive_clients = Client.objects.filter(idle=True).count()
+        total_clients = clients_base.count()
+        active_clients = clients_base.filter(idle=False).count()
+        inactive_clients = clients_base.filter(idle=True).count()
 
         context["kpis"] = [
             {
                 "label": "Total de Clientes",
                 "value": total_clients,
-                "style": "",  # Padrão azul
-                "footer": "Base completa",
+                "extra": "clientes",
+                "css_class": "kpi-concluido",
+                "icon": "groups",
+                "url": reverse_lazy("clients:list"),
             },
             {
                 "label": "Clientes Ativos",
                 "value": active_clients,
-                "style": "success",  # Borda verde
-                "footer": "Em operação",
+                "extra": "ativos",
+                "css_class": "kpi-aprovado",
+                "icon": "check_circle",
+                "url": reverse_lazy("clients:list") + "?idle=False",
+
             },
             {
                 "label": "Inativos",
                 "value": inactive_clients,
-                "style": "alert",  # Borda laranja
-                "footer": "Arquivados",
+                "extra": "inativos",
+                "css_class": "kpi-reprovado",
+                "icon": "cancel",
+                "url": reverse_lazy("clients:list") + "?idle=True",
             },
         ]
 
@@ -73,18 +83,42 @@ class ClientHomeView(CommonTemplateView):
             },
         ]
 
-        # --- Itens Recentes (Últimos 5 cadastrados) ---
-        last_clients = Client.objects.order_by("-id")[:5]
+        # --- Tabela Dinâmica (Últimos 10 cadastrados) ---
+        context["table_columns"] = [
+            "Nome",
+            "Documento",
+            "Situação"
+        ]
 
-        context["recent_items"] = []
-        for client in last_clients:
-            context["recent_items"].append(
-                {
-                    "label": client.name,
-                    "url": reverse_lazy("clients:detail", args=[client.pk]),
-                    "meta": f"CNPJ/CPF: {client.cpf_cnpj}",
-                }
+        context["table_rows"] = [
+            {
+                "cols": [
+                    f'<a href="{reverse_lazy("clients:detail", args=[client.pk])}"><strong>{client.name}</strong></a>',
+                    client.cpf_cnpj,
+                    f'<span class="badge-{client.status_css_class}">{client.status_label}</span>',
+                ]
+            }
+            for client in clients_base.order_by("-id")[:10]
+        ]
+
+        # --- Ranking ---
+        context["ranking_title"] = "Top Clientes"
+        context["ranking_label"] = "Cliente"
+        context["ranking_value"] = "Pedidos"
+
+        context["ranking"] = [
+            {
+                "label": item["client__name"],
+                "value": item["total_pedidos"],
+                "url": reverse_lazy("clients:detail", args=[item["client_id"]]),
+            }
+            for item in (
+                Order.objects
+                .values("client_id", "client__name")
+                .annotate(total_pedidos=Count("id"))
+                .order_by("-total_pedidos")[:10]
             )
+        ]
 
         return context
 
@@ -96,6 +130,11 @@ class ClientListView(CommonListView):
 
     header_buttons = [
         {
+            "label": "Dashboard",
+            "url": reverse_lazy("clients:home"),
+            "class": "btn-dashboard",
+        },
+        {
             "label": "Novo Cliente",
             "url": reverse_lazy("clients:new"),
             "class": "btn-new",
@@ -103,8 +142,16 @@ class ClientListView(CommonListView):
     ]
 
     search_config = [
-        {"name": "name", "label": "Nome", "type": "text"},
-        {"name": "cpf_cnpj", "label": "Documento", "type": "text"},
+        {
+            "name": "name",
+            "label": "Nome",
+            "type": "text"
+        },
+        {
+            "name": "cpf_cnpj",
+            "label": "Documento",
+            "type": "text"
+        },
         {
             "name": "idle",
             "label": "Inativo?",
@@ -117,18 +164,21 @@ class ClientListView(CommonListView):
         {"field": "id", "label": "ID"},
         {"field": "name", "label": "Nome"},
         {"field": "cpf_cnpj", "label": "Documento"},
-        {"field": "idle", "label": "Inativo?"},
+        {"field": "idle", "label": "Status"},
     ]
 
     def get_row_data(self, item):
         detail_url = reverse_lazy("clients:detail", args=[item.pk])
-        status = "Sim" if item.idle else "Não"
 
         return [
             item.id,
             format_html('<a href="{}">{}</a>', detail_url, item.name),
             item.cpf_cnpj,
-            status,
+            format_html(
+                '<span class="badge-{}">{}</span>',
+                item.status_css_class,
+                item.status_label
+            ),
         ]
 
 
@@ -154,20 +204,24 @@ class ClientDetailView(CommonDetailView):
             {
                 "id": "tab-dados",
                 "label": "Dados Cadastrais",
-                "icon": "fas fa-user",
+                "icon": "person",
                 "active": True
             },
             {
                 "id": "tab-enderecos",
                 "label": f"Endereços ({client.addresses.count()})",
-                "icon": "fas fa-map-marker-alt",
+                "icon": "location_on",
             },
             {
                 "id": "tab-contatos",
                 "label": f"Contatos ({client.contacts.count()})",
-                "icon": "fas fa-address-book",
+                "icon": "contacts",
             },
-            {"id": "tab-orcamentos", "label": "Orçamentos", "icon": "fas fa-file-invoice-dollar"},
+            {
+                "id": "tab-pedidos",
+                "label": "Pedidos",
+                "icon": "receipt_long"
+            },
         ]
 
         # SEÇÕES (Conteúdo de cada aba)
@@ -183,7 +237,14 @@ class ClientDetailView(CommonDetailView):
                     {"label": "Tipo", "value": client.get_person_type_display()},
                     {"label": "CPF/CNPJ", "value": client.cpf_cnpj},
                     {"label": "RG/IE", "value": client.rg_ie},
-                    {"label": "Status", "value": "Inativo" if client.idle else "Ativo"},
+                    {
+                        "label": "Status",
+                        "value": format_html(
+                            '<span class="badge-{}">{}</span>',
+                            client.status_css_class,
+                            client.status_label,
+                        )
+                    },
                     {"label": "Observações", "value": client.notes},
                 ],
             },
@@ -192,7 +253,13 @@ class ClientDetailView(CommonDetailView):
                 "id": "tab-enderecos",
                 "title": "Endereços Cadastrados",
                 "is_table": True,
-                "table_headers": ["Cidade", "Logradouro", "Bairro", "CEP"],
+                "table_headers": [
+                    "Cidade",
+                    "Logradouro",
+                    "Bairro",
+                    "CEP",
+                    "Observações",
+                ],
                 "fields": [
                     {
                         "values": [
@@ -200,6 +267,7 @@ class ClientDetailView(CommonDetailView):
                             f"{addr.street}, {addr.number}",
                             addr.district,
                             addr.zip_code,
+                            addr.notes,
                         ]
                     }
                     for addr in client.addresses.all()
@@ -218,7 +286,7 @@ class ClientDetailView(CommonDetailView):
             },
             # Aba 4: Orçamentos (Implantação Futura)
             {
-                "id": "tab-orcamentos",
+                "id": "tab-pedidos",
                 "title": "Histórico de Orçamentos",
                 "custom_html": '<p class="p-detail" style="color: var(--text-secondary);">Funcionalidade de orçamentos em desenvolvimento.</p>',
             },
