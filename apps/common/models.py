@@ -32,6 +32,15 @@ class IdleBase(NoteBase):
     class Meta:
         abstract = True
 
+    @property
+    def status_label(self):
+        return "Ativo" if not self.idle else "Inativo"
+
+
+    @property
+    def status_css_class(self):
+        return "ativo" if not self.idle else "inativo"
+
 
 class AuxContactType(IdleBase):
     """
