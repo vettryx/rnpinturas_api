@@ -37,7 +37,7 @@ from .models import Order
 
 # 1. HOME
 class OrderHomeView(CommonAppHomeView):
-    title = "Dashboard de Orçamentos"
+    title = "Dashboard de Pedidos"
     description = "Visão geral dos pedidos, KPIs, ações rápidas e ranking de clientes."
 
     def get_context_data(self, **kwargs):
@@ -158,14 +158,19 @@ class OrderHomeView(CommonAppHomeView):
 # 2. LISTAGEM
 class OrderListView(CommonListView):
     model = Order
-    title = "Listagem de Orçamentos"
+    title = "Listagem de Pedidos"
 
     header_buttons = [
         {
-            "label": "Novo Orçamento",
+            "label": "Dashboard",
+            "url": reverse_lazy("orders:home"),
+            "class": "btn-dashboard"
+        },
+        {
+            "label": "Novo Pedido",
             "url": reverse_lazy("orders:new"),
             "class": "btn-new"
-        }
+        },
     ]
 
     search_config = [
@@ -563,7 +568,7 @@ class OrderUpdateView(CommonUpdateView):
     model = Order
     form_class = OrderForm
     success_url = reverse_lazy("orders:list")
-    title = "Editar Orçamento"
+    title = "Editar Pedido"
     return_url = reverse_lazy("orders:list")
 
     def get_object(self, queryset = None):
