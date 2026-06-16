@@ -7,11 +7,11 @@ Caminho: apps/services/models.py
 Define a entidade central de serviços (Service) da RN Pinturas
 """
 
-from common.models import IdleBase
+from common.models import IdleBase, PriceBase
 from django.db import models
 
 
-class Service(IdleBase):
+class Service(IdleBase, PriceBase):
     """
     Cadastro de Serviços (Ex: Pintura, Lixamento, Emassamento).
     """

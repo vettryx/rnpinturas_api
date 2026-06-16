@@ -7,11 +7,11 @@ Caminho: apps/materials/models.py
 Define a entidade central de materiais (Material) da RN Pinturas
 """
 
-from common.models import IdleBase
+from common.models import IdleBase, PriceBase
 from django.db import models
 
 
-class Material(IdleBase):
+class Material(IdleBase, PriceBase):
     """
     Cadastro de Materiais (Tintas, Insumos, Ferramentas).
     """
