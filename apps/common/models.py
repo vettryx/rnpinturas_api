@@ -217,3 +217,21 @@ class ContactBase(models.Model):
                 self.value = f"+{numbers}"
 
         super().save(*args, **kwargs)
+
+
+class PriceBase(models.Model):
+    default_price = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        default=0,
+        verbose_name="Preço Padrão"
+    )
+
+    class Meta:
+        abstract = True
+
+    @property
+    def formatted_price(self):
+        value = self.default_price or 0
+        price_str = f"R$ {value:,.2f}"
+        return price_str.replace(",", "X").replace(".", ",").replace("X", ".")
