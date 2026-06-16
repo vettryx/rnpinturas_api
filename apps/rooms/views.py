@@ -9,11 +9,11 @@ Herdará as views genéricas do app 'common' para padronização.
 """
 
 from common.views import (
+    CommonAppHomeView,
     CommonCreateView,
     CommonDeleteView,
     CommonDetailView,
     CommonListView,
-    CommonTemplateView,
     CommonUpdateView,
 )
 from django.shortcuts import redirect
@@ -26,36 +26,75 @@ from .models import Room, RoomPart
 
 # ===== CÔMODOS =====
 # 1. HOME
-class RoomHomeView(CommonTemplateView):
-    template_name = "includes/apps_home.html"
+class RoomHomeView(CommonAppHomeView):
     title = "Dashboard de Estruturas"
+    description = "Visão geral dos Cômodos e suas Partes (Superfícies)"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
+        rooms_base = Room.objects.all()
+        parts_base = RoomPart.objects.all()
+
         # --- KPIs para o Dashboard ---
-        total_rooms = Room.objects.count()
-        total_parts = RoomPart.objects.count()
-        active_rooms = Room.objects.filter(idle=False).count()
+        # Cômodos
+        total_rooms = rooms_base.count()
+        active_rooms = rooms_base.filter(idle=False).count()
+        inactive_rooms = rooms_base.filter(idle=True).count()
+
+        # Partes (Superfícies)
+        total_parts = parts_base.count()
+        active_parts = parts_base.filter(idle=False).count()
+        inactive_parts = parts_base.filter(idle=True).count()
 
         context["kpis"] = [
             {
                 "label": "Total de Cômodos",
                 "value": total_rooms,
-                "style": "",  # Padrão azul
-                "footer": "Cadastrados",
+                "extra": "cômodos",
+                "css_class": "kpi-concluido",
+                "icon": "other_houses",
+                "url": reverse_lazy("rooms:room_list"),
             },
             {
-                "label": "Total de Partes/Superfícies",
+                "label": "Total de Partes (Superfícies)",
                 "value": total_parts,
-                "style": "",  # Padrão azul
-                "footer": "Cadastradas",
+                "extra": "cômodos",
+                "css_class": "kpi-concluido",
+                "icon": "room_preferences",
+                "url": reverse_lazy("rooms:roompart_list"),
             },
             {
                 "label": "Cômodos Ativos",
                 "value": active_rooms,
-                "style": "success",  # Borda verde
-                "footer": "Em operação",
+                "extra": "ativos",
+                "css_class": "kpi-aprovado",
+                "icon": "check_circle",
+                "url": reverse_lazy("rooms:room_list") + "?idle=False",
+            },
+            {
+                "label": "Partes (Superfícies) Ativas",
+                "value": active_parts,
+                "extra": "ativas",
+                "css_class": "kpi-aprovado",
+                "icon": "check_circle",
+                "url": reverse_lazy("rooms:roompart_list") + "?idle=False",
+            },
+            {
+                "label": "Cômodos Inativos",
+                "value": inactive_rooms,
+                "extra": "inativos",
+                "css_class": "kpi-reprovado",
+                "icon": "cancel",
+                "url": reverse_lazy("rooms:room_list") + "?idle=True",
+            },
+            {
+                "label": "Partes (Superfícies) Inativas",
+                "value": inactive_parts,
+                "extra": "inativas",
+                "css_class": "kpi-reprovado",
+                "icon": "cancel",
+                "url": reverse_lazy("rooms:roompart_list") + "?idle=True",
             },
         ]
 
@@ -83,18 +122,53 @@ class RoomHomeView(CommonTemplateView):
             },
         ]
 
-        # --- Itens Recentes (Últimos 5 Criados) ---
-        last_rooms = Room.objects.order_by("-id")[:5]
+        # --- Tabela Dinâmica (Últimos 10 cadastrados) ---
+        context["table_columns"] = [
+            "Nome",
+            "Tipo",
+            "Status",
+        ]
 
-        context["recent_items"] = []
-        for room in last_rooms:
-            context["recent_items"].append(
-                {
-                    "label": room.name,
-                    "url": reverse_lazy("rooms:room_detail", args=[room.pk]),
-                    "meta": "Inativo" if room.idle else "Ativo",
-                }
-            )
+        items = []
+
+        # CÔMODOS
+        items += [
+            {
+                "id": room.id,
+                "name": room.name,
+                "type": "Cômodo",
+                "status_label": room.status_label,
+                "status_class": room.status_css_class,
+                "url": reverse_lazy("rooms:room_detail", args=[room.pk]),
+            }
+            for room in Room.objects.all()
+        ]
+
+        # PARTES
+        items += [
+            {
+                "id": part.id,
+                "name": part.name,
+                "type": "Parte",
+                "status_label": part.status_label,
+                "status_class": part.status_css_class,
+                "url": reverse_lazy("rooms:roompart_detail", args=[part.pk]),
+            }
+            for part in RoomPart.objects.all()
+        ]
+
+        items = sorted(items, key=lambda x: x["id"], reverse=True)[:10]
+
+        context["table_rows"] = [
+            {
+                "cols": [
+                    f'<a href="{item["url"]}"><strong>{item["name"]}</strong></a>',
+                    item["type"],
+                    f'<span class="badge-{item["status_class"]}">{item["status_label"]}</span>',
+                ]
+            }
+            for item in items
+        ]
 
         return context
 
@@ -106,19 +180,28 @@ class RoomListView(CommonListView):
 
     header_buttons = [
         {
-            "label": "Novo Cômodo",
-            "url": reverse_lazy("rooms:room_new"),
-            "class": "btn-new",
+            "label": "Dashboard",
+            "url": reverse_lazy("rooms:home"),
+            "class": "btn-dashboard",
         },
         {
             "label": "Gerenciar Partes (Superfícies)",
             "url": reverse_lazy("rooms:roompart_list"),
             "class": "btn-list",
         },
+        {
+            "label": "Novo Cômodo",
+            "url": reverse_lazy("rooms:room_new"),
+            "class": "btn-new",
+        },
     ]
 
     search_config = [
-        {"name": "name", "label": "Nome do Cômodo", "type": "text"},
+        {
+            "name": "name",
+            "label": "Nome do Cômodo",
+            "type": "text"
+        },
         {
             "name": "idle",
             "label": "Inativo?",
@@ -130,19 +213,22 @@ class RoomListView(CommonListView):
     table_headers = [
         {"field": "id", "label": "ID"},
         {"field": "name", "label": "Nome"},
+        {"field": "idle", "label": "Status"},
         {"field": "notes", "label": "Observações"},
-        {"field": "idle", "label": "Inativo?"},
     ]
 
     def get_row_data(self, item):
         detail_url = reverse_lazy("rooms:room_detail", args=[item.pk])
-        status = "Sim" if item.idle else "Não"
 
         return [
             item.id,
             format_html('<a href="{}">{}</a>', detail_url, item.name),
+            format_html(
+                '<span class="badge-{}">{}</span>',
+                item.status_css_class,
+                item.status_label
+            ),
             item.notes,
-            status,
         ]
 
 
@@ -155,12 +241,34 @@ class RoomDetailView(CommonDetailView):
         context = super().get_context_data(**kwargs)
         room = self.object
 
+        # BOTOES PERSONALIZADOS (URLs diferentes do padrão definido)
+        context["buttons"] = [
+            {
+                "class": "btn-edit",
+                "url": reverse_lazy("rooms:room_edit", args=[room.pk]),
+                "title": "Editar",
+                "text": "Editar",
+            },
+            {
+                "class": "btn-delete",
+                "url": reverse_lazy("rooms:room_delete", args=[room.pk]),
+                "title": "Excluir",
+                "text": "Excluir",
+            },
+            {
+                "class": "btn-return",
+                "url": self.return_url,
+                "title": "Voltar",
+                "text": "Voltar",
+            },
+        ]
+
     # ABAS (Tabs)
         context["tabs"] = [
             {
                 "id": "tab-dados",
                 "label": "Dados do Cômodo",
-                "icon": "fas fa-box",
+                "icon": "other_houses",
                 "active": True
             },
         ]
@@ -170,10 +278,17 @@ class RoomDetailView(CommonDetailView):
             {
                 "id": "tab-dados",
                 "active": True,
-                "label": "Dados do Cômodo",
+                "label": "Informações Gerais",
                 "fields": [
                     {"label": "Nome do Cômodo", "value": room.name},
-                    {"label": "Status", "value": "Inativo" if room.idle else "Ativo"},
+                    {
+                        "label": "Status",
+                        "value": format_html(
+                            '<span class="badge-{}">{}</span>',
+                            room.status_css_class,
+                            room.status_label,
+                        )
+                    },
                     {"label": "Observações", "value": room.notes},
                 ],
             },
@@ -215,6 +330,11 @@ class RoomPartListView(CommonListView):
 
     header_buttons = [
         {
+            "label": "Dashboard",
+            "url": reverse_lazy("rooms:home"),
+            "class": "btn-dashboard",
+        },
+        {
             "label": "Nova Parte (Superfície)",
             "url": reverse_lazy("rooms:roompart_new"),
             "class": "btn-new",
@@ -222,7 +342,11 @@ class RoomPartListView(CommonListView):
     ]
 
     search_config = [
-        {"name": "name", "label": "Nome", "type": "text"},
+        {
+            "name": "name",
+            "label": "Nome",
+            "type": "text"
+        },
         {
             "name": "idle",
             "label": "Inativo?",
@@ -234,19 +358,22 @@ class RoomPartListView(CommonListView):
     table_headers = [
         {"field": "id", "label": "ID"},
         {"field": "name", "label": "Nome"},
+        {"field": "idle", "label": "Status"},
         {"field": "notes", "label": "Observações"},
-        {"field": "idle", "label": "Inativo?"},
     ]
 
     def get_row_data(self, item):
         detail_url = reverse_lazy("rooms:roompart_detail", args=[item.pk])
-        status = "Sim" if item.idle else "Não"
 
         return [
             item.id,
             format_html('<a href="{}">{}</a>', detail_url, item.name),
+            format_html(
+                '<span class="badge-{}">{}</span>',
+                item.status_css_class,
+                item.status_label
+            ),
             item.notes,
-            status,
         ]
 
 
@@ -259,12 +386,35 @@ class RoomPartDetailView(CommonDetailView):
         context = super().get_context_data(**kwargs)
         part = self.object
 
+        # BOTOES PERSONALIZADOS (URLs diferentes do padrão definido)
+        context["buttons"] = [
+            {
+                "class": "btn-edit",
+                "url": reverse_lazy("rooms:roompart_edit", args=[part.pk]),
+                "title": "Editar",
+                "text": "Editar",
+            },
+            {
+                "class": "btn-delete",
+                "url": reverse_lazy("rooms:roompart_delete", args=[part.pk]),
+                "title": "Excluir",
+                "text": "Excluir",
+            },
+            {
+                "class": "btn-return",
+                "url": self.return_url,
+                "title": "Voltar",
+                "text": "Voltar",
+            },
+
+        ]
+
         # ABAS (Tabs)
         context["tabs"] = [
             {
                 "id": "tab-dados",
                 "label": "Dados da Parte do Cômodo",
-                "icon": "fas fa-box",
+                "icon": "room_preferences",
                 "active": True
             },
         ]
@@ -274,10 +424,17 @@ class RoomPartDetailView(CommonDetailView):
             {
                 "id": "tab-dados",
                 "active": True,
-                "label": "Dados da Parte do Cômodo",
+                "label": "Informações Gerais",
                 "fields": [
                     {"label": "Nome da Parte", "value": part.name},
-                    {"label": "Status", "value": "Inativo" if part.idle else "Ativo"},
+                    {
+                        "label": "Status",
+                        "value": format_html(
+                            '<span class="badge-{}">{}</span>',
+                            part.status_css_class,
+                            part.status_label,
+                        )
+                    },
                     {"label": "Observações", "value": part.notes},
                 ],
             },
