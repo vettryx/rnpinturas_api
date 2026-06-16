@@ -17,7 +17,6 @@ from common.views import (
     CommonUpdateView,
 )
 from django.db.models import Sum
-from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.utils.html import format_html
 from orders.models import OrderMaterial
