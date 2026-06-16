@@ -61,7 +61,7 @@ garantindo contraste e sombreamento no Dark Mode.
 ========================================================================== */
 .apps-home-main-layout-grid {
     display: grid;
-    grid-template-columns:minmax(240px,260px) 1fr minmax(260px,300px);
+    grid-template-columns: minmax(240px,260px) 1fr;
     gap: 1.2rem;
     margin-bottom: 0.75rem;
     flex: 1;
