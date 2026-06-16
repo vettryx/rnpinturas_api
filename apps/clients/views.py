@@ -87,7 +87,7 @@ class ClientHomeView(CommonAppHomeView):
         context["table_columns"] = [
             "Nome",
             "Documento",
-            "Situação"
+            "Status",
         ]
 
         context["table_rows"] = [
