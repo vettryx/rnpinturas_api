@@ -16,7 +16,6 @@ from common.views import (
     CommonListView,
     CommonUpdateView,
 )
-from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.utils.html import format_html
 
