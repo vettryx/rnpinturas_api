@@ -9,52 +9,62 @@ Herdará as views genéricas do app 'common' para padronização.
 """
 
 from common.views import (
+    CommonAppHomeView,
     CommonCreateView,
     CommonDeleteView,
     CommonDetailView,
     CommonListView,
-    CommonTemplateView,
     CommonUpdateView,
 )
+from django.db.models import Sum
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.utils.html import format_html
+from orders.models import OrderService
 
 from .forms import ServiceForm
 from .models import Service
 
 
 # 1. HOME
-class ServiceHomeView(CommonTemplateView):
-    template_name = "includes/apps_home.html"
+class ServiceHomeView(CommonAppHomeView):
     title = "Dashboard de Serviços"
+    description = "Visão geral dos serviços"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
+        services_base = Service.objects.all()
+
         # --- KPIs para o Dashboard ---
-        total_services = Service.objects.count()
-        active_services = Service.objects.filter(idle=False).count()
-        inactive_services = Service.objects.filter(idle=True).count()
+        total_services = services_base.count()
+        active_services = services_base.filter(idle=False).count()
+        inactive_services = services_base.filter(idle=True).count()
 
         context["kpis"] = [
             {
                 "label": "Total de Serviços",
                 "value": total_services,
-                "style": "",  # Padrão azul
-                "footer": "Base completa",
+                "extra": "serviços",
+                "css_class": "kpi-concluido",
+                "icon": "build",
+                "url": reverse_lazy("services:list"),
             },
             {
                 "label": "Serviços Ativos",
                 "value": active_services,
-                "style": "success",  # Borda verde
-                "footer": "Em operação",
+                "extra": "ativos",
+                "css_class": "kpi-aprovado",
+                "icon": "check_circle",
+                "url": reverse_lazy("services:list") + "?idle=False",
             },
             {
                 "label": "Serviços Inativos",
                 "value": inactive_services,
-                "style": "alert",
-                "footer": "Arquivados",
+                "extra": "inativos",
+                "css_class": "kpi-reprovado",
+                "icon": "cancel",
+                "url": reverse_lazy("services:list") + "?idle=True",
             },
         ]
 
@@ -72,18 +82,44 @@ class ServiceHomeView(CommonTemplateView):
             },
         ]
 
-        # --- Itens Recentes (Últimos 5 Criados) ---
-        last_services = Service.objects.order_by("-id")[:5]
+        # --- Tabela Dinâmica (Últimos 10 cadastrados) ---
+        context["table_columns"] = [
+            "Nome",
+            "Status",
+        ]
 
-        context["recent_items"] = []
-        for service in last_services:
-            context["recent_items"].append(
-                {
-                "label": service.name,
-                "url": reverse_lazy("services:detail", args=[service.pk]),
-                "meta": "Inativo" if service.idle else "Ativo",
-                }
+        context["table_rows"] = [
+            {
+                "cols": [
+                    f'<a href="{
+                        reverse_lazy("services:detail",
+                        args=[service.pk])
+                    }"><strong>{service.name}</strong></a>',
+                    f'<span class="badge-{service.status_css_class}">{service.status_label}</span>',
+                ]
+            }
+            for service in services_base.order_by("-id")[:10]
+        ]
+
+        # --- Ranking ---
+        context["ranking_title"] = "Top Serviços"
+        context["ranking_label"] = "Serviço"
+        context["ranking_value"] = "Quantidade"
+
+        context["ranking"] = [
+            {
+                "label": item["service__name"],
+                "value": item["total_services"],
+                "url": reverse_lazy("services:detail", args=[item["service_id"]]),
+            }
+            for item in (
+                OrderService.objects
+                .filter(order__status__id=6)
+                .values("service_id", "service__name")
+                .annotate(total_services=Sum("quantity"))
+                .order_by("-total_services")[:10]
             )
+        ]
 
         return context
 
@@ -95,6 +131,11 @@ class ServiceListView(CommonListView):
 
     header_buttons = [
         {
+            "label": "Dashboard",
+            "url": reverse_lazy("services:home"),
+            "class": "btn-dashboard",
+        },
+        {
             "label": "Novo Serviço",
             "url": reverse_lazy("services:new"),
             "class": "btn-new",
@@ -102,7 +143,11 @@ class ServiceListView(CommonListView):
     ]
 
     search_config = [
-        {"name": "name", "label": "Nome", "type": "text"},
+        {
+            "name": "name",
+            "label": "Nome",
+            "type": "text"
+        },
         {
             "name": "idle",
             "label": "Inativo?",
@@ -115,25 +160,23 @@ class ServiceListView(CommonListView):
         {"field": "id", "label": "ID"},
         {"field": "name", "label": "Nome"},
         {"field": "default_price", "label": "Preço Sugerido"},
+        {"field": "idle", "label": "Status"},
         {"field": "notes", "label": "Observações"},
-        {"field": "idle", "label": "Inativo?"},
     ]
 
     def get_row_data(self, item):
         detail_url = reverse_lazy("services:detail", args=[item.pk])
-        status = "Sim" if item.idle else "Não"
-
-        if item.default_price:
-            price_str = f"R$ {item.default_price:,.2f}"
-            price = price_str.replace(",", "X").replace(".", ",").replace("X", ".")
-        else:
-            price = "R$ 0,00"
 
         return [
             item.id,
             format_html('<a href="{}">{}</a>', detail_url, item.name),
-            price,
-            status,
+            item.formatted_price,
+            format_html(
+                '<span class="badge-{}">{}</span>',
+                item.status_css_class,
+                item.status_label
+            ),
+            item.notes,
         ]
 
 
@@ -146,18 +189,12 @@ class ServiceDetailView(CommonDetailView):
         context = super().get_context_data(**kwargs)
         service = self.object
 
-        if service.default_price:
-            price_str = f"R$ {service.default_price:,.2f}"
-            price = price_str.replace(",", "X").replace(".", ",").replace("X", ".")
-        else:
-            price = "R$ 0,00"
-
         # ABAS (Tabs)
         context["tabs"] = [
             {
                 "id": "tab-dados",
                 "label": "Dados do Serviço",
-                "icon": "fas fa-box",
+                "icon": "build",
                 "active": True
             },
         ]
@@ -170,8 +207,15 @@ class ServiceDetailView(CommonDetailView):
                 "title": "Informações Gerais",
                 "fields": [
                     {"label": "Nome do Serviço", "value": service.name},
-                    {"label": "Preço Sugerido", "value": price},
-                    {"label": "Status", "value": "Inativo" if service.idle else "Ativo"},
+                    {"label": "Preço Sugerido", "value": service.formatted_price},
+                    {
+                        "label": "Status",
+                        "value": format_html(
+                            '<span class="badge-{}">{}</span>',
+                            service.status_css_class,
+                            service.status_label,
+                        )
+                    },
                     {"label": "Observações", "value": service.notes},
                 ],
             },
