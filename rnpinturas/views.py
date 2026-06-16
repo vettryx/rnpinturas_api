@@ -16,7 +16,7 @@ from django.urls import URLPattern, URLResolver, get_resolver
 from django.utils import timezone
 from django.utils.formats import number_format
 from django.views.generic import TemplateView
-from orders.models import Order
+from orders.models import Order, OrderMaterial, OrderService
 
 
 class HomeView(TemplateView):
@@ -185,48 +185,38 @@ class HomeView(TemplateView):
         # ==========================================
         # TOP SERVIÇOS
         # ==========================================
-        context["top_services"] = (
-            orders_base
-            .exclude(
-                services__isnull=True
+        context["top_services"] = [
+            {
+                "id": item["service_id"],
+                "nome": item["service__name"],
+                "total_realizado": item["total_realizado"],
+            }
+            for item in (
+                OrderService.objects
+                .filter(order__in=orders_base, order__status__id=6)
+                .values("service_id", "service__name")
+                .annotate(total_realizado=Sum("quantity"))
+                .order_by("-total_realizado")[:5]
             )
-            .values(
-                nome=F(
-                    "services__service__name"
-                )
-            )
-            .annotate(
-                total_realizado=Sum(
-                    "services__quantity"
-                )
-            )
-            .order_by(
-                "-total_realizado"
-            )[:5]
-        )
+        ]
 
         # ==========================================
         # TOP MATERIAIS
         # ==========================================
-        context["top_materials"] = (
-            orders_base
-            .exclude(
-                materials__isnull=True
+        context["top_materials"] = [
+            {
+                "id": item["material_id"],
+                "nome": item["material__name"],
+                "total_solicitado": item["total_solicitado"],
+            }
+            for item in (
+                OrderMaterial.objects
+                .filter(order__in=orders_base, order__status__id=6)
+                .values("material_id", "material__name")
+                .annotate(total_solicitado=Sum("quantity"))
+                .order_by("-total_solicitado")[:5]
             )
-            .values(
-                nome=F(
-                    "materials__material__name"
-                )
-            )
-            .annotate(
-                total_solicitado=Sum(
-                    "materials__quantity"
-                )
-            )
-            .order_by(
-                "-total_solicitado"
-            )[:5]
-        )
+        ]
 
         # ==========================================
         # CONTEXTO PARA TEMPLATE
