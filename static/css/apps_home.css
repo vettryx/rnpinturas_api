@@ -40,9 +40,14 @@ garantindo contraste e sombreamento no Dark Mode.
 ========================================================================== */
 .apps-home-header {
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    gap: 1rem;
     margin-bottom: 0.75rem;
+}
+
+.apps-home-header-content {
+    display: flex;
+    flex-direction: column;
 }
 
 .apps-home-header-title {
@@ -54,6 +59,15 @@ garantindo contraste e sombreamento no Dark Mode.
 .apps-home-header-description {
     font-size: 0.85rem;
     color: var(--text-secondary);
+}
+
+.apps-home-header .btn-square {
+    width: 52px;
+    height: 52px;
+}
+
+.apps-home-header .btn-square::before {
+    font-size: 1.5rem;
 }
 
 /* ==========================================================================
