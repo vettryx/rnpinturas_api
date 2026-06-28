@@ -68,6 +68,10 @@ garantindo contraste e sombreamento no Dark Mode.
     min-height: 0;
 }
 
+.apps-home-main-layout-grid.has-ranking {
+    grid-template-columns: minmax(240px,260px) 1fr 300px;
+}
+
 /* ==========================================================================
    PAINÉIS (BASE)
 ========================================================================== */
@@ -126,9 +130,6 @@ garantindo contraste e sombreamento no Dark Mode.
     display: block;
     font-size: 22px;
     margin-bottom: 6px;
-}
-
-.apps-home-actions-card span[class^="btn-"] {
     padding: 0;
     background: none;
     box-shadow: none;
