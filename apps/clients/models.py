@@ -125,6 +125,7 @@ class ClientAddress(NoteBase, AddressBase):
         parts = [
             self.street,
             self.number,
+            self.complement,
             self.district,
             self.city.name if self.city else None,
             self.city.uf.abbreviation if self.city and hasattr(self.city, 'uf') and self.city.uf else None,
