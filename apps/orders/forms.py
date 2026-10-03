@@ -215,6 +215,16 @@ class OrderServiceForm(NoteBaseForm):
             }
         ),
     )
+    room_identifier = forms.CharField(
+        label="Identificador",
+        required=False,
+        widget=forms.TextInput(
+            attrs={
+                "class": "apps-form-input",
+                "placeholder": "Ex: A, B, Casal",
+            }
+        ),
+    )
     room_part = forms.ModelChoiceField(
         label="Parte do Ambiente",
         queryset=RoomPart.objects.filter(idle=False).order_by("name"),
@@ -268,6 +278,7 @@ class OrderServiceForm(NoteBaseForm):
         fields = [
             "service",
             "room",
+            "room_identifier",
             "room_part",
             "quantity",
             "price",

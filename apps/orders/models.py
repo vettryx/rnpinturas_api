@@ -166,10 +166,12 @@ class OrderService(NoteBase):
     )
     service = models.ForeignKey(Service, on_delete=models.PROTECT, verbose_name="Serviço")
     room = models.ForeignKey(Room, on_delete=models.PROTECT, verbose_name="Ambiente")
+    room_identifier = models.CharField(
+            max_length=50, blank=True, verbose_name="Identificador do Ambiente"
+        )
     room_part = models.ForeignKey(
         RoomPart, on_delete=models.PROTECT, verbose_name="Parte do Ambiente"
     )
-
     quantity = models.DecimalField(
         max_digits=10, decimal_places=2, default=0.00, verbose_name="Quantidade"
     )
@@ -184,10 +186,16 @@ class OrderService(NoteBase):
     def total_price(self):
         return (self.quantity * self.price) - self.discount
 
+    @property
+    def room_display_name(self):
+        if self.room_identifier:
+            return f"{self.room.name} {self.room_identifier}"
+        return self.room.name
+
     class Meta:
         verbose_name = "Serviço do Pedido"
         verbose_name_plural = "Serviços do Pedido"
         db_table = "orders_services"
 
     def __str__(self):
-        return f"{self.service} - {self.room}"
+        return f"{self.service} - {self.room_display_name}"

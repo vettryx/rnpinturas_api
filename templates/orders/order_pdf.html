@@ -113,7 +113,7 @@
         </thead>
         <tbody>
             <!-- Ordena por nome do cômodo e agrupa -->
-            {% regroup order.services.all|dictsort:"room.name" by room.name as room_list %}
+            {% regroup order.services.all|dictsort:"room_display_name" by room_display_name as room_list %}
             
             {% for room_group in room_list %}
                 <!-- Linha de destaque para o nome do Cômodo -->

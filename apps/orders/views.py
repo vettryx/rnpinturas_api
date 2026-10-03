@@ -308,7 +308,7 @@ class OrderDetailView(CommonDetailView):
             {
                 "values": [
                     service.service.name,
-                    f"{service.room.name} ({service.room_part.name})" if service.room_part else service.room.name,
+                    f"{service.room_display_name} ({service.room_part.name})" if service.room_part else service.room_display_name,
                     service.quantity,
                     number_format(service.price, decimal_pos=2, force_grouping=True),
                     number_format(service.discount, decimal_pos=2, force_grouping=True) if service.discount else "-",
@@ -528,7 +528,7 @@ class OrderCreateView(CommonCreateView):
                 "formset": context["service_formset"],
                 "helper_text": "Adicione um ou mais serviços.",
                 "layout": "table",
-                "table_headers": ["Serviço", "Ambiente", "Parte", "Qtd", "Preço (R$)", "Desconto", "Observações", "Ações"],
+                "table_headers": ["Serviço", "Ambiente", "Identificador", "Parte", "Qtd", "Preço (R$)", "Desconto", "Observações", "Ações"],
             },
             {
                 "id": "tab-materiais",
@@ -637,7 +637,7 @@ class OrderUpdateView(CommonUpdateView):
                 "formset": context["service_formset"],
                 "helper_text": "Adicione um ou mais serviços.",
                 "layout": "table",
-                "table_headers": ["Serviço", "Ambiente", "Parte", "Qtd", "Preço (R$)", "Desconto", "Observações", "Ações"],
+                "table_headers": ["Serviço", "Ambiente", "Identificador", "Parte", "Qtd", "Preço (R$)", "Desconto", "Observações", "Ações"],
             },
             {
                 "id": "tab-materiais",
