@@ -243,6 +243,8 @@ body {
 
 .data-table td.no-border-bottom {
     border-bottom: 0px solid transparent !important;
+    padding-top: 1px !important;
+    padding-bottom: 1px !important;
 }
 
 .data-table .text-right { 

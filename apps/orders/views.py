@@ -8,6 +8,8 @@ Contém a lógica de apresentação e endpoints da API para o módulo de orders.
 Herdará as views genéricas do app 'common' para padronização.
 """
 from datetime import timedelta
+from itertools import groupby
+from operator import attrgetter
 
 from clients.models import Client
 from common.models import AuxStatus
@@ -702,8 +704,29 @@ class OrderPDFView(CommonDetailView):
         self.object = self.get_object()
         order = self.object
 
+        # 1. Obter serviços em lista e ordenar pelo identificador (necessário para o groupby)
+        services = list(order.services.all())
+        services.sort(key=attrgetter("room_display_name"))
+
+        # 2. Agrupar e somar os valores por ambiente
+        grouped_services = []
+        for room_name, group in groupby(services, key=attrgetter("room_display_name")):
+            group_list = list(group)
+
+            # Soma os valores deste grupo específico
+            total_desconto = sum(item.discount for item in group_list)
+            total_liquido = sum(item.total_price for item in group_list)
+
+            grouped_services.append({
+                "room_name": room_name,
+                "items": group_list,
+                "total_desconto": total_desconto,
+                "total_liquido": total_liquido,
+            })
+
         context = {
             "order": order,
+            "grouped_services": grouped_services,
 
             "services_subtotal": order.gross_services,
             "services_discount": order.discount_services,

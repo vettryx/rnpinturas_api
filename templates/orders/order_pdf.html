@@ -112,25 +112,37 @@
             </tr>
         </thead>
         <tbody>
-            <!-- Ordena por nome do cômodo e agrupa -->
-            {% regroup order.services.all|dictsort:"room_display_name" by room_display_name as room_list %}
-            
-            {% for room_group in room_list %}
-                <!-- Linha de destaque para o nome do Cômodo -->
-                <tr style="background-color: #f4f6f8;">
-                    <td colspan="6" style="padding: 8px; font-weight: bold; text-transform: uppercase; color: #333;">
-                        {{ room_group.grouper }}
+            <!-- Ciclo na lista que já vem agrupada e somada da View -->
+            {% for group in grouped_services %}
+                
+                <!-- Linha de destaque para o nome do Cômodo com os SUBTOTAIS -->
+                <tr style="background-color: #e9ecef;">
+                    <!-- Ocupa as 4 primeiras colunas -->
+                    <td colspan="4" style="padding: 8px; font-weight: bold; text-transform: uppercase; color: #333;">
+                        {{ group.room_name }}
+                    </td>
+                    <!-- Coluna do Subtotal de Descontos (Coluna 5) -->
+                    <td class="text-right" style="padding: 8px; font-weight: bold; color: #d9534f; font-size: 11px;">
+                        {% if group.total_desconto > 0 %}
+                            R$ {{ group.total_desconto|floatformat:"2g" }}
+                        {% endif %}
+                    </td>
+                    <!-- Coluna do Subtotal Líquido (Coluna 6) -->
+                    <td class="text-right" style="padding: 8px; font-weight: bold; color: #333; font-size: 11px;">
+                        R$ {{ group.total_liquido|floatformat:"2g" }}
                     </td>
                 </tr>
                 
                 <!-- Lista os serviços pertencentes a este Cômodo -->
-                {% for s in room_group.list %}
+                {% for s in group.items %}
                 <tr>
                     <td class="{% if s.notes %}no-border-bottom{% endif %}">{{ s.service.name }}</td>
                     <td class="{% if s.notes %}no-border-bottom{% endif %}">{{ s.room_part.name|default:"-" }}</td>
                     <td class="text-center {% if s.notes %}no-border-bottom{% endif %}">{{ s.quantity|floatformat:2 }}</td>
                     <td class="text-right {% if s.notes %}no-border-bottom{% endif %}">R$ {{ s.price|floatformat:"2g" }}</td>
-                    <td class="text-right {% if s.notes %}no-border-bottom{% endif %}" style="color: #d9534f;">R$ {{ s.discount|floatformat:"2g" }}</td>
+                    <td class="text-right {% if s.notes %}no-border-bottom{% endif %}" style="color: #d9534f;">
+                        {% if s.discount > 0 %}R$ {{ s.discount|floatformat:"2g" }}{% endif %}
+                    </td>
                     <td class="text-right {% if s.notes %}no-border-bottom{% endif %}">R$ {{ s.total_price|floatformat:"2g" }}</td>
                 </tr>
                 {% if s.notes %}
@@ -141,6 +153,7 @@
                 </tr>
                 {% endif %}
                 {% endfor %}
+
             {% endfor %}
         </tbody>
     </table>
