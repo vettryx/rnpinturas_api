@@ -132,7 +132,7 @@ class HomeView(TemplateView):
             },
             {
                 "id": 5,
-                "nome": "Pagamento Pendente",
+                "nome": "Aguardando Pagamento",
                 "css": "kpi-pagamento-pendente",
                 "icon": "payments"
             },
@@ -148,7 +148,7 @@ class HomeView(TemplateView):
 
         for status in status_mapping:
             queryset_status = orders_base.filter(
-                status__name=status["nome"]
+                status__id=status["id"]
             )
             quantidade = queryset_status.count()
             soma = sum(

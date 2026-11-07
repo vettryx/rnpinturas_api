@@ -101,7 +101,7 @@ Visão Geral
                 </span>
 
                 <span class="kpi-count">
-                    {{ kpi.qtd }} pedidos
+                    {{ kpi.qtd }} pedido{{ kpi.qtd|pluralize }}
                 </span>
             </div>
         </a>
@@ -185,7 +185,7 @@ Visão Geral
                             <td>{{ order.issue_date|date:"d/m/Y" }}</td>
                             
                             <td>
-                                <strong>R$ {{ order.grand_total|floatformat:2 }}</strong>
+                                <strong>R$ {{ order.grand_total|floatformat:"2g" }}</strong>
                             </td>
                             <td>
                                 <span class="badge-{{ order.status.css_class }}">{{ order.status.name }}</span>
@@ -203,9 +203,11 @@ Visão Geral
 
         <!-- RANKING -->
         <section class="dashboard-panel panel-rankings">
-            <h4 class="section-title">
-                <span class="material-symbols-outlined">star</span> Top Serviços & Materiais
-            </h4>
+            <div class="section-header">
+                <h4 class="section-title">
+                    <span class="material-symbols-outlined">star</span> Top Serviços & Materiais
+                </h4>
+            </div>
             
             <div class="ranking-list">
                 <h5 class="ranking-subtitle">Serviços Mais Realizados</h5>
@@ -227,13 +229,12 @@ Visão Geral
                         <span class="rank-value">{{ item.total_solicitado|default:0 }}x</span>
                     </div>
                 {% empty %}
-                        <p class="text-muted text-center" style="font-size: 0.8rem;">Sem dados no período.</p>
+                    <p class="text-muted text-center" style="font-size: 0.8rem;">Sem dados no período.</p>
                 {% endfor %}
             </div>
         </section>
     </div>
 
-    {% else %}
-        {% endif %}
+    {% endif %}
 </div>
 {% endblock content %}
