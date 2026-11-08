@@ -41,6 +41,15 @@ dev = [
 # 3. CONFIGURAÇÕES DE FERRAMENTAS (TOOLS)
 # ==============================================================================
 
+# --- POETRY (Modo Aplicação Django) ---
+[tool.poetry]
+package-mode = false
+
+# --- PYLANCE / PYRIGHT (Resolução de Imports no VS Code) ---
+[tool.pyright]
+pythonVersion = "3.14"
+extraPaths = [".", "apps"]
+
 # --- TASKIPY (Automação de Tarefas) ---
 [tool.taskipy.tasks]
 update = "python update_packages.py"
@@ -51,6 +60,7 @@ lint = "ruff check . --fix && ruff format ."
 line-length = 100
 target-version = "py314"
 indent-width = 4
+src = [".", "apps"]
 extend-exclude = [
     "migrations",
     "venv",
